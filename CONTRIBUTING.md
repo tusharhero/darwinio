@@ -56,4 +56,19 @@ git push origin <branch-name>
 
 Replace <branch-name> with the name of the branch you are working on.
 
+## Step 7: Synchronizing with Master
+
+```
+git fetch
+git pull
+```
+
+These commands will `pull` all the new stuff from GitHub. Now to get those stuff into your branch. You have to do,
+
+```
+git merge origin/master
+```
+
+If there are new changes to master you can git
+
 That's it! Thank you for your contribution to Darwinio. We appreciate your time and effort.
