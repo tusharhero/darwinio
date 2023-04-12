@@ -21,6 +21,7 @@ Various methods for encoding and decoding genomes.
 
 import secrets
 import random
+import numpy as np
 
 
 def get_random_genome(size: int) -> str:
@@ -46,3 +47,22 @@ def generate_offspring_genome(parent1: str, parent2: str, mutationfactor: float)
         offspring_genome[random_index] = random_value
 
     return "".join(offspring_genome)
+
+
+def encode_organism_characteristics(characteristics: np.ndarray) -> str:
+    """
+    Encode the given organism characteristics into genome.
+
+    characteristics: A pandas Series containing the characteristics to be encoded.
+    Each characteristic should be represented as an integer between 0 and 15.
+    """
+    characteristics = characteristics.clip(0, 15)
+    genome: list = [hex(character)[2:] for character in characteristics]
+    return "".join(genome)
+
+
+def decode_organism_characteristics(genome: str) -> np.ndarray:
+    """
+    Decode the given genome into an array of organism characteristics.
+    """
+    return np.array([int(base_pair, 16) for base_pair in genome])
