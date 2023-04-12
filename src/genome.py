@@ -1,3 +1,7 @@
+""" 
+Various methods for encoding and decoding genomes.
+"""
+
 """
 The GPLv3 License (GPLv3)
 
@@ -17,9 +21,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-""" 
-Various methods for encoding and decoding genomes.
-"""
 
 import secrets
 import random
@@ -34,8 +35,9 @@ def get_offspring_genome(parent1: str, parent2: str, mutationfactor: float) -> s
     offspring_genome: list = [random.choice(bp) for bp in zip(parent1, parent2)]
 
     # mutations
-    if random.choices([True, False], [mutationfactor, 1 - mutationfactor])[0]:
-        offspring_genome[random.randrange(len(offspring_genome))] = random.choice(
-            offspring_genome
-        )
+    if random.random() < mutationfactor:
+        random_index: int = random.randrange(len(offspring_genome))
+        random_value: str = hex(random.randrange(16))[2:]
+        offspring_genome[random_index] = random_value
+
     return "".join(offspring_genome)
