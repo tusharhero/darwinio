@@ -14,6 +14,10 @@ certain stimuli such as presence of food, other organisms, potential mating
 partners, etc. This part will essentially determine the neural structure of the
 organism.
 
+The genome will be encoded as an hexadecimal number. And the offspring's genome
+will be derived from the parent's genome by randomly selecting each digit randomly
+for each digit and mutation are also applied.
+
 ## Taxonomy
 
 This part will look at the genome of each organism and label it according to
