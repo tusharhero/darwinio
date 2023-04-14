@@ -39,28 +39,34 @@ class Organism:
 
     Attributes:
     -----------------------------------------------------------------------------------
-        genome (str): A string representing the organism's genome.
-        characters (np.ndarray): A NumPy array containing the organism's characteristics.
-        coordinates (tuple[int, int]): A tuple representing the organism's coordinates on a canvas.
-
-    Methods:
-    -----------------------------------------------------------------------------------
-        __init__(self, input_data, canvas_size=(10, 10))
-            Initializes an instance of the Organism class.
+        genome: A string representing the organism's genome.
+        characters: A NumPy array containing the organism's characteristics.
+        coordinates: A tuple representing the organism's coordinates on a canvas.
     """
 
     def __init__(
         self,
         input_data: Union[str, np.ndarray],
         canvas_size: tuple[int, int] = (10, 10),
+        number_of_characters: int = 4,
     ) -> None:
+        """
+        Initializes an instance of the Organism class.
+        """
         # check if input is genome or characteristics
+
         if isinstance(input_data, np.ndarray):
-            self.genome: str = gn.encode_organism_characteristics(input_data)
+            self.genome: str = gn.encode_organism_characteristics(
+                input_data, number_of_characters
+            )
+
             self.characters: np.ndarray = input_data
+
         elif isinstance(input_data, str):
             self.genome: str = input_data
-            self.characters: np.ndarray = gn.decode_organism_characteristics(input_data)
+            self.characters: np.ndarray = gn.decode_organism_characteristics(
+                input_data, number_of_characters
+            )
 
         # assign random coordinates
         self.canvas_size = canvas_size

@@ -122,6 +122,6 @@ def decode_organism_characteristics(genome: str, array_length: int) -> np.ndarra
             element of the array represents a characteristic and is an integer
             between 0 and 15.
     """
-    if not 0 <= array_length < len(genome):
+    if not 0 <= array_length <= len(genome):
         raise ValueError("length must be larger than size of Characteristics")
     return np.array([int(base_pair, 16) for base_pair in genome[:array_length]])
