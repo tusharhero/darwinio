@@ -24,9 +24,6 @@ import genome as gn
 import numpy as np
 from typing import Union
 
-"""
-"""
-
 
 class Organism:
     """
