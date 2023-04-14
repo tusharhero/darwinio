@@ -39,7 +39,7 @@ def generate_offspring_genome(parent1: str, parent2: str, mutationfactor: float)
     -----------------------------------------------------------------------------------
         parent1 (str): The genome of the first parent.
         parent2 (str): The genome of the second parent.
-        mutationfactor (float): A value between 0 and 1 (exclusive) representing the probability
+        mutationfactor (float): A value between 0 and 1 (inclusive) representing the probability
         of a mutation occurring in the offspring's genome.
 
     Returns:
@@ -53,6 +53,11 @@ def generate_offspring_genome(parent1: str, parent2: str, mutationfactor: float)
         for a random mutation to occur in one of the offspring's base pairs. The function then returns
         the offspring's genome as a string.
     """
+
+    if not 0 < mutationfactor <= 1:
+        raise ValueError("mutationfactor must be a value between 0 and 1 (inclusive)")
+    if len(parent1) != len(parent2):
+        raise ValueError("parent1 and parent2 must have the same length")
 
     # bitwise random choice between each base_pair
     offspring_genome: list = [
@@ -83,7 +88,14 @@ def encode_organism_characteristics(characteristics: np.ndarray) -> str:
         genome is in hexadecimal format, with each characteristic encoded as a pair of
         hexadecimal digits.
     """
-    characteristics = characteristics.clip(0, 15)
+
+    if not isinstance(characteristics, np.ndarray):
+        raise TypeError("Characteristics must be a NumPy ndarray")
+    if not characteristics.dtype == np.int64:
+        raise ValueError("Characteristics must be integers")
+    if not np.all((0 <= characteristics) & (characteristics <= 15)):
+        raise ValueError("Characteristics must be between 0 and 15 inclusive")
+
     genome: list = [hex(character)[2:] for character in characteristics]
     return "".join(genome)
 
