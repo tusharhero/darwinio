@@ -25,14 +25,36 @@ import numpy as np
 
 
 def get_random_genome(size: int) -> str:
-    """randomly generate a genome"""
+    """
+    Generates a random genome of the specified size.
+
+    Args:
+        size (int): The number of bytes in the genome.
+
+    Returns:
+        str: A randomly generated genome represented as a hexadecimal string.
+    """
     return secrets.token_hex(size)
 
 
 def generate_offspring_genome(parent1: str, parent2: str, mutationfactor: float) -> str:
     """
-    Generate a genome for an offspring of the given parents(with mutations).
-    mutationfactor must be within [0,1)
+    Generate a genome for an offspring of the given parents with mutations.
+
+    Args:
+        parent1 (str): The genome of the first parent.
+        parent2 (str): The genome of the second parent.
+        mutationfactor (float): A value between 0 and 1 (exclusive) representing the probability
+                                of a mutation occurring in the offspring's genome.
+
+    Returns:
+        str: The genome of the offspring.
+
+    Notes:
+        The function performs a bitwise random choice between each base pair of the parents' genomes
+        to generate the offspring's genome. If the mutationfactor is greater than 0, there is a chance
+        for a random mutation to occur in one of the offspring's base pairs. The function then returns
+        the offspring's genome as a string.
     """
 
     # bitwise random choice between each base_pair
@@ -51,10 +73,16 @@ def generate_offspring_genome(parent1: str, parent2: str, mutationfactor: float)
 
 def encode_organism_characteristics(characteristics: np.ndarray) -> str:
     """
-    Encode the given organism characteristics into genome.
+    Encode the given organism characteristics into a genome string.
 
-    characteristics: A pandas Series containing the characteristics to be encoded.
-    Each characteristic should be represented as an integer between 0 and 15.
+    Args:
+        characteristics: A numpy ndarray of integers representing the characteristics
+            to be encoded. Each characteristic should be between 0 and 15 (inclusive).
+
+    Returns:
+        A string representing the genome encoded from the given characteristics. The
+        genome is in hexadecimal format, with each characteristic encoded as a pair of
+        hexadecimal digits.
     """
     characteristics = characteristics.clip(0, 15)
     genome: list = [hex(character)[2:] for character in characteristics]
@@ -64,5 +92,15 @@ def encode_organism_characteristics(characteristics: np.ndarray) -> str:
 def decode_organism_characteristics(genome: str) -> np.ndarray:
     """
     Decode the given genome into an array of organism characteristics.
+
+    Args:
+        genome : str
+            The genome string to be decoded.
+
+    Returns:
+        np.ndarray
+            A NumPy array containing the decoded organism characteristics. Each
+            element of the array represents a characteristic and is an integer
+            between 0 and 15.
     """
     return np.array([int(base_pair, 16) for base_pair in genome])
