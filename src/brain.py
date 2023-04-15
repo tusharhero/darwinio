@@ -30,27 +30,27 @@ class NeuralNetwork:
     Attributes:
     -----------------------------------------------------------------------------------
         genome: The genome string that encodes the weights of the neural network.
-        neuralstructure: A numpy ndarray of integers representing the
+        neural_structure: A numpy ndarray of integers representing the
         structure of the neural network, where each integer represents the number of
         neurons in that layer.
         weights: contains weights of the neural network.
     """
 
-    def __init__(self, genome: str, neuralstructure: np.ndarray) -> None:
+    def __init__(self, genome: str, neural_structure: np.ndarray) -> None:
         """
         Initialize a neural network object with the given genome and neural structure.
 
         Args:
         ----------------------------------------------------------------------
         genome: A string representing the genome of the organism.
-        neuralstructure: A numpy ndarray representing the neural structure of the organism.
+        neural_structure: A numpy ndarray representing the neural structure of the organism.
 
         Raises:
         ----------------------------------------------------------------------
         ValueError: If the genome is not large enough for the given neural structure.
         """
         self.genome: str = genome
-        self.neuralstructure: np.ndarray = neuralstructure
+        self.neural_structure: np.ndarray = neural_structure
         self.create_weights()
 
     def create_weights(self) -> None:
@@ -62,17 +62,17 @@ class NeuralNetwork:
         ValueError: If the genome is not large enough for the given neural structure.
         """
 
-        neuralstructure: np.ndarray = self.neuralstructure
+        neural_structure: np.ndarray = self.neural_structure
 
-        number_of_neural_connections: int = int(
-            np.sum(neuralstructure[:-1] * neuralstructure[1:])
+        number_of_neural_connections = int(
+            np.sum(neural_structure[:-1] * neural_structure[1:])
         )
 
         genome_seq: np.ndarray = gn.decode_organism_characteristics(
             self.genome, len(self.genome)
         )
 
-        length_of_genome: int = len(genome_seq)
+        length_of_genome = len(genome_seq)
         length_of_neural_section: int = length_of_genome // number_of_neural_connections
 
         if not length_of_neural_section > 0:

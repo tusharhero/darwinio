@@ -31,15 +31,17 @@ def get_random_genome(size: int) -> str:
     return secrets.token_hex(size)
 
 
-def generate_offspring_genome(parent1: str, parent2: str, mutationfactor: float) -> str:
+def generate_offspring_genome(
+    parent_1: str, parent_2: str, mutation_factor: float
+) -> str:
     """
     Generate a genome for an offspring of the given parents with mutations.
 
     Args:
     -----------------------------------------------------------------------------------
-        parent1: The genome of the first parent.
-        parent2: The genome of the second parent.
-        mutationfactor: A value between 0 and 1 (inclusive) representing the probability
+        parent_1: The genome of the first parent.
+        parent_2: The genome of the second parent.
+        mutation_factor: A value between 0 and 1 (inclusive) representing the probability
         of a mutation occurring in the offspring's genome.
 
     Returns:
@@ -54,18 +56,18 @@ def generate_offspring_genome(parent1: str, parent2: str, mutationfactor: float)
         the offspring's genome as a string.
     """
 
-    if not 0 < mutationfactor <= 1:
-        raise ValueError("mutationfactor must be a value between 0 and 1 (inclusive)")
-    if len(parent1) != len(parent2):
-        raise ValueError("parent1 and parent2 must have the same length")
+    if not 0 < mutation_factor <= 1:
+        raise ValueError("mutation_factor must be a value between 0 and 1 (inclusive)")
+    if len(parent_1) != len(parent_2):
+        raise ValueError("parent_1 and parent_2 must have the same length")
 
     # bitwise random choice between each base_pair
     offspring_genome: list = [
-        random.choice(base_pair) for base_pair in zip(parent1, parent2)
+        random.choice(base_pair) for base_pair in zip(parent_1, parent_2)
     ]
 
     # mutations
-    if random.random() < mutationfactor:
+    if random.random() < mutation_factor:
         random_index: int = random.randrange(len(offspring_genome))
         random_value: str = hex(random.randrange(16))[2:]
         offspring_genome[random_index] = random_value
@@ -91,6 +93,7 @@ def encode_organism_characteristics(characteristics: np.ndarray, length: int) ->
         hexadecimal digits.
     """
 
+    # check for errors
     if not isinstance(characteristics, np.ndarray):
         raise TypeError("Characteristics must be a NumPy ndarray")
     if not characteristics.dtype == np.int64:
@@ -100,7 +103,7 @@ def encode_organism_characteristics(characteristics: np.ndarray, length: int) ->
     if not length >= len(characteristics):
         raise ValueError("length must be larger than size of Characteristics")
 
-    genome: list = [hex(character)[2:] for character in characteristics]
+    genome = [hex(character)[2:] for character in characteristics]
     return "".join(genome) + get_random_genome(length - len(characteristics))
 
 
@@ -122,6 +125,8 @@ def decode_organism_characteristics(genome: str, array_length: int) -> np.ndarra
             element of the array represents a characteristic and is an integer
             between 0 and 15.
     """
+
     if not 0 <= array_length <= len(genome):
         raise ValueError("length must be larger than size of Characteristics")
+
     return np.array([int(base_pair, 16) for base_pair in genome[:array_length]])
