@@ -117,6 +117,7 @@ class NeuralNetwork:
 
         neural_network[0] = list(input_values)
 
+        weight_index = 0
         for layer_index, layer_values in enumerate(neural_network[:-1]):
             next_layer_index = layer_index + 1
             for neuron_value in layer_values:
@@ -124,8 +125,8 @@ class NeuralNetwork:
                     neural_network[next_layer_index]
                 ):
                     neural_network[next_layer_index][next_layer_neuron_index] = (
-                        next_layer_neuron_value
-                        + weights[layer_index + next_layer_neuron_index] * neuron_value
+                        next_layer_neuron_value + weights[weight_index] * neuron_value
                     )
+                    weight_index += 1
 
         return np.array(neural_network[-1])
