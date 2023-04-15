@@ -96,3 +96,36 @@ class NeuralNetwork:
         weights: np.ndarray = (weights / (15 * length_of_neural_section)) - 0.5
 
         self.weights: np.ndarray = weights
+
+    def run_neural_network(self, input_values: np.ndarray) -> np.ndarray:
+        """
+        Run the neural network according to input values.
+
+        Args:
+        ----------------------------------------------------------------------
+        input_values: A numpy ndarray representing the input values of the neural
+        neural_network.
+
+        Returns:
+        ----------------------------------------------------------------------
+        A numpy ndarray with the output values of the neural network
+        """
+
+        weights: np.ndarray = self.weights
+        neural_structure: np.ndarray = self.neural_structure
+        neural_network: list[list[float]] = [[0.0] * i for i in neural_structure]
+
+        neural_network[0] = list(input_values)
+
+        for layer_index, layer_values in enumerate(neural_network[:-1]):
+            next_layer_index = layer_index + 1
+            for neuron_value in layer_values:
+                for next_layer_neuron_index, next_layer_neuron_value in enumerate(
+                    neural_network[next_layer_index]
+                ):
+                    neural_network[next_layer_index][next_layer_neuron_index] = (
+                        next_layer_neuron_value
+                        + weights[layer_index + next_layer_neuron_index] * neuron_value
+                    )
+
+        return np.array(neural_network[-1])

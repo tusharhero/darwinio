@@ -18,11 +18,18 @@ The genome will be encoded as an hexadecimal number. And the offspring's genome
 will be derived from the parent's genome by randomly selecting each digit randomly
 for each digit and mutation are also applied.
 
-Each digit of the genome represents a feature, as an hexadecimal number this means each digit has 16 states 
+Each digit of the genome represents a feature, as an hexadecimal number this means
+each digit has 16 states.
 
+```python
+[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 ```
-0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-```
+
+## Neural network
+
+This part of the program essentially determines the brain the of the organism.
+It defines a class called `NeuralNetwork` which has methods for generating
+neural networks from the genome of the organism and running it.
 
 ## Taxonomy
 
