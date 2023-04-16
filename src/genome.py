@@ -50,10 +50,10 @@ def generate_offspring_genome(
 
     Notes:
     -----------------------------------------------------------------------------------
-        The function performs a bitwise random choice between each base pair of the parents' genomes
-        to generate the offspring's genome. If the mutationfactor is greater than 0, there is a chance
-        for a random mutation to occur in one of the offspring's base pairs. The function then returns
-        the offspring's genome as a string.
+        The function performs a bitwise random choice between each base pair of the
+        parents' genomes to generate the offspring's genome. If the mutationfactor is
+        greater than 0, there is a chance for a random mutation to occur in one of the
+        offspring's base pairs. The function then returns the offspring's genome as a string.
     """
 
     if not 0 < mutation_factor <= 1:
