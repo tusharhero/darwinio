@@ -78,3 +78,7 @@ class Organism:
 
         # assign a neural_network generated from the the genome
         self.neural_network = NeuralNetwork(self.genome, np.array([2, 2]))
+
+
+def get_random_organism(canvas_size: tuple) -> Organism:
+    return Organism(input_data=gn.get_random_genome(4), canvas_size=canvas_size)
