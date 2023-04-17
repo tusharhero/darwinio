@@ -20,6 +20,7 @@ Organism class and related stuff.
 """
 
 import random
+from brain import NeuralNetwork
 import genome as gn
 import numpy as np
 from typing import Union
@@ -42,6 +43,7 @@ class Organism:
         genome: A string representing the organism's genome.
         characters: A NumPy array containing the organism's characteristics.
         coordinates: A tuple representing the organism's coordinates on a canvas.
+        neural_network: A neural network generated from the genome of the organism
     """
 
     def __init__(
@@ -73,3 +75,6 @@ class Organism:
         self.coordinates = tuple(
             random.randrange(self.canvas_size[i]) for i in range(2)
         )
+
+        # assign a neural_network generated from the the genome
+        self.neural_network = NeuralNetwork(self.genome, np.array([2, 2]))
