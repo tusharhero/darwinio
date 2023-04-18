@@ -31,6 +31,10 @@ This part of the program essentially determines the brain the of the organism.
 It defines a class called `NeuralNetwork` which has methods for generating
 neural networks from the genome of the organism and running it.
 
+The network extracts the weights from the genome by first calculating the
+number of connections required and then dividing and taking average of the 
+divided parts for each weight.
+
 ## Taxonomy
 
 This part will look at the genome of each organism and label it according to
