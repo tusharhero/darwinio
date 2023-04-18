@@ -48,6 +48,13 @@ class Tile:
         self.food_amount: int = food_amount
 
 
+def get_random_tile() -> Tile:
+    food_amount: int = random.randrange(16)
+    random_organism: Organism = organism.get_random_organism()
+    tile: Tile = Tile(random_organism, food_amount)
+    return tile
+
+
 class Canvas:
     """
     A class representing a 2D canvas with tiles containing organisms and food amounts.
@@ -73,8 +80,5 @@ class Canvas:
 
         for row in range(self.canvas_size[0]):
             for column in range(self.canvas_size[1]):
-                food_amount: int = random.randrange(16)
-                random_organism: Organism = organism.get_random_organism()
-                tile: Tile = Tile(random_organism, food_amount)
-                canvas[row][column] = tile
+                canvas[row][column] = get_random_tile()
         return canvas
