@@ -70,12 +70,11 @@ class Canvas:
         Returns a NumPy array representing the random distribution of tiles on the canvas.
         """
         canvas = np.empty(self.canvas_size, dtype=object)
+
         for row in range(self.canvas_size[0]):
             for column in range(self.canvas_size[1]):
                 food_amount: int = random.randrange(16)
-                random_organism: Organism = organism.get_random_organism(
-                    self.canvas_size
-                )
+                random_organism: Organism = organism.get_random_organism()
                 tile: Tile = Tile(random_organism, food_amount)
                 canvas[row][column] = tile
         return canvas

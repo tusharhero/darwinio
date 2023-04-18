@@ -38,7 +38,6 @@ Characteristics are stored as:
     3: reproductive type
 """
 
-import random
 from brain import NeuralNetwork
 import genome as gn
 import numpy as np
@@ -53,14 +52,12 @@ class Organism:
     -------------------------------------------------------------------------------------
         genome: A string representing the organism's genome.
         characters: A NumPy array containing the organism's characteristics.
-        coordinates: A tuple representing the organism's coordinates on a canvas.
         neural_network: A neural network generated from the genome of the organism
     """
 
     def __init__(
         self,
         input_data: Union[str, np.ndarray],
-        canvas_size: tuple[int, int] = (10, 10),
         number_of_characters: int = 4,
     ) -> None:
         """
@@ -70,7 +67,6 @@ class Organism:
         ---------------------------------------------------------------------------------
             input_data : A string representing the organism's genome or a NumPy array
             containing the organism's characteristics.
-            canvas_size : A tuple representing the canvas size. Defaults to (10, 10).
             number_of_characters : The number of characteristics
         """
 
@@ -89,26 +85,18 @@ class Organism:
                 input_data, number_of_characters
             )
 
-        # assign random coordinates
-        self.canvas_size = canvas_size
-        self.coordinates = tuple(
-            random.randrange(self.canvas_size[i]) for i in range(2)
-        )
-
         # assign a neural_network generated from the the genome
         self.neural_network = NeuralNetwork(self.genome, np.array([2, 2]))
 
 
-def get_random_organism(canvas_size: tuple) -> Organism:
+def get_random_organism() -> Organism:
     """
     Generate a random organism.
-
-    Args:
-    -------------------------------------------------------------------------------------
-        canvas_size (tuple[int, int]): A tuple representing the canvas size.
 
     Returns:
     -------------------------------------------------------------------------------------
         Organism: A random instance of the Organism class.
     """
-    return Organism(input_data=gn.get_random_genome(4), canvas_size=canvas_size)
+    return Organism(
+        input_data=gn.get_random_genome(4),
+    )
