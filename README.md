@@ -7,5 +7,5 @@ through a simulation.
 
 ## License
 
-This program is licensed under the terms of the GNU PUBLIC LICENSE VERSION 3.
-Which means this is Free Software.
+This program is licensed under the terms of the
+[GNU GENERAL PUBLIC LICENSE VERSION 3](./LICENSE.md) which means this is Free Software.

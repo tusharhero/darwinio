@@ -17,6 +17,24 @@
 
 """
 A module for representing a 2D canvas with tiles containing organisms and food amounts.
+
+This module contains two classes: Tile and Canvas. Tile represents a tile on the canvas and contains an organism and food amount.
+Canvas represents a 2D canvas of tiles and contains a NumPy array representing the distribution of tiles on the canvas.
+
+The module also contains a function for generating a random Tile object.
+
+Classes:
+---------
+Tile:
+    A class representing a tile on the canvas.
+
+Canvas:
+    A class representing a 2D canvas with tiles containing organisms and food amounts.
+
+Functions:
+---------
+get_random_tile() -> Tile:
+    Returns a randomly generated Tile object.
 """
 
 import random
@@ -31,8 +49,9 @@ class Tile:
     A class representing a tile on the canvas.
 
     Attributes:
-    -----------------------------------------------------------------------------------
+    -----------
         organism: An instance of the Organism class, or None if the tile is empty.
+
         food_amount: An integer representing the amount of food on the tile.
     """
 
@@ -63,8 +82,9 @@ class Canvas:
     A class representing a 2D canvas with tiles containing organisms and food amounts.
 
     Attributes:
-    -----------------------------------------------------------------------------------
+    -----------
         canvas_size: A tuple representing the dimensions of the canvas.
+
         canvas: A NumPy array representing the distribution of tiles on the canvas.
     """
 

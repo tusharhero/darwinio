@@ -51,7 +51,9 @@ class Organism:
     Attributes:
     -------------------------------------------------------------------------------------
         genome: A string representing the organism's genome.
+
         characters: A NumPy array containing the organism's characteristics.
+
         neural_network: A neural network generated from the genome of the organism
     """
 
@@ -67,6 +69,7 @@ class Organism:
         ---------------------------------------------------------------------------------
             input_data : A string representing the organism's genome or a NumPy array
             containing the organism's characteristics.
+
             number_of_characters : The number of characteristics
         """
 
@@ -89,14 +92,16 @@ class Organism:
         self.neural_network = NeuralNetwork(self.genome, np.array([2, 2]))
 
 
-def get_random_organism() -> Organism:
+def get_random_organism(number_of_characters: int = 4) -> Organism:
     """
     Generate a random organism.
+
+    Args:
+    ---------------------------------------------------------------------------------
+        number_of_characters : The number of characteristics
 
     Returns:
     -------------------------------------------------------------------------------------
         Organism: A random instance of the Organism class.
     """
-    return Organism(
-        input_data=gn.get_random_genome(4),
-    )
+    return Organism(input_data=gn.get_random_genome(number_of_characters))

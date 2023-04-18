@@ -17,9 +17,22 @@
 
 """ 
 Various methods for encoding and decoding genomes.
+
+Functions:
+------------------------------------------------------------------------------------
+get_random_genome(size: int) -> str:
+Generates a random hexadecimal genome of the specified size.
+
+generate_offspring_genome(parent_1: str, parent_2: str, mutation_factor: float) -> str:
+Generate a genome for an offspring of the given parents with mutations.
+
+encode_organism_characteristics(characteristics: np.ndarray, length: int) -> str:
+Encode the given organism characteristics into a genome string.
+
+decode_organism_characteristics(genome: str, array_length: int) -> np.ndarray:
+Decode the given genome into an array of organism characteristics.
 """
 
-import secrets
 import random
 import numpy as np
 
@@ -28,7 +41,7 @@ def get_random_genome(size: int) -> str:
     """
     Generates a random hexadecimal genome of the specified size.
     """
-    return secrets.token_hex(size)
+    return "".join([random.choice("0123456789abcdef") for _ in range(size)])
 
 
 def generate_offspring_genome(
@@ -40,7 +53,9 @@ def generate_offspring_genome(
     Args:
     -----------------------------------------------------------------------------------
         parent_1: The genome of the first parent.
+
         parent_2: The genome of the second parent.
+
         mutation_factor: A value between 0 and 1 (inclusive) representing the probability
         of a mutation occurring in the offspring's genome.
 
@@ -56,7 +71,7 @@ def generate_offspring_genome(
         offspring's base pairs. The function then returns the offspring's genome as a string.
     """
 
-    if not 0 < mutation_factor <= 1:
+    if not 0 <= mutation_factor <= 1:
         raise ValueError("mutation_factor must be a value between 0 and 1 (inclusive)")
     if len(parent_1) != len(parent_2):
         raise ValueError("parent_1 and parent_2 must have the same length")
@@ -83,6 +98,7 @@ def encode_organism_characteristics(characteristics: np.ndarray, length: int) ->
     -----------------------------------------------------------------------------------
         characteristics: A numpy ndarray of integers representing the characteristics
         to be encoded. Each characteristic should be between 0 and 15 (inclusive).
+
         length: An integer representing length of the genome, if its larger than the
         size of the array, the rest will be generated randomly.
 
@@ -113,17 +129,15 @@ def decode_organism_characteristics(genome: str, array_length: int) -> np.ndarra
 
     Args:
     -----------------------------------------------------------------------------------
-        genome:
-        The genome string to be decoded.
-        array_length:
-        The length of the genome, actually intended to contain characteristics
+        genome: The genome string to be decoded.
+
+        array_length: The length of the genome, actually intended to contain characteristics
 
     Returns:
     -----------------------------------------------------------------------------------
-        np.ndarray
-            A NumPy array containing the decoded organism characteristics. Each
-            element of the array represents a characteristic and is an integer
-            between 0 and 15.
+        A NumPy array containing the decoded organism characteristics. Each
+        element of the array represents a characteristic and is an integer
+        between 0 and 15.
     """
 
     if not 0 <= array_length <= len(genome):

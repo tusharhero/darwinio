@@ -17,6 +17,16 @@
 
 """ 
 Classes and methods for handling the neural network.
+
+Classes:
+-------------
+    NeuralNetwork: A class for representing a neural network with a given genome and neural structure.
+
+Methods:
+-------------
+    create_weights: Creates the weights for the neural network based on the genome and neural structure.
+
+    run_neural_network: Runs the neural network according to input values.
 """
 
 import numpy as np
@@ -28,17 +38,20 @@ class NeuralNetwork:
     A class for representing a neural network with a given genome and neural structure.
 
     Args:
-    -----------------------------------------------------------------------------------
+    -----
         genome: A string representing the genome of the organism.
+
         neural_structure: A numpy ndarray representing the neural structure
         of the organism.
 
     Attributes:
-    -----------------------------------------------------------------------------------
+    -----
         genome: The genome string that encodes the weights of the neural network.
+
         neural_structure: A numpy ndarray of integers representing the
         structure of the neural network, where each integer represents the number of
         neurons in that layer.
+
         weights: contains weights of the neural network.
     """
 
@@ -48,13 +61,14 @@ class NeuralNetwork:
         neural structure.
 
         Args:
-        --------------------------------------------------------------------------------
+        -----
         genome: A string representing the genome of the organism.
+
         neural_structure: A numpy ndarray representing the neural structure of
         the organism.
 
         Raises:
-        --------------------------------------------------------------------------------
+        -----
         ValueError: If the genome is not large enough for the given neural structure.
         """
         self.genome: str = genome
@@ -67,7 +81,7 @@ class NeuralNetwork:
         neural structure.
 
         Raises:
-        --------------------------------------------------------------------------------
+        -----
         ValueError: If the genome is not large enough for the given neural structure.
         """
 
@@ -111,12 +125,20 @@ class NeuralNetwork:
         Run the neural network according to input values.
 
         Args:
-        --------------------------------------------------------------------------------
+        -----
         input_values: A numpy ndarray representing the input values of the neural network.
 
         Returns:
-        --------------------------------------------------------------------------------
+        -----
         A numpy ndarray with the output values of the neural network
+
+        Note:
+        -----
+        The method uses the current weights and neural structure of the neural network to calculate
+        the output values based on the given input values. It does this by initializing a new
+        empty neural network and filling in the values using the provided input and the weights.
+        The weights are applied to the corresponding input neuron to obtain the output of the next
+        neuron in the network. Finally, the output of the last layer is returned as a numpy ndarray.
         """
 
         weights: np.ndarray = self.weights
