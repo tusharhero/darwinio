@@ -32,7 +32,7 @@ class Tile:
 
     Attributes:
     -----------------------------------------------------------------------------------
-        organism: An instance of the Organism class, or False if the tile is empty.
+        organism: An instance of the Organism class, or None if the tile is empty.
         food_amount: An integer representing the amount of food on the tile.
     """
 
@@ -49,6 +49,9 @@ class Tile:
 
 
 def get_random_tile() -> Tile:
+    """
+    Returns a randomly generated Tile object.
+    """
     food_amount: int = random.randrange(16)
     random_organism: Organism = organism.get_random_organism()
     tile: Tile = Tile(random.choice((random_organism, None)), food_amount)
@@ -81,4 +84,5 @@ class Canvas:
         for row in range(self.canvas_size[0]):
             for column in range(self.canvas_size[1]):
                 canvas[row][column] = get_random_tile()
+
         return canvas
