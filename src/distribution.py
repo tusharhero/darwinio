@@ -36,14 +36,14 @@ class Tile:
         food_amount: An integer representing the amount of food on the tile.
     """
 
-    def __init__(self, organism: Union[Organism, str], food_amount: int):
+    def __init__(self, organism: Union[Organism, None], food_amount: int):
         """
         Initializes an instance of the Tile class.
         """
         if isinstance(organism, Organism):
             self.organism = organism
-        elif isinstance(organism, Organism):
-            self.organism = False
+        else:
+            self.organism = None
 
         self.food_amount: int = food_amount
 
@@ -51,7 +51,7 @@ class Tile:
 def get_random_tile() -> Tile:
     food_amount: int = random.randrange(16)
     random_organism: Organism = organism.get_random_organism()
-    tile: Tile = Tile(random_organism, food_amount)
+    tile: Tile = Tile(random.choice((random_organism, None)), food_amount)
     return tile
 
 
