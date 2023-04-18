@@ -15,8 +15,27 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" 
+"""
 Organism class and related stuff.
+
+This module provides the Organism class, which represents an organism and its characteristics.
+It also includes a function to generate a random organism.
+
+Classes:
+------------------------------------------------------------------------------------
+    Organism: A class representing an organism.
+
+Functions:
+------------------------------------------------------------------------------------
+    get_random_organism: A function to generate a random organism.
+
+Note:
+------------------------------------------------------------------------------------
+Characteristics are stored as:
+    0: ideal temperature
+    1: trophic level
+    2: energy requirement
+    3: reproductive type
 """
 
 import random
@@ -30,16 +49,8 @@ class Organism:
     """
     A class representing an organism.
 
-    Note:
-    -----------------------------------------------------------------------------------
-        characteristics are stored as:
-            0: ideal temperature
-            1: trophic level
-            2: energy requirement
-            3: reproductive type
-
     Attributes:
-    -----------------------------------------------------------------------------------
+    -------------------------------------------------------------------------------------
         genome: A string representing the organism's genome.
         characters: A NumPy array containing the organism's characteristics.
         coordinates: A tuple representing the organism's coordinates on a canvas.
@@ -54,7 +65,15 @@ class Organism:
     ) -> None:
         """
         Initializes an instance of the Organism class.
+
+        Args:
+        ---------------------------------------------------------------------------------
+            input_data : A string representing the organism's genome or a NumPy array
+            containing the organism's characteristics.
+            canvas_size : A tuple representing the canvas size. Defaults to (10, 10).
+            number_of_characters : The number of characteristics
         """
+
         # check if input is genome or characteristics
 
         if isinstance(input_data, np.ndarray):
@@ -81,4 +100,15 @@ class Organism:
 
 
 def get_random_organism(canvas_size: tuple) -> Organism:
+    """
+    Generate a random organism.
+
+    Args:
+    -------------------------------------------------------------------------------------
+        canvas_size (tuple[int, int]): A tuple representing the canvas size.
+
+    Returns:
+    -------------------------------------------------------------------------------------
+        Organism: A random instance of the Organism class.
+    """
     return Organism(input_data=gn.get_random_genome(4), canvas_size=canvas_size)

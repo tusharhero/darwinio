@@ -15,6 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+A module for representing a 2D canvas with tiles containing organisms and food amounts.
+"""
+
 import random
 import numpy as np
 from typing import Union
@@ -23,7 +27,19 @@ import organism
 
 
 class Tile:
+    """
+    A class representing a tile on the canvas.
+
+    Attributes:
+    -----------------------------------------------------------------------------------
+        organism: An instance of the Organism class, or False if the tile is empty.
+        food_amount: An integer representing the amount of food on the tile.
+    """
+
     def __init__(self, organism: Union[Organism, str], food_amount: int):
+        """
+        Initializes an instance of the Tile class.
+        """
         if isinstance(organism, Organism):
             self.organism = organism
         elif isinstance(organism, Organism):
@@ -33,11 +49,26 @@ class Tile:
 
 
 class Canvas:
+    """
+    A class representing a 2D canvas with tiles containing organisms and food amounts.
+
+    Attributes:
+    -----------------------------------------------------------------------------------
+        canvas_size: A tuple representing the dimensions of the canvas.
+        canvas: A NumPy array representing the distribution of tiles on the canvas.
+    """
+
     def __init__(self, canvas_size: tuple):
+        """
+        Initializes an instance of the Canvas class.
+        """
         self.canvas_size: tuple = canvas_size
         self.canvas: np.ndarray = self.get_random_distribution()
 
     def get_random_distribution(self) -> np.ndarray:
+        """
+        Returns a NumPy array representing the random distribution of tiles on the canvas.
+        """
         canvas = np.empty(self.canvas_size, dtype=object)
         for row in range(self.canvas_size[0]):
             for column in range(self.canvas_size[1]):
