@@ -1,6 +1,6 @@
 # The GPLv3 License (GPLv3)
 
-# Copyright (c) 2023 Tushar Maharana
+# Copyright (c) 2023 Tushar Maharana, and Mihir Nallagonda
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
