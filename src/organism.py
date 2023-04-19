@@ -22,15 +22,15 @@ This module provides the Organism class, which represents an organism and its ch
 It also includes a function to generate a random organism.
 
 Classes:
-------------------------------------------------------------------------------------
+--------
     Organism: A class representing an organism.
 
 Functions:
-------------------------------------------------------------------------------------
+--------
     get_random_organism: A function to generate a random organism.
 
 Note:
-------------------------------------------------------------------------------------
+--------
 Characteristics are stored as:
     0: ideal temperature
     1: trophic level
@@ -49,7 +49,7 @@ class Organism:
     A class representing an organism.
 
     Attributes:
-    -------------------------------------------------------------------------------------
+    ---------
         genome: A string representing the organism's genome.
 
         characters: A NumPy array containing the organism's characteristics.
@@ -66,7 +66,7 @@ class Organism:
         Initializes an instance of the Organism class.
 
         Args:
-        ---------------------------------------------------------------------------------
+        -----
             input_data : A string representing the organism's genome or a NumPy array
             containing the organism's characteristics.
 
@@ -97,11 +97,11 @@ def get_random_organism(number_of_characters: int = 4) -> Organism:
     Generate a random organism.
 
     Args:
-    ---------------------------------------------------------------------------------
+    -----
         number_of_characters : The number of characteristics
 
     Returns:
-    -------------------------------------------------------------------------------------
+    ---------
         Organism: A random instance of the Organism class.
     """
     return Organism(input_data=gn.get_random_genome(number_of_characters))
