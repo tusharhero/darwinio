@@ -49,9 +49,6 @@ import organism
 class Tile:
     """
     A class representing a tile on the canvas.
-
-    Attributes:
-    -----------
         organism: An instance of the Organism class, or None if the tile is empty.
 
         food_amount: An integer representing the amount of food on the tile.

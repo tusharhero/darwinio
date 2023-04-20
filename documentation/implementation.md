@@ -32,7 +32,7 @@ It defines a class called `NeuralNetwork` which has methods for generating
 neural networks from the genome of the organism and running it.
 
 The network extracts the weights from the genome by first calculating the
-number of connections required and then dividing and taking average of the 
+number of connections required and then dividing and taking average of the
 divided parts for each weight.
 
 ## Taxonomy
