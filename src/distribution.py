@@ -76,9 +76,10 @@ def get_random_tile() -> Tile:
     return tile
 
 
-class Canvas:
+class World:
     """
-    A class representing a 2D canvas with tiles containing organisms and food amounts.
+    A class representing a world with canvas containing tiles containing
+    organisms and food amounts.
 
     Attributes:
     -----------
@@ -103,5 +104,4 @@ class Canvas:
         for row in range(self.canvas_size[0]):
             for column in range(self.canvas_size[1]):
                 canvas[row][column] = get_random_tile()
-
         return canvas

@@ -105,3 +105,29 @@ def get_random_organism(number_of_characters: int = 4) -> Organism:
         Organism: A random instance of the Organism class.
     """
     return Organism(input_data=gn.get_random_genome(number_of_characters))
+
+
+def reproduce(
+    parent_1: Organism, parent_2: Organism, mutation_factor: int
+) -> Organism:
+    """
+    Generate offspring of the two Organisms
+
+    Args:
+    -----
+        parent_1 : One of the parent Organisms
+
+        parent_2 : One of the parent Organisms
+
+        mutation_factor: A value between 0 and 1 (inclusive) representing the probability
+        of a mutation occurring in the offspring's genome.
+
+    Returns:
+    ---------
+        offspring: Child of the parents.
+    """
+    offspring_genome: str = gn.generate_offspring_genome(
+        parent_1.genome, parent_2.genome, mutation_factor
+    )
+    offspring = Organism(offspring_genome)
+    return offspring
