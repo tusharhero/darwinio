@@ -129,5 +129,4 @@ def reproduce(
     offspring_genome: str = gn.generate_offspring_genome(
         parent_1.genome, parent_2.genome, mutation_factor
     )
-    offspring = Organism(offspring_genome)
-    return offspring
+    return Organism(offspring_genome)

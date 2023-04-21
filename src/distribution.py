@@ -43,7 +43,7 @@ import random
 import numpy as np
 from typing import Union
 from organism import Organism
-import organism
+import organism as org
 
 
 class Tile:
@@ -71,7 +71,7 @@ def get_random_tile() -> Tile:
     Returns a randomly generated Tile object.
     """
     food_amount: int = random.randrange(16)
-    random_organism: Organism = organism.get_random_organism()
+    random_organism: Organism = org.get_random_organism()
     tile: Tile = Tile(random.choice((random_organism, None)), food_amount)
     return tile
 
@@ -105,3 +105,24 @@ class World:
             for column in range(self.canvas_size[1]):
                 canvas[row][column] = get_random_tile()
         return canvas
+
+    def update_state(self):
+        """
+        Update the state of the canvas.
+        """
+        canvas: np.ndarray = self.canvas
+        new_canvas: np.ndarray = np.copy(canvas)
+
+        for i, row in enumerate(canvas[0]):
+            for j, column in enumerate(canvas[1]):
+                tile = canvas[i][j]
+
+                if tile.organism != None:
+                    organism: Organism = tile.organism
+                    new_i, new_j = organism.neural_network.run_neural_network(
+                        np.array((i, j))
+                    )
+                    new_canvas[new_i][new_j] = tile
+
+                    tile.organism = None
+                    canvas[i, j] = tile
