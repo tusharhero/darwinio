@@ -126,3 +126,5 @@ class World:
 
                     tile.organism = None
                     canvas[i, j] = tile
+
+        self.canvas = new_canvas
