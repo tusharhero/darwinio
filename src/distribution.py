@@ -101,6 +101,16 @@ class World:
                         )
                         for k in range(2)
                     )
+                    if isinstance(
+                        self.organism_distribution[new_coordinates[0]][
+                            new_coordinates[1]
+                        ],
+                        org.Organism,
+                    ):
+                        new_coordinates = tuple(
+                            k + random.choice((-1, 1)) for k in new_coordinates
+                        )
+
                     self.organism_distribution[i][j] = None
                     self.organism_distribution[new_coordinates[0]][
                         new_coordinates[1]
