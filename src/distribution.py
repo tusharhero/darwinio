@@ -16,115 +16,72 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-A module for representing a 2D canvas with tiles containing organisms and food amounts.
-
-This module contains two classes: Tile and Canvas.
-Tile represents a tile on the canvas and contains an organism and food amount.
-Canvas represents a 2D canvas of tiles and contains a NumPy array representing
-the distribution of tiles on the canvas.
-
-The module also contains a function for generating a random Tile object.
-
+A module for representing the food and organism in the World
 Classes:
 ---------
-Tile:
-    A class representing a tile on the canvas.
-
-Canvas:
-    A class representing a 2D canvas with tiles containing organisms and food amounts.
-
-Functions:
-----------
-get_random_tile() -> Tile:
-    Returns a randomly generated Tile object.
+World:
+    Represents a world in which organisms and food are distributed across a canvas.
 """
 
 import random
 import numpy as np
 from typing import Union
-from organism import Organism
 import organism as org
-
-
-class Tile:
-    """
-    A class representing a tile on the canvas.
-        organism: An instance of the Organism class, or None if the tile is empty.
-
-        food_amount: An integer representing the amount of food on the tile.
-    """
-
-    def __init__(self, organism: Union[Organism, None], food_amount: int):
-        """
-        Initializes an instance of the Tile class.
-        """
-        if isinstance(organism, Organism):
-            self.organism = organism
-        else:
-            self.organism = None
-
-        self.food_amount: int = food_amount
-
-
-def get_random_tile() -> Tile:
-    """
-    Returns a randomly generated Tile object.
-    """
-    food_amount: int = random.randrange(16)
-    random_organism: Organism = org.get_random_organism()
-    tile: Tile = Tile(random.choice((random_organism, None)), food_amount)
-    return tile
 
 
 class World:
     """
-    A class representing a world with canvas containing tiles containing
-    organisms and food amounts.
+    Represents a world in which organisms and food are distributed across a canvas.
 
-    Attributes:
-    -----------
-        canvas_size: A tuple representing the dimensions of the canvas.
+        Attributes:
+        -----------
+            canvas_size (tuple): A tuple of two integers representing the dimensions of the canvas.
 
-        canvas: A NumPy array representing the distribution of tiles on the canvas.
+            food_distribution (numpy.ndarray): A numpy array of random integers between 0 and 15 of size `canvas_size`.
+
+            organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list of organisms and `None` values
+                of size `canvas_size`.
     """
 
     def __init__(self, canvas_size: tuple):
         """
-        Initializes an instance of the Canvas class.
+        Initializes a new World instance.
+
+        Args:
+        -----
+            canvas_size (tuple): A tuple of two integers representing the dimensions of the canvas.
+
         """
         self.canvas_size: tuple = canvas_size
-        self.canvas: np.ndarray = self.get_random_distribution()
-
-    def get_random_distribution(self) -> np.ndarray:
-        """
-        Returns a NumPy array representing the random distribution of tiles on the canvas.
-        """
-        canvas = np.empty(self.canvas_size, dtype=object)
-
-        for row in range(self.canvas_size[0]):
-            for column in range(self.canvas_size[1]):
-                canvas[row][column] = get_random_tile()
-        return canvas
+        self.food_distribution: np.ndarray = np.random.random_integers(
+            0, 15, self.canvas_size
+        )
+        self.organism_distribution: list[list[Union[org.Organism, None]]] = [
+            [
+                random.choice((org.get_random_organism(), None))
+                for _ in range(self.canvas_size[1])
+            ]
+            for _ in range(self.canvas_size[0])
+        ]
 
     def update_state(self):
         """
         Update the state of the canvas.
+
+        Note:
+        -----
+            Updates the state of the world by iterating over each organism and updating its position based on its neural
+            network's output. If the organism is not present at its current position after updating, it is removed from
+            the current position and added to the new position.
         """
-        canvas: np.ndarray = self.canvas
-        new_canvas: np.ndarray = np.copy(canvas)
 
-        for i, row in enumerate(canvas[0]):
-            for j, column in enumerate(canvas[1]):
-                tile = canvas[i][j]
+        for i in range(self.canvas_size[0]):
+            for j in range(self.canvas_size[1]):
+                organism = self.organism_distribution[i][j]
 
-                if tile.organism != None:
-                    organism: Organism = tile.organism
-                    new_i, new_j = organism.neural_network.run_neural_network(
+                if isinstance(organism, org.Organism):
+                    x, y = organism.neural_network.run_neural_network(
                         np.array((i, j))
                     )
-                    new_canvas[new_i][new_j] = tile
-
-                    tile.organism = None
-                    canvas[i, j] = tile
-
-        self.canvas = new_canvas
+                    self.organism_distribution[i][j] = None
+                    self.organism_distribution[x][y] = organism
