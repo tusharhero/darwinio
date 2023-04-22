@@ -36,6 +36,7 @@ import random
 import numpy as np
 from typing import Union
 import organism as org
+from utilities import clamp
 
 
 class World:
@@ -75,7 +76,7 @@ class World:
 
     def update_state(self):
         """
-        Update the state of the canvas.
+        Update the state of the canvas
 
         Note:
         -----
@@ -83,7 +84,6 @@ class World:
             network's output. If the organism is not present at its current position after updating, it is removed from
             the current position and added to the new position.
         """
-
         for i in range(self.canvas_size[0]):
             for j in range(self.canvas_size[1]):
                 organism = self.organism_distribution[i][j]
@@ -95,22 +95,29 @@ class World:
                         )
                     )
                     new_coordinates = tuple(
-                        min(
+                        clamp(
                             int(neural_ouput[k]) + (i, j)[k],
                             self.canvas_size[k] - 1,
+                            0,
                         )
                         for k in range(2)
                     )
-                    if isinstance(
+
+                    # While an organism already lives there the new coordinates change
+                    while isinstance(
                         self.organism_distribution[new_coordinates[0]][
                             new_coordinates[1]
                         ],
                         org.Organism,
                     ):
                         new_coordinates = tuple(
-                            k + random.choice((-1, 1)) for k in new_coordinates
+                            clamp(
+                                new_coordinates[k] + random.choice((-1, 1)),
+                                self.canvas_size[k] - 1,
+                                0,
+                            )
+                            for k in range(2)
                         )
-
                     self.organism_distribution[i][j] = None
                     self.organism_distribution[new_coordinates[0]][
                         new_coordinates[1]
