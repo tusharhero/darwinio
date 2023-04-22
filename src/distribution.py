@@ -16,7 +16,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-A module for representing the food and organism in the World
+A module for representing a 2D canvas with tiles containing organisms and food amounts.
+
+
+This module contains two classes: Tile and Canvas.
+Tile represents a tile on the canvas and contains an organism and food amount.
+Canvas represents a 2D canvas of tiles and contains a NumPy array representing
+the distribution of tiles on the canvas.
+
+The module also contains a function for generating a random Tile object.
+
 Classes:
 ---------
 World:
@@ -80,8 +89,19 @@ class World:
                 organism = self.organism_distribution[i][j]
 
                 if isinstance(organism, org.Organism):
-                    x, y = organism.neural_network.run_neural_network(
-                        np.array((i, j))
+                    neural_ouput: np.ndarray = (
+                        organism.neural_network.run_neural_network(
+                            np.array((i, j))
+                        )
+                    )
+                    new_coordinates = tuple(
+                        min(
+                            int(neural_ouput[k]) + (i, j)[k],
+                            self.canvas_size[k] - 1,
+                        )
+                        for k in range(2)
                     )
                     self.organism_distribution[i][j] = None
-                    self.organism_distribution[x][y] = organism
+                    self.organism_distribution[new_coordinates[0]][
+                        new_coordinates[1]
+                    ] = organism

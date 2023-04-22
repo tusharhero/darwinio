@@ -62,14 +62,14 @@ class NeuralNetwork:
 
         Args:
         -----
-        genome: A string representing the genome of the organism.
+            genome: A string representing the genome of the organism.
 
-        neural_structure: A numpy ndarray representing the neural structure of
-        the organism.
+            neural_structure: A numpy ndarray representing the neural structure of
+            the organism.
 
         Raises:
         -----
-        ValueError: If the genome is not large enough for the given neural structure.
+            ValueError: If the genome is not large enough for the given neural structure.
         """
         self.genome: str = genome
         self.neural_structure: np.ndarray = neural_structure
@@ -82,7 +82,7 @@ class NeuralNetwork:
 
         Raises:
         -----
-        ValueError: If the genome is not large enough for the given neural structure.
+            ValueError: If the genome is not large enough for the given neural structure.
         """
 
         neural_structure: np.ndarray = self.neural_structure
@@ -96,7 +96,9 @@ class NeuralNetwork:
         )
 
         length_of_genome = len(genome_seq)
-        length_of_neural_section: int = length_of_genome // number_of_neural_connections
+        length_of_neural_section: int = (
+            length_of_genome // number_of_neural_connections
+        )
 
         if not length_of_neural_section > 0:
             raise ValueError("Genome is not large enough.")
@@ -126,24 +128,26 @@ class NeuralNetwork:
 
         Args:
         -----
-        input_values: A numpy ndarray representing the input values of the neural network.
+            input_values: A numpy ndarray representing the input values of the neural network.
 
         Returns:
         -----
-        A numpy ndarray with the output values of the neural network
+            A numpy ndarray with the output values of the neural network
 
         Note:
         -----
-        The method uses the current weights and neural structure of the neural network to calculate
-        the output values based on the given input values. It does this by initializing a new
-        empty neural network and filling in the values using the provided input and the weights.
-        The weights are applied to the corresponding input neuron to obtain the output of the next
-        neuron in the network. Finally, the output of the last layer is returned as a numpy ndarray.
+            The method uses the current weights and neural structure of the neural network to calculate
+            the output values based on the given input values. It does this by initializing a new
+            empty neural network and filling in the values using the provided input and the weights.
+            The weights are applied to the corresponding input neuron to obtain the output of the next
+            neuron in the network. Finally, the output of the last layer is returned as a numpy ndarray.
         """
 
         weights: np.ndarray = self.weights
         neural_structure: np.ndarray = self.neural_structure
-        neural_network: list[list[float]] = [[0.0] * i for i in neural_structure]
+        neural_network: list[list[float]] = [
+            [0.0] * i for i in neural_structure
+        ]
 
         neural_network[0] = list(input_values)
 
@@ -151,11 +155,15 @@ class NeuralNetwork:
         for layer_index, layer_values in enumerate(neural_network[:-1]):
             next_layer_index = layer_index + 1
             for neuron_value in layer_values:
-                for next_layer_neuron_index, next_layer_neuron_value in enumerate(
-                    neural_network[next_layer_index]
-                ):
-                    neural_network[next_layer_index][next_layer_neuron_index] = (
-                        next_layer_neuron_value + weights[weight_index] * neuron_value
+                for (
+                    next_layer_neuron_index,
+                    next_layer_neuron_value,
+                ) in enumerate(neural_network[next_layer_index]):
+                    neural_network[next_layer_index][
+                        next_layer_neuron_index
+                    ] = (
+                        next_layer_neuron_value
+                        + weights[weight_index] * neuron_value
                     )
                     weight_index += 1
 
