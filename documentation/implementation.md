@@ -45,6 +45,9 @@ the details in [characteristics.ods]("./characteristics.ods").
 This part of the program will handle the distribution of food and other things
 in the environment, It will also handle the movement of the organisms.
 
+Current it has a class called `World` which has various NumPy Arrays and
+python Lists which represent the food distribution, Organsims distribution, etc.
+
 ## Rendering
 
 This part will render the simulation according to the state of the system.
