@@ -73,8 +73,8 @@ class World:
         Note:
         -----
         Updates the state of the world by iterating over each organism and updating its position based on its neural
-        network's output. If the organism is not present at its current position after updating, it is removed from
-        the current position and added to the new position.
+        network's output. If another organism is not present at its current position after updating, it is removed from
+        the current position and added to the new position. It also considers the direction of food around it.
         """
         for i in range(self.canvas_size[0]):
             for j in range(self.canvas_size[1]):
@@ -87,47 +87,55 @@ class World:
                     if np.size(neighbour_cells.flatten())
                     else -1
                 )
-                if isinstance(organism, org.Organism) and (
-                    self.food_distribution[i][j] >= organism.characters[2]
-                ):
-                    self.food_distribution[i][j] -= organism.characters[2]
 
-                    neural_ouput: np.ndarray = (
-                        organism.neural_network.run_neural_network(
-                            np.array((food_direction, i, j))
-                        )
-                    )
-                    new_coordinates = tuple(
-                        clamp(
-                            int(neural_ouput[k]) + (i, j)[k],
-                            self.canvas_size[k] - 1,
-                            0,
-                        )
-                        for k in range(2)
-                    )
+                # check if there is an organism at the current location
+                if isinstance(organism, org.Organism):
+                    # if enough food is available
+                    if self.food_distribution[i][j] >= organism.characters[2]:
+                        self.food_distribution[i][j] -= organism.characters[2]
 
-                    # While an organism already lives there the new coordinates change
-                    while isinstance(
-                        self.organism_distribution[new_coordinates[0]][
-                            new_coordinates[1]
-                        ],
-                        org.Organism,
-                    ):
+                        neural_ouput: np.ndarray = (
+                            organism.neural_network.run_neural_network(
+                                np.array((food_direction, i, j))
+                            )
+                        )
                         new_coordinates = tuple(
                             clamp(
-                                new_coordinates[k] + random.choice((-1, 1)),
+                                int(neural_ouput[k]) + (i, j)[k],
                                 self.canvas_size[k] - 1,
                                 0,
                             )
                             for k in range(2)
                         )
-                    self.organism_distribution[i][j] = None
-                    self.organism_distribution[new_coordinates[0]][
-                        new_coordinates[1]
-                    ] = organism
 
-                else:
-                    self.organism_distribution[i][j] = None
+                        # While an organism already lives there the new coordinates change
+                        while isinstance(
+                            self.organism_distribution[new_coordinates[0]][
+                                new_coordinates[1]
+                            ],
+                            org.Organism,
+                        ):
+                            new_coordinates = tuple(
+                                clamp(
+                                    new_coordinates[k]
+                                    + random.choice((-1, 1)),
+                                    self.canvas_size[k] - 1,
+                                    0,
+                                )
+                                for k in range(2)
+                            )
+
+                        # move the organism
+                        self.organism_distribution[i][j] = None
+                        self.organism_distribution[new_coordinates[0]][
+                            new_coordinates[1]
+                        ] = organism
+
+                    # if food is not available kill it and derive some food from its
+                    # dead body.
+                    else:
+                        self.food_distribution[i][j] += organism.characters[2]
+                        self.organism_distribution[i][j] = None
 
 
 def get_neighbour_cells(
