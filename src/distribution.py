@@ -56,7 +56,7 @@ class World:
         """
         self.canvas_size: tuple = canvas_size
         self.food_distribution: np.ndarray = np.random.random_integers(
-            0, 15, self.canvas_size
+            0, 160, self.canvas_size
         )
         self.organism_distribution: list[list[Union[org.Organism, None]]] = [
             [

@@ -96,7 +96,9 @@ class Organism:
         self.neural_network = NeuralNetwork(self.genome, np.array([3, 2]))
 
 
-def get_random_organism(size_of_genome: int = 8) -> Organism:
+def get_random_organism(
+    size_of_genome: int = 8, allow_immortality: bool = False
+) -> Organism:
     """
     Generate a random organism.
 
@@ -104,11 +106,20 @@ def get_random_organism(size_of_genome: int = 8) -> Organism:
     -----
     size_of_genome : the size of the genome
 
+    allow_immortality: allow the organism to be immortal
+
     Returns:
     ---------
     Organism: A random instance of the Organism class.
     """
-    return Organism(input_data=gn.get_random_genome(size_of_genome))
+    organism: Organism = Organism(
+        input_data=gn.get_random_genome(size_of_genome)
+    )
+    if not allow_immortality:
+        if organism.characters[2] == 0:
+            organism.characters[2] = np.random.randint(1, 16)
+
+    return organism
 
 
 def reproduce(
