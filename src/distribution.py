@@ -35,14 +35,14 @@ class World:
     """
     Represents a world in which organisms and food are distributed across a canvas.
 
-        Attributes:
-        -----------
-            canvas_size (tuple): A tuple of two integers representing the dimensions of the canvas.
+    Attributes:
+    -----------
+    canvas_size (tuple): A tuple of two integers representing the dimensions of the canvas.
 
-            food_distribution (numpy.ndarray): A numpy array of random integers between 0 and 15 of size `canvas_size`.
+    food_distribution (numpy.ndarray): A numpy array of random integers between 0 and 15 of size `canvas_size`.
 
-            organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list of organisms and `None` values
-                of size `canvas_size`.
+    organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list of organisms and `None` values
+    of size `canvas_size`.
     """
 
     def __init__(self, canvas_size: tuple):
@@ -51,7 +51,7 @@ class World:
 
         Args:
         -----
-            canvas_size (tuple): A tuple of two integers representing the dimensions of the canvas.
+        canvas_size (tuple): A tuple of two integers representing the dimensions of the canvas.
 
         """
         self.canvas_size: tuple = canvas_size
@@ -72,18 +72,29 @@ class World:
 
         Note:
         -----
-            Updates the state of the world by iterating over each organism and updating its position based on its neural
-            network's output. If the organism is not present at its current position after updating, it is removed from
-            the current position and added to the new position.
+        Updates the state of the world by iterating over each organism and updating its position based on its neural
+        network's output. If the organism is not present at its current position after updating, it is removed from
+        the current position and added to the new position.
         """
         for i in range(self.canvas_size[0]):
             for j in range(self.canvas_size[1]):
                 organism = self.organism_distribution[i][j]
+                neighbour_cells: np.ndarray = get_neighbour_cells(
+                    (i, j), self.food_distribution
+                )
+                food_direction: int = (
+                    int(np.argmax(neighbour_cells.flatten()))
+                    if np.size(neighbour_cells.flatten())
+                    else -1
+                )
+                if isinstance(organism, org.Organism) and (
+                    self.food_distribution[i][j] >= organism.characters[2]
+                ):
+                    self.food_distribution[i][j] -= organism.characters[2]
 
-                if isinstance(organism, org.Organism):
                     neural_ouput: np.ndarray = (
                         organism.neural_network.run_neural_network(
-                            np.array((i, j))
+                            np.array((food_direction, i, j))
                         )
                     )
                     new_coordinates = tuple(
@@ -114,3 +125,29 @@ class World:
                     self.organism_distribution[new_coordinates[0]][
                         new_coordinates[1]
                     ] = organism
+
+                else:
+                    self.organism_distribution[i][j] = None
+
+
+def get_neighbour_cells(
+    coordinates: tuple[int, int], distribuion: np.ndarray
+) -> np.ndarray:
+    """Return the values of neighbouring cells around a given coordinate in a distribution.
+
+    Args:
+    -----
+    coordinates (tuple[int, int]): The (x, y) coordinate for which to retrieve neighbouring cells.
+    distribuion (np.ndarray): A 2D array of values representing a distribution of some kind.
+
+    Returns:
+    --------
+    np.ndarray: A 2D array containing the values of neighbouring
+    cells around the given coordinates. Specifically, this array
+    contains a 3x3 subset of `distribution` centered around the
+    given coordinates.
+    """
+    return distribuion[
+        coordinates[0] - 1 : coordinates[0] + 1 + 1,
+        coordinates[1] - 1 : coordinates[1] + 1 + 1,
+    ]

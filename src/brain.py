@@ -20,13 +20,13 @@ Classes and methods for handling the neural network.
 
 Classes:
 -------------
-    NeuralNetwork: A class for representing a neural network with a given genome and neural structure.
+NeuralNetwork: A class for representing a neural network with a given genome and neural structure.
 
 Methods:
 -------------
-    create_weights: Creates the weights for the neural network based on the genome and neural structure.
+create_weights: Creates the weights for the neural network based on the genome and neural structure.
 
-    run_neural_network: Runs the neural network according to input values.
+run_neural_network: Runs the neural network according to input values.
 """
 
 import numpy as np
@@ -39,20 +39,20 @@ class NeuralNetwork:
 
     Args:
     -----
-        genome: A string representing the genome of the organism.
+    genome: A string representing the genome of the organism.
 
-        neural_structure: A numpy ndarray representing the neural structure
-        of the organism.
+    neural_structure: A numpy ndarray representing the neural structure
+    of the organism.
 
     Attributes:
     -----
-        genome: The genome string that encodes the weights of the neural network.
+    genome: The genome string that encodes the weights of the neural network.
 
-        neural_structure: A numpy ndarray of integers representing the
-        structure of the neural network, where each integer represents the number of
-        neurons in that layer.
+    neural_structure: A numpy ndarray of integers representing the
+    structure of the neural network, where each integer represents the number of
+    neurons in that layer.
 
-        weights: contains weights of the neural network.
+    weights: contains weights of the neural network.
     """
 
     def __init__(self, genome: str, neural_structure: np.ndarray) -> None:
@@ -62,14 +62,14 @@ class NeuralNetwork:
 
         Args:
         -----
-            genome: A string representing the genome of the organism.
+        genome: A string representing the genome of the organism.
 
-            neural_structure: A numpy ndarray representing the neural structure of
-            the organism.
+        neural_structure: A numpy ndarray representing the neural structure of
+        the organism.
 
         Raises:
         -----
-            ValueError: If the genome is not large enough for the given neural structure.
+        ValueError: If the genome is not large enough for the given neural structure.
         """
         self.genome: str = genome
         self.neural_structure: np.ndarray = neural_structure
@@ -82,7 +82,7 @@ class NeuralNetwork:
 
         Raises:
         -----
-            ValueError: If the genome is not large enough for the given neural structure.
+        ValueError: If the genome is not large enough for the given neural structure.
         """
 
         neural_structure: np.ndarray = self.neural_structure
@@ -128,19 +128,19 @@ class NeuralNetwork:
 
         Args:
         -----
-            input_values: A numpy ndarray representing the input values of the neural network.
+        input_values: A numpy ndarray representing the input values of the neural network.
 
         Returns:
         -----
-            A numpy ndarray with the output values of the neural network
+        A numpy ndarray with the output values of the neural network
 
         Note:
         -----
-            The method uses the current weights and neural structure of the neural network to calculate
-            the output values based on the given input values. It does this by initializing a new
-            empty neural network and filling in the values using the provided input and the weights.
-            The weights are applied to the corresponding input neuron to obtain the output of the next
-            neuron in the network. Finally, the output of the last layer is returned as a numpy ndarray.
+        The method uses the current weights and neural structure of the neural network to calculate
+        the output values based on the given input values. It does this by initializing a new
+        empty neural network and filling in the values using the provided input and the weights.
+        The weights are applied to the corresponding input neuron to obtain the output of the next
+        neuron in the network. Finally, the output of the last layer is returned as a numpy ndarray.
         """
 
         weights: np.ndarray = self.weights

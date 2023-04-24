@@ -23,11 +23,11 @@ It also includes a function to generate a random organism.
 
 Classes:
 --------
-    Organism: A class representing an organism.
+Organism: A class representing an organism.
 
 Functions:
 --------
-    get_random_organism: A function to generate a random organism.
+get_random_organism: A function to generate a random organism.
 
 Note:
 --------
@@ -50,34 +50,38 @@ class Organism:
 
     Attributes:
     ---------
-        genome: A string representing the organism's genome.
+    genome: A string representing the organism's genome.
 
-        characters: A NumPy array containing the organism's characteristics.
+    characters: A NumPy array containing the organism's characteristics.
 
-        neural_network: A neural network generated from the genome of the organism
+    neural_network: A neural network generated from the genome of the organism
     """
 
     def __init__(
         self,
         input_data: Union[str, np.ndarray],
         number_of_characters: int = 4,
+        size_of_genome: int = 4,
     ) -> None:
         """
         Initializes an instance of the Organism class.
 
         Args:
         -----
-            input_data : A string representing the organism's genome or a NumPy array
-            containing the organism's characteristics.
+        input_data : A string representing the organism's genome or a NumPy array
+        containing the organism's characteristics.
 
-            number_of_characters : The number of characteristics
+        number_of_characters : The number of characteristics
         """
 
         # check if input is genome or characteristics
 
         if isinstance(input_data, np.ndarray):
             self.genome: str = gn.encode_organism_characteristics(
-                input_data, number_of_characters
+                input_data,
+                number_of_characters
+                if number_of_characters > size_of_genome
+                else size_of_genome,
             )
 
             self.characters: np.ndarray = input_data
@@ -89,22 +93,22 @@ class Organism:
             )
 
         # assign a neural_network generated from the the genome
-        self.neural_network = NeuralNetwork(self.genome, np.array([2, 2]))
+        self.neural_network = NeuralNetwork(self.genome, np.array([3, 2]))
 
 
-def get_random_organism(number_of_characters: int = 4) -> Organism:
+def get_random_organism(size_of_genome: int = 8) -> Organism:
     """
     Generate a random organism.
 
     Args:
     -----
-        number_of_characters : The number of characteristics
+    size_of_genome : the size of the genome
 
     Returns:
     ---------
-        Organism: A random instance of the Organism class.
+    Organism: A random instance of the Organism class.
     """
-    return Organism(input_data=gn.get_random_genome(number_of_characters))
+    return Organism(input_data=gn.get_random_genome(size_of_genome))
 
 
 def reproduce(
@@ -115,16 +119,16 @@ def reproduce(
 
     Args:
     -----
-        parent_1 : One of the parent Organisms
+    parent_1 : One of the parent Organisms
 
-        parent_2 : One of the parent Organisms
+    parent_2 : One of the parent Organisms
 
-        mutation_factor: A value between 0 and 1 (inclusive) representing the probability
-        of a mutation occurring in the offspring's genome.
+    mutation_factor: A value between 0 and 1 (inclusive) representing the probability
+    of a mutation occurring in the offspring's genome.
 
     Returns:
     ---------
-        offspring: Child of the parents.
+    offspring: Child of the parents.
     """
     offspring_genome: str = gn.generate_offspring_genome(
         parent_1.genome, parent_2.genome, mutation_factor
