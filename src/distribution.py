@@ -39,7 +39,9 @@ class World:
     -----------
     canvas_size (tuple): A tuple of two integers representing the dimensions of the canvas.
 
-    food_distribution (numpy.ndarray): A numpy array of random integers between 0 and 15 of size `canvas_size`.
+    food_distribution (numpy.ndarray): A numpy array of random integers between 0 and 160 of size `canvas_size`.
+
+    temp_distribution (numpy.ndarray): A numpy array of random integers between 0 and 15 of size `canvas_size`.
 
     organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list of organisms and `None` values
     of size `canvas_size`.
@@ -57,6 +59,9 @@ class World:
         self.canvas_size: tuple = canvas_size
         self.food_distribution: np.ndarray = np.random.random_integers(
             0, 160, self.canvas_size
+        )
+        self.temp_distribution: np.ndarray = np.random.random_integers(
+            0, 16, self.canvas_size
         )
         self.organism_distribution: list[list[Union[org.Organism, None]]] = [
             [
@@ -90,8 +95,14 @@ class World:
 
                 # check if there is an organism at the current location
                 if isinstance(organism, org.Organism):
-                    # if enough food is available
-                    if self.food_distribution[i][j] >= organism.characters[2]:
+                    # if enough food is available and if the temperature
+                    # is ideal
+                    if self.food_distribution[i][j] >= organism.characters[
+                        2
+                    ] and self.temp_distribution[i][j] in range(
+                        organism.characters[0] - 4,
+                        organism.characters[0] + 4,
+                    ):
                         self.food_distribution[i][j] -= organism.characters[2]
 
                         neural_ouput: np.ndarray = (
