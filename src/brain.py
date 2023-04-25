@@ -83,6 +83,12 @@ class NeuralNetwork:
         Raises:
         -----
         ValueError: If the genome is not large enough for the given neural structure.
+
+        Note:
+        ----
+        The weights are extracted from the genome by first calculating the
+        number of connections required and then dividing and taking average of the
+        divided parts for each weight.
         """
 
         neural_structure: np.ndarray = self.neural_structure
@@ -136,11 +142,12 @@ class NeuralNetwork:
 
         Note:
         -----
-        The method uses the current weights and neural structure of the neural network to calculate
-        the output values based on the given input values. It does this by initializing a new
-        empty neural network and filling in the values using the provided input and the weights.
-        The weights are applied to the corresponding input neuron to obtain the output of the next
-        neuron in the network. Finally, the output of the last layer is returned as a numpy ndarray.
+        This method runs the neural network with the given input values using the current weights
+        and neural structure of the neural network. It initializes a new empty neural network and fills
+        in the values using the provided input and the weights. The weights are then applied to the
+        corresponding input neuron to obtain the output of the next neuron in the network. The output of
+        each layer is passed through the activation function (tanh) and stored in the neural network list.
+        Finally, the output of the last layer is returned as a Numpy Array.
         """
 
         weights: np.ndarray = self.weights
@@ -151,20 +158,27 @@ class NeuralNetwork:
 
         neural_network[0] = list(input_values)
 
-        weight_index = 0
         for layer_index, layer_values in enumerate(neural_network[:-1]):
             next_layer_index = layer_index + 1
-            for neuron_value in layer_values:
-                for (
-                    next_layer_neuron_index,
-                    next_layer_neuron_value,
-                ) in enumerate(neural_network[next_layer_index]):
-                    neural_network[next_layer_index][
-                        next_layer_neuron_index
-                    ] = (
-                        next_layer_neuron_value
-                        + weights[weight_index] * neuron_value
-                    )
-                    weight_index += 1
+            # calculate the dot product between the current layer and the weights for the next layer
+            next_layer_values = np.dot(
+                layer_values,
+                weights[
+                    : len(layer_values) * len(neural_network[next_layer_index])
+                ].reshape(
+                    len(layer_values), len(neural_network[next_layer_index])
+                ),
+            )
+            # reshape the resulting values to match the shape of the next layer
+            next_layer_values = next_layer_values.reshape(
+                len(neural_network[next_layer_index]),
+            )
+            # apply the activation function to the next layer values
+            next_layer_values = np.tanh(next_layer_values)
+            neural_network[next_layer_index] = list(next_layer_values)
+            # update the weights
+            weights = weights[
+                len(layer_values) * len(neural_network[next_layer_index]) :
+            ]
 
         return np.array(neural_network[-1])
