@@ -64,7 +64,7 @@ class Organism:
         self,
         input_data: Union[str, np.ndarray],
         number_of_characters: int = 4,
-        size_of_genome: int = 16,
+        size_of_genome: int = 10,
         letters_per_character: int = 1,
     ) -> None:
         """

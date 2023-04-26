@@ -157,27 +157,8 @@ def create_weights(genome: str, neural_structure: np.ndarray) -> np.ndarray:
         genome, len(genome)
     )
 
-    length_of_genome = len(genome_seq)
-    length_of_neural_section: int = (
-        length_of_genome // number_of_neural_connections
-    )
-
-    if not length_of_neural_section > 0:
-        raise ValueError("Genome is not large enough.")
-
     # generate the weights
-    weights: np.ndarray = np.array(
-        [
-            np.sum(
-                genome_seq[
-                    i
-                    * length_of_neural_section : (i + 1)
-                    * length_of_neural_section
-                ]
-            )
-            for i in range(number_of_neural_connections)
-        ]
-    )
+    weights: np.ndarray = genome_seq[:number_of_neural_connections]
 
     # normalize to the range [-1, 1]
     weights: np.ndarray = np.tanh(weights)
