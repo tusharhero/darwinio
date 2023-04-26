@@ -62,6 +62,7 @@ class Organism:
         input_data: Union[str, np.ndarray],
         number_of_characters: int = 4,
         size_of_genome: int = 4,
+        letters_per_character: int = 1,
     ) -> None:
         """
         Initializes an instance of the Organism class.
@@ -76,12 +77,14 @@ class Organism:
 
         # check if input is genome or characteristics
 
+        self.letters_per_character: int = letters_per_character
         if isinstance(input_data, np.ndarray):
             self.genome: str = gn.encode_organism_characteristics(
                 input_data,
                 number_of_characters
                 if number_of_characters > size_of_genome
                 else size_of_genome,
+                self.letters_per_character,
             )
 
             self.characters: np.ndarray = input_data
@@ -89,9 +92,8 @@ class Organism:
         elif isinstance(input_data, str):
             self.genome: str = input_data
             self.characters: np.ndarray = gn.decode_organism_characteristics(
-                input_data, number_of_characters
+                input_data, number_of_characters, self.letters_per_character
             )
-
         # assign a neural_network generated from the the genome
         self.neural_network = NeuralNetwork(self.genome, np.array([3, 2]))
 
@@ -123,7 +125,7 @@ def get_random_organism(
 
 
 def reproduce(
-    parent_1: Organism, parent_2: Organism, mutation_factor: int
+    parent_1: Organism, parent_2: Organism, mutation_factor: float
 ) -> Organism:
     """
     Generate offspring of the two Organisms

@@ -47,7 +47,7 @@ class World:
     of size `canvas_size`.
     """
 
-    def __init__(self, canvas_size: tuple):
+    def __init__(self, canvas_size: tuple, mutation_factor: float = 0.3):
         """
         Initializes a new World instance.
 
@@ -57,8 +57,9 @@ class World:
 
         """
         self.canvas_size: tuple = canvas_size
+        self.mutation_factor: float = mutation_factor
         self.food_distribution: np.ndarray = np.random.random_integers(
-            0, 160, self.canvas_size
+            0, 5000, self.canvas_size
         )
         self.temp_distribution: np.ndarray = np.random.random_integers(
             0, 16, self.canvas_size
@@ -97,11 +98,11 @@ class World:
                 if isinstance(organism, org.Organism):
                     # if enough food is available and if the temperature
                     # is ideal
-                    if self.food_distribution[i][j] >= organism.characters[
-                        2
-                    ] and self.temp_distribution[i][j] in range(
-                        organism.characters[0] - 4,
-                        organism.characters[0] + 4,
+                    if (
+                        self.food_distribution[i][j] >= organism.characters[2]
+                    ) and self.temp_distribution[i][j] in range(
+                        organism.characters[0] - 16,
+                        organism.characters[0] + 16,
                     ):
                         self.food_distribution[i][j] -= organism.characters[2]
 
@@ -145,8 +146,45 @@ class World:
                     # if food is not available kill it and derive some food from its
                     # dead body.
                     else:
-                        self.food_distribution[i][j] += organism.characters[2]
+                        self.food_distribution[i][j] += (
+                            organism.characters[2] * 10
+                        )
                         self.organism_distribution[i][j] = None
+
+    def get_next_gen(self):
+        life_distribution: np.ndarray = np.array(
+            [
+                [
+                    1 if isinstance(organism, org.Organism) else 0
+                    for organism in column
+                ]
+                for column in self.organism_distribution
+            ]
+        )
+
+        new_gen_organism_distribution: list[
+            list[Union[org.Organism, None]]
+        ] = [
+            [None for _ in range(self.canvas_size[1])]
+            for _ in range(self.canvas_size[0])
+        ]
+
+        for i in range(self.canvas_size[0]):
+            for j in range(self.canvas_size[1]):
+                organism = self.organism_distribution[i][j]
+
+                if isinstance(organism, org.Organism):
+                    if True:  # organism.characters[3] == 0:
+                        new_gen_organism_distribution[i][j] = org.reproduce(
+                            organism, organism, self.mutation_factor
+                        )
+                        self.food_distribution[i][j] += (
+                            organism.characters[2] * 10
+                        )
+
+        self.organism_distribution: list[
+            list[Union[org.Organism, None]]
+        ] = new_gen_organism_distribution
 
 
 def get_neighbour_cells(
