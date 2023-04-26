@@ -93,11 +93,11 @@ class World:
                 neighbour_cells: np.ndarray = get_neighbour_cells(
                     (i, j), self.food_distribution
                 )
-                food_direction: int = (
+                food_direction: float = (
                     int(np.argmax(neighbour_cells.flatten()))
                     if np.size(neighbour_cells.flatten())
                     else -1
-                )
+                ) / 9
 
                 # check if there is an organism at the current location
                 if isinstance(organism, org.Organism):
@@ -113,7 +113,13 @@ class World:
 
                         neural_ouput: np.ndarray = (
                             organism.neural_network.run_neural_network(
-                                np.array((food_direction, i, j))
+                                np.array(
+                                    (
+                                        food_direction,
+                                        i / self.canvas_size[0],
+                                        j / self.canvas_size[1],
+                                    )
+                                )
                             )
                         )
                         new_coordinates = tuple(
