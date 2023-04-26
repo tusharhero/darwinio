@@ -55,79 +55,27 @@ class NeuralNetwork:
     weights: contains weights of the neural network.
     """
 
-    def __init__(self, genome: str, neural_structure: np.ndarray) -> None:
+    def __init__(
+        self, weights: np.ndarray, neural_structure: np.ndarray
+    ) -> None:
         """
         Initialize a neural network object with the given genome and
         neural structure.
 
         Args:
         -----
-        genome: A string representing the genome of the organism.
+        weights: An one-dimensional Numpy Array containing the weights for
+        the neural network.
 
-        neural_structure: A numpy ndarray representing the neural structure of
-        the organism.
-
-        Raises:
-        -----
-        ValueError: If the genome is not large enough for the given neural structure.
-        """
-        self.genome: str = genome
-        self.neural_structure: np.ndarray = neural_structure
-        self.create_weights()
-
-    def create_weights(self) -> None:
-        """
-        Creates the weights for the neural network based on the genome and
-        neural structure.
+        neural_structure: An one-dimensional Numpy Array representing the
+        neural structure of the organism.
 
         Raises:
         -----
         ValueError: If the genome is not large enough for the given neural structure.
-
-        Note:
-        ----
-        The weights are extracted from the genome by first calculating the
-        number of connections required and then dividing and taking average of the
-        divided parts for each weight.
         """
-
-        neural_structure: np.ndarray = self.neural_structure
-
-        number_of_neural_connections = int(
-            np.sum(neural_structure[:-1] * neural_structure[1:])
-        )
-
-        # convert the genome into an array of base10 numbers.
-        genome_seq: np.ndarray = gn.decode_organism_characteristics(
-            self.genome, len(self.genome)
-        )
-
-        length_of_genome = len(genome_seq)
-        length_of_neural_section: int = (
-            length_of_genome // number_of_neural_connections
-        )
-
-        if not length_of_neural_section > 0:
-            raise ValueError("Genome is not large enough.")
-
-        # generate the weights
-        weights: np.ndarray = np.array(
-            [
-                np.sum(
-                    genome_seq[
-                        i
-                        * length_of_neural_section : (i + 1)
-                        * length_of_neural_section
-                    ]
-                )
-                for i in range(number_of_neural_connections)
-            ]
-        )
-
-        # normalize to the range [-1, 1]
-        weights: np.ndarray = np.tanh(weights)
-
         self.weights: np.ndarray = weights
+        self.neural_structure: np.ndarray = neural_structure
 
     def run_neural_network(self, input_values: np.ndarray) -> np.ndarray:
         """
@@ -182,3 +130,56 @@ class NeuralNetwork:
             neural_network[next_layer_index] = list(next_layer_values)
 
         return np.array(neural_network[-1])
+
+
+def create_weights(genome: str, neural_structure: np.ndarray) -> np.ndarray:
+    """
+    Creates the weights for the neural network based on the genome and
+    neural structure.
+
+    Raises:
+    -----
+    ValueError: If the genome is not large enough for the given neural structure.
+
+    Note:
+    ----
+    The weights are extracted from the genome by first calculating the
+    number of connections required and then dividing and taking average of the
+    divided parts for each weight.
+    """
+
+    number_of_neural_connections = int(
+        np.sum(neural_structure[:-1] * neural_structure[1:])
+    )
+
+    # convert the genome into an array of base10 numbers.
+    genome_seq: np.ndarray = gn.decode_organism_characteristics(
+        genome, len(genome)
+    )
+
+    length_of_genome = len(genome_seq)
+    length_of_neural_section: int = (
+        length_of_genome // number_of_neural_connections
+    )
+
+    if not length_of_neural_section > 0:
+        raise ValueError("Genome is not large enough.")
+
+    # generate the weights
+    weights: np.ndarray = np.array(
+        [
+            np.sum(
+                genome_seq[
+                    i
+                    * length_of_neural_section : (i + 1)
+                    * length_of_neural_section
+                ]
+            )
+            for i in range(number_of_neural_connections)
+        ]
+    )
+
+    # normalize to the range [-1, 1]
+    weights: np.ndarray = np.tanh(weights)
+
+    return weights

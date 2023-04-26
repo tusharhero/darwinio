@@ -38,7 +38,7 @@ Characteristics are stored as:
     3: reproductive type
 """
 
-from brain import NeuralNetwork
+import brain as brn
 import genome as gn
 import numpy as np
 from typing import Union
@@ -105,9 +105,10 @@ class Organism:
             self.characters: np.ndarray = gn.decode_organism_characteristics(
                 input_data, number_of_characters, self.letters_per_character
             )
-
         # assign a neural_network generated from the the genome
-        self.neural_network = NeuralNetwork(self.genome, np.array([3, 2]))
+        neural_structure = np.array([3, 2])
+        weights: np.ndarray = brn.create_weights(self.genome, neural_structure)
+        self.neural_network = brn.NeuralNetwork(weights, neural_structure)
 
 
 def get_random_organism(
