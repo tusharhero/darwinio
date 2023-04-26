@@ -55,13 +55,16 @@ class Organism:
     characters: A NumPy array containing the organism's characteristics.
 
     neural_network: A neural network generated from the genome of the organism
+
+    letters_per_character: The number of digits that would be used for representing
+    each character.
     """
 
     def __init__(
         self,
         input_data: Union[str, np.ndarray],
         number_of_characters: int = 4,
-        size_of_genome: int = 4,
+        size_of_genome: int = 16,
         letters_per_character: int = 1,
     ) -> None:
         """
@@ -73,11 +76,16 @@ class Organism:
         containing the organism's characteristics.
 
         number_of_characters : The number of characteristics
+
+        size_of_genome:  Its the length of the genome string.
+
+        letters_per_character: The number of digits that would be used for representing
+        each character.
         """
 
-        # check if input is genome or characteristics
-
         self.letters_per_character: int = letters_per_character
+
+        # check if input is genome or characteristics
         if isinstance(input_data, np.ndarray):
             self.genome: str = gn.encode_organism_characteristics(
                 input_data,
@@ -90,10 +98,14 @@ class Organism:
             self.characters: np.ndarray = input_data
 
         elif isinstance(input_data, str):
-            self.genome: str = input_data
+            self.genome: str = input_data + gn.get_random_genome(
+                size_of_genome - len(input_data)
+            )
+
             self.characters: np.ndarray = gn.decode_organism_characteristics(
                 input_data, number_of_characters, self.letters_per_character
             )
+
         # assign a neural_network generated from the the genome
         self.neural_network = NeuralNetwork(self.genome, np.array([3, 2]))
 
@@ -115,7 +127,8 @@ def get_random_organism(
     Organism: A random instance of the Organism class.
     """
     organism: Organism = Organism(
-        input_data=gn.get_random_genome(size_of_genome)
+        input_data=gn.get_random_genome(size_of_genome),
+        size_of_genome=size_of_genome,
     )
     if not allow_immortality:
         if organism.characters[2] == 0:

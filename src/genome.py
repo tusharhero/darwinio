@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-""" 
+"""
 Various methods for encoding and decoding genomes.
 
 Functions:
@@ -41,7 +41,12 @@ def get_random_genome(size: int) -> str:
     """
     Generates a random hexadecimal genome of the specified size.
     """
-    return "".join([random.choice("0123456789abcdef") for _ in range(size)])
+    return "".join(
+        [
+            random.choice("0123456789abcdef")
+            for _ in range(size if size >= 0 else 0)
+        ]
+    )
 
 
 def generate_basepairs(genome: str, letters_per_character: int) -> np.ndarray:
@@ -51,6 +56,7 @@ def generate_basepairs(genome: str, letters_per_character: int) -> np.ndarray:
     Args:
     -------
     genome: A string representing the genome to be converted.
+
     letters_per_character: The number of characters in the genome string that should
     be combined to form each base pair.
 

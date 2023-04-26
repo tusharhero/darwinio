@@ -97,6 +97,7 @@ class NeuralNetwork:
             np.sum(neural_structure[:-1] * neural_structure[1:])
         )
 
+        # convert the genome into an array of base10 numbers.
         genome_seq: np.ndarray = gn.decode_organism_characteristics(
             self.genome, len(self.genome)
         )
