@@ -124,8 +124,8 @@ class NeuralNetwork:
             ]
         )
 
-        # normalize to the range [-0.5, 0.5]
-        weights: np.ndarray = (weights / (15 * length_of_neural_section)) - 0.5
+        # normalize to the range [-1, 1]
+        weights: np.ndarray = np.tanh(weights)
 
         self.weights: np.ndarray = weights
 
@@ -159,8 +159,10 @@ class NeuralNetwork:
 
         neural_network[0] = list(input_values)
 
-        for layer_index, layer_values in enumerate(neural_network[:-1]):
+        for layer_index in range(len(neural_network[:-1])):
+            layer_values = neural_network[layer_index]
             next_layer_index = layer_index + 1
+
             # calculate the dot product between the current layer and the weights for the next layer
             next_layer_values = np.dot(
                 layer_values,
@@ -170,6 +172,7 @@ class NeuralNetwork:
                     len(layer_values), len(neural_network[next_layer_index])
                 ),
             )
+
             # reshape the resulting values to match the shape of the next layer
             next_layer_values = next_layer_values.reshape(
                 len(neural_network[next_layer_index]),
@@ -177,9 +180,5 @@ class NeuralNetwork:
             # apply the activation function to the next layer values
             next_layer_values = np.tanh(next_layer_values)
             neural_network[next_layer_index] = list(next_layer_values)
-            # update the weights
-            weights = weights[
-                len(layer_values) * len(neural_network[next_layer_index]) :
-            ]
 
         return np.array(neural_network[-1])
