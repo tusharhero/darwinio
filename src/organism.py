@@ -65,7 +65,7 @@ class Organism:
         input_data: Union[str, np.ndarray],
         number_of_characters: int = 4,
         size_of_genome: int = 10,
-        letters_per_character: int = 1,
+        letters_per_character: int = 3,
     ) -> None:
         """
         Initializes an instance of the Organism class.
@@ -112,7 +112,9 @@ class Organism:
 
 
 def get_random_organism(
-    size_of_genome: int = 8, allow_immortality: bool = False
+    size_of_genome: int = 8 * 3,
+    letters_per_character: int = 3,
+    allow_immortality: bool = False,
 ) -> Organism:
     """
     Generate a random organism.
@@ -129,7 +131,7 @@ def get_random_organism(
     """
     organism: Organism = Organism(
         input_data=gn.get_random_genome(size_of_genome),
-        size_of_genome=size_of_genome,
+        letters_per_character=letters_per_character,
     )
     if not allow_immortality:
         if organism.characters[2] == 0:

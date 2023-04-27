@@ -31,6 +31,7 @@ run_neural_network: Runs the neural network according to input values.
 
 import numpy as np
 import genome as gn
+import utilities as utils
 
 
 class NeuralNetwork:
@@ -99,13 +100,14 @@ class NeuralNetwork:
         Finally, the output of the last layer is returned as a Numpy Array.
         """
 
+        normalized_input_values: np.ndarray = utils.normalize(input_values)
         weights: np.ndarray = self.weights
         neural_structure: np.ndarray = self.neural_structure
         neural_network: list[list[float]] = [
             [0.0] * i for i in neural_structure
         ]
 
-        neural_network[0] = list(input_values)
+        neural_network[0] = list(normalized_input_values)
 
         for layer_index in range(len(neural_network[:-1])):
             layer_values = neural_network[layer_index]
@@ -126,6 +128,7 @@ class NeuralNetwork:
                 len(neural_network[next_layer_index]),
             )
             # apply the activation function to the next layer values
+
             next_layer_values = np.tanh(next_layer_values)
             neural_network[next_layer_index] = list(next_layer_values)
 
@@ -161,6 +164,6 @@ def create_weights(genome: str, neural_structure: np.ndarray) -> np.ndarray:
     weights: np.ndarray = genome_seq[:number_of_neural_connections]
 
     # normalize to the range [-1, 1]
-    weights: np.ndarray = np.tanh(weights)
+    weights: np.ndarray = utils.normalize(weights)
 
     return weights
