@@ -20,17 +20,16 @@ Various methods for encoding and decoding genomes.
 
 Functions:
 --------
-get_random_genome(size: int) -> str:
-Generates a random hexadecimal genome of the specified size.
+get_random_genome: a random hexadecimal genome of the specified size.
 
-generate_offspring_genome(parent_1: str, parent_2: str, mutation_factor: float) -> str:
-Generate a genome for an offspring of the given parents with mutations.
+generate_offspring_genome: Generate a genome for an offspring of the given
+parents with mutations.
 
-encode_organism_characteristics(characteristics: np.ndarray, length: int) -> str:
-Encode the given organism characteristics into a genome string.
+encode_organism_characteristics: Encode the given organism characteristics
+into a genome string.
 
-decode_organism_characteristics(genome: str, array_length: int) -> np.ndarray:
-Decode the given genome into an array of organism characteristics.
+decode_organism_characteristics: Decode the given genome into an array of
+organism characteristics.
 """
 
 import random
@@ -57,8 +56,8 @@ def generate_basepairs(genome: str, letters_per_character: int) -> np.ndarray:
     -------
     genome: A string representing the genome to be converted.
 
-    letters_per_character: The number of characters in the genome string that should
-    be combined to form each base pair.
+    letters_per_character: The number of characters in the genome string that
+    should be combined to form each base pair.
 
     Returns:
     -------
@@ -91,10 +90,11 @@ def generate_offspring_genome(
 
     parent_2: The genome of the second parent.
 
-    mutation_factor: A value between 0 and 1 (inclusive) representing the probability
-    of a mutation occurring in the offspring's genome.
+    mutation_factor: A value between 0 and 1 (inclusive) representing the
+    probability of a mutation occurring in the offspring's genome.
 
-    letters_per_character: The amount of digits used for representing each character.
+    letters_per_character: The amount of digits used for representing each
+    character.
 
     Returns:
     -------
@@ -102,10 +102,11 @@ def generate_offspring_genome(
 
     Notes:
     -------
-    The function performs a bitwise random choice between each base pair of the
-    parents' genomes to generate the offspring's genome. If the mutationfactor is
-    greater than 0, there is a chance for a random mutation to occur in one of the
-    offspring's base pairs. The function then returns the offspring's genome as a string.
+    The function performs a bitwise random choice between each base pair of
+    the parents' genomes to generate the offspring's genome. If the
+    mutationfactor is greater than 0, there is a chance for a random mutation
+    to occur in one of the offspring's base pairs. The function then returns
+    the offspring's genome as a string.
     """
 
     if not 0 <= mutation_factor <= 1:
@@ -142,19 +143,21 @@ def encode_organism_characteristics(
 
     Args:
     -------
-    characteristics: A numpy ndarray of integers representing the characteristics
-    to be encoded. Each characteristic should be between 0 and 16**letters_per_character-1.
+    characteristics: A numpy ndarray of integers representing the
+    characteristics to be encoded. Each characteristic should be between 0
+    and 16**letters_per_character-1.
 
-    length: An integer representing length of the genome, if its larger than the
-    size of the array, the rest will be generated randomly.
+    length: An integer representing length of the genome, if its larger than
+    the size of the array, the rest will be generated randomly.
 
-    letters_per_character: The amount of digits used for representing each character.
+    letters_per_character: The amount of digits used for representing each
+    character.
 
     Returns:
     -------
-    A string representing the genome encoded from the given characteristics. The
-    genome is in hexadecimal format, with each characteristic encoded as hexadecimal
-    digits.
+    A string representing the genome encoded from the given characteristics.
+    The genome is in hexadecimal format, with each characteristic encoded as
+    hexadecimal digits.
     """
 
     # check for errors
@@ -190,9 +193,11 @@ def decode_organism_characteristics(
     -------
     genome: The genome string to be decoded.
 
-    array_length: The length of the genome, actually intended to contain characteristics
+    array_length: The length of the genome, actually intended to contain
+    characteristics
 
-    letters_per_character: The amount of digits used for representing each character.
+    letters_per_character: The amount of digits used for representing each
+    character.
 
     Returns:
     -------

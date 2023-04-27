@@ -18,9 +18,6 @@
 """
 Organism class and related stuff.
 
-This module provides the Organism class, which represents an organism and its characteristics.
-It also includes a function to generate a random organism.
-
 Classes:
 --------
 Organism: A class representing an organism.
@@ -56,8 +53,8 @@ class Organism:
 
     neural_network: A neural network generated from the genome of the organism
 
-    letters_per_character: The number of digits that would be used for representing
-    each character.
+    letters_per_character: The number of digits that would be used for
+    representing each character.
     """
 
     def __init__(
@@ -72,15 +69,15 @@ class Organism:
 
         Args:
         -----
-        input_data : A string representing the organism's genome or a NumPy array
-        containing the organism's characteristics.
+        input_data : A string representing the organism's genome or a NumPy
+        array containing the organism's characteristics.
 
         number_of_characters : The number of characteristics
 
         size_of_genome:  Its the length of the genome string.
 
-        letters_per_character: The number of digits that would be used for representing
-        each character.
+        letters_per_character: The number of digits that would be used for
+        representing each character.
         """
 
         self.letters_per_character: int = letters_per_character
@@ -152,8 +149,8 @@ def reproduce(
 
     parent_2 : One of the parent Organisms
 
-    mutation_factor: A value between 0 and 1 (inclusive) representing the probability
-    of a mutation occurring in the offspring's genome.
+    mutation_factor: A value between 0 and 1 (inclusive) representing the
+    probability of a mutation occurring in the offspring's genome.
 
     Returns:
     ---------

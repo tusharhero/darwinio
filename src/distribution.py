@@ -20,13 +20,13 @@ A module for representing a World with an array representing each layer.
 
 Classes:
 ---------
-World:
-Represents a world in which organisms and food are distributed across a canvas.
+World: Represents a world in which organisms and food are distributed across
+a canvas.
 
 Functions:
 ----------
-get_neighbour_cells:
-Return the values of neighbouring cells around a given coordinate in a distribution.
+get_neighbour_cells: the values of neighbouring cells around a given
+coordinate in a distribution.
 """
 
 import random
@@ -38,7 +38,8 @@ import utilities as utils
 
 class World:
     """
-    Represents a world in which organisms and food are distributed across a canvas.
+    Represents a world in which organisms and food are distributed across a
+    canvas.
 
     Attributes:
     -----------
@@ -46,10 +47,10 @@ class World:
     of the canvas.
 
     food_distribution (numpy.ndarray): A numpy array of random integers between
-    0 and 160 of size `canvas_size`.
+    0 and 500000 of size `canvas_size`.
 
-    organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list of
-    organisms and `None` values of size `canvas_size`.
+    organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list
+    of organisms and `None` values of size `canvas_size`.
     """
 
     def __init__(self, canvas_size: tuple, mutation_factor: float = 0.3):
@@ -61,12 +62,17 @@ class World:
         canvas_size (tuple): A tuple of two integers representing the
         dimensions of the canvas.
 
+        mutation_factor: A value between 0 and 1 (inclusive) representing the
+        probability of a mutation occurring in the offspring's genome.
         """
+
         self.canvas_size: tuple = canvas_size
         self.mutation_factor: float = mutation_factor
         self.food_distribution: np.ndarray = np.random.random_integers(
             0, 500000, self.canvas_size
         )
+
+        # Randomly distribute the organisms
         self.organism_distribution: list[list[Union[org.Organism, None]]] = [
             [
                 random.choice((org.get_random_organism(), None))
@@ -77,15 +83,15 @@ class World:
 
     def update_state(self):
         """
-        Update the state of the canvas
+        Update the state of the canvas.
 
         Note:
         -----
         Updates the state of the world by iterating over each organism and
-        updating its position based on its neural network's output. If another
-        organism is not present at its current position after updating, it is
-        removed from the current position and added to the new position. It
-        also considers the direction of food around it.
+        updating its position based on its neural network's output. If
+        another organism is not present at its current position after updating
+        , it is removed from the current position and added to the new
+        position. It also considers the direction of food around it.
         """
 
         for i in range(self.canvas_size[0]):
@@ -111,6 +117,7 @@ class World:
                                 np.array((food_direction, i, j))
                             )
                         )
+
                         new_coordinates = tuple(
                             utils.clamp(
                                 int(neural_output[k]) + (i, j)[k],
@@ -121,7 +128,8 @@ class World:
                         )
 
                         # While an organism already lives there the new
-                        # coordinates change
+                        # coordinates keep changing until there is no one else
+                        # there
                         while isinstance(
                             self.organism_distribution[new_coordinates[0]][
                                 new_coordinates[1]
@@ -144,8 +152,8 @@ class World:
                             new_coordinates[1]
                         ] = organism
 
-                    # if food is not available kill it and derive some food from its
-                    # dead body.
+                    # if food is not available kill it and derive some food
+                    # from its dead body.
                     else:
                         self.food_distribution[i][j] += (
                             organism.characters[2] * 10
@@ -154,25 +162,25 @@ class World:
 
     def get_next_gen(self):
         """
-        Calculate the distribution of organisms for the next generation
-        based on the current distribution.
+        Calculate the distribution of organisms for the next generation based
+        on the current distribution.
 
         Note:
         ----
         This method applies the rules of the simulation to the current
-        distribution of organisms and produces the distribution for the
-        next generation. The current distribution is first converted to
-        a numpy array for processing. Then, for each cell in the grid,
-        the function checks whether the organism at that cell can reproduce.
-        If the organism is asexual, it creates an offspring and adds food
-        to the current cell. If the organism is sexual, the function searches
-        for a valid partner among its neighboring cells. If a partner is
-        found, the two organisms reproduce to produce an offspring. The
-        distribution of organisms for the next generation is stored in a
-        list of lists, and is updated at the end of the function.
+        distribution of organisms and produces the distribution for the next
+        generation. The current distribution is first converted to a numpy
+        array for processing. Then, for each cell in the grid, the function
+        checks whether the organism at that cell can reproduce. If the
+        organism is asexual, it creates an offspring and adds food to the
+        current cell. If the organism is sexual, the function searches for a
+        valid partner among its neighboring cells. If a partner is found, the
+        two organisms reproduce to produce an offspring. The distribution of
+        organisms for the next generation is stored in a list of lists, and
+        is updated at the end of the function.
         """
 
-        # Convert current generation to a numpy array for processing
+        # Convert current generation to a binary numpy array for processing
         reproductive_distribution: np.ndarray = np.array(
             [
                 [
@@ -190,7 +198,6 @@ class World:
             for _ in range(self.canvas_size[0])
         ]
 
-        # Iterate over each cell in the grid
         for i in range(self.canvas_size[0]):
             for j in range(self.canvas_size[1]):
                 organism = self.organism_distribution[i][j]
@@ -227,7 +234,8 @@ class World:
                             partner = self.organism_distribution[i + x - 1][
                                 j + y - 1
                             ]
-                            # If all neighbours have been checked, break out of loop
+                            # If all neighbours have been checked, break out
+                            # of loop
                             if x == len(neighbours) and y == len(
                                 neighbours[0]
                             ):
@@ -241,6 +249,8 @@ class World:
                             ] = org.reproduce(
                                 organism, partner, self.mutation_factor
                             )
+                            # Make sure the partner doesn't reproduce with
+                            # someother organism
                             reproductive_distribution[i][j] = 0
                             reproductive_distribution[i + x - 1][j + y - 1] = 0
 
@@ -253,23 +263,22 @@ def get_neighbour_cells(
     coordinates: tuple[int, int], distribuion: np.ndarray
 ) -> np.ndarray:
     """
-    Return the values of neighbouring cells around a given
-    coordinate in a distribution.
+    Return the values of neighbouring cells around a given coordinate in a
+    distribution.
 
     Args:
     -----
-    coordinates (tuple[int, int]): The (x, y) coordinate for which
-    to retrieve neighbouring cells.
+    coordinates (tuple[int, int]): The (x, y) coordinate for which to
+    retrieve neighbouring cells.
 
     distribuion (np.ndarray): A 2D array of values representing a
     distribution of some kind.
 
     Returns:
     --------
-    np.ndarray: A 2D array containing the values of neighbouring
-    cells around the given coordinates. Specifically, this array
-    contains a 3x3 subset of `distribution` centered around the
-    given coordinates.
+    np.ndarray: A 2D array containing the values of neighbouring cells around
+    the given coordinates. Specifically, this array contains a 3x3 subset(not
+    always) of ` distribution` centered around the given coordinates.
     """
     x, y = coordinates
     rows, cols = np.shape(distribuion)
