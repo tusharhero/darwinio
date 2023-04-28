@@ -73,13 +73,16 @@ class World:
         )
 
         # Randomly distribute the organisms
-        self.organism_distribution: list[list[Union[org.Organism, None]]] = [
+        self.organism_distribution = np.array(
             [
-                random.choice((org.get_random_organism(), None))
-                for _ in range(self.canvas_size[1])
-            ]
-            for _ in range(self.canvas_size[0])
-        ]
+                [
+                    random.choice((org.get_random_organism(), None))
+                    for _ in range(self.canvas_size[1])
+                ]
+                for _ in range(self.canvas_size[0])
+            ],
+            dtype=object,
+        )
 
     def update_state(self):
         """
@@ -89,8 +92,8 @@ class World:
         -----
         Updates the state of the world by iterating over each organism and
         updating its position based on its neural network's output. If
-        another organism is not present at its current position after updating
-        , it is removed from the current position and added to the new
+        another organism is not present at its current position after updating,
+        it is removed from the current position and added to the new
         position. It also considers the direction of food around it.
         """
 
@@ -181,7 +184,7 @@ class World:
         """
 
         # Convert current generation to a binary numpy array for processing
-        reproductive_distribution: np.ndarray = np.array(
+        reproductive_distribution = np.array(
             [
                 [
                     1 if isinstance(organism, org.Organism) else 0
@@ -191,12 +194,12 @@ class World:
             ]
         )
 
-        next_gen_organism_distribution: list[
-            list[Union[org.Organism, None]]
-        ] = [
-            [None for _ in range(self.canvas_size[1])]
-            for _ in range(self.canvas_size[0])
-        ]
+        next_gen_organism_distribution = np.array(
+            [
+                [None for _ in range(self.canvas_size[1])]
+                for _ in range(self.canvas_size[0])
+            ]
+        )
 
         for i in range(self.canvas_size[0]):
             for j in range(self.canvas_size[1]):
@@ -254,9 +257,7 @@ class World:
                             reproductive_distribution[i][j] = 0
                             reproductive_distribution[i + x - 1][j + y - 1] = 0
 
-        self.organism_distribution: list[
-            list[Union[org.Organism, None]]
-        ] = next_gen_organism_distribution
+        self.organism_distribution: np.ndarray = next_gen_organism_distribution
 
 
 def get_neighbour_cells(
@@ -286,3 +287,17 @@ def get_neighbour_cells(
         utils.clamp(x - 1, rows, 0) : utils.clamp(x + 1, rows, 0) + 1,
         utils.clamp(y - 1, cols, 0) : utils.clamp(y + 1, cols, 0) + 1,
     ]
+
+
+def get_distribution_population(distribution: np.ndarray) -> int:
+    """
+    get the number of "truthy" values in the distribution
+
+    Args:
+    -----
+    distribuion (np.ndarray): A 2D array of values representing a
+    distribution of some kind.
+    """
+    return sum(
+        [sum([1 if cell else 0 for cell in row]) for row in distribution]
+    )
