@@ -327,35 +327,96 @@ def get_feasible_position(
     distribution: np.ndarray,
 ) -> tuple[int, int]:
     """
-    Find a feasible position
+    Finds a feasible position given a current position, preferred position, and
+    a distribution.
+
+    Args:
+    ----
+    current_position: A tuple containing the x and y coordinates of the current
+    position.
+
+    preferred_position: A tuple containing the x and y coordinates of the
+    preferred position.
+
+    distribution: A 2D numpy array representing the distribution of feasible
+    positions.
+
+    Returns:
+    -------
+    A tuple containing the x and y coordinates of a feasible position. If
+    there are no feasible positions between the current and preferred positions,
+    returns the preferred position if it is feasible, otherwise returns the
+    current position.
     """
+
     possible_positions: np.ndarray = get_points_between_2_points(
         current_position, preferred_position
     )
-    index = 0
-    for point in possible_positions:
-        x, y = point
-        if distribution[x][y]:
-            break
-        else:
-            index += 1
-            continue
-    feasible_position = tuple(possible_positions[index - 1])
-    return feasible_position
+
+    for row, column in possible_positions:
+        if distribution[column][row]:
+            return row, column
+    return preferred_position
 
 
 def get_points_between_2_points(
     point_1: tuple[int, int], point_2: tuple[int, int]
 ) -> np.ndarray:
     """
-    Get the coordinates of the points between 2 points.
+    Return an array of coordinates of points that lie on the line between two given
+    points.
+
+    Args:
+    -----
+    point_1 (tuple): A tuple of two integers that represent the (x, y)
+    coordinates of the first point.
+
+    point_2 (tuple): A tuple of two integers that represent the (x, y)
+    coordinates of the second point.
+
+    Returns:
+    -----
+    np.ndarray: An array of coordinates of the points that lie on the line
+    between the two given points.
+
+    Note:
+    -----
+    The function calculates the coordinates of the points that lie on the line
+    between the two input points, and returns an array of these coordinates. The
+    function first determines the slope and intercept of the line connecting the
+    two input points. If the line is vertical, the function returns an array of
+    points with the same x coordinate and a range of y coordinates. Otherwise,
+    the function calculates the coordinates of the points on the line using the
+    slope and intercept, and returns an array of these coordinates. The returned
+    array is sorted by distance from the first input point.
     """
-    x, y = relative_point = np.array(point_2) - np.array(point_1)
-    a, b = point_1
-    slope: float = y / x
-    points = []
-    for i in range(1, x):
-        for j in range(1, y):
-            if j == np.ceil(slope * i) or j == np.floor(slope * i):
-                points.append((i + a, j + b))
-    return np.array(points)
+    x1, y1 = point_1
+    x2, y2 = point_2
+
+    # Calculate the slope of the line
+    if x1 == x2:
+        # Handle the special case where the line is vertical
+        x_coords: np.ndarray = np.full(abs(y2 - y1) + 1, x1)
+        y_coords: np.ndarray = np.arange(min(y1, y2), max(y1, y2) + 1)
+    else:
+        slope: float = (y2 - y1) / (x2 - x1)
+        intercept: float = y1 - slope * x1
+
+        # Calculate the coordinates of the points on the line
+        x_coords: np.ndarray = np.arange(min(x1, x2), max(x1, x2) + 1)
+        y_coords: np.ndarray = np.around(slope * x_coords + intercept).astype(
+            int
+        )
+
+    # Combine the x and y coordinates into a single array
+    points: np.ndarray = np.column_stack((x_coords, y_coords))
+
+    # Remove duplicate points
+    points: np.ndarray = np.unique(points, axis=0)
+
+    # Sort the points by distance from the first input point
+    distances: np.ndarray = np.linalg.norm(points - point_1, axis=1)
+    sorted_indices: np.ndarray = np.argsort(distances)
+    points: np.ndarray = points[sorted_indices]
+
+    return points
