@@ -30,6 +30,7 @@ coordinate in a distribution.
 """
 
 import random
+from typing import Union
 import numpy as np
 import organism as org
 import utilities as utils
@@ -133,6 +134,47 @@ class World:
                         self.organism_distribution[new_coordinates[0]][
                             new_coordinates[1]
                         ] = organism
+
+                    elif (
+                        self.food_distribution[i][j]
+                        >= 2 * organism.characters[2]
+                    ):
+                        prefered_position = tuple(
+                            [
+                                (i, j)[p] + random.choice((-1, 1))
+                                for p in range(2)
+                            ]
+                        )
+                        x, y = get_feasible_position(
+                            (i, j),
+                            prefered_position,
+                            self.organism_distribution,
+                        )
+                        if organism.characters[3] == 0:
+                            offspring: Union[
+                                org.Organism, None
+                            ] = org.reproduce(organism, organism, 0.3)
+                        else:
+                            partner: Union[org.Organism, None] = None
+                            neighbour_cells: np.ndarray = get_neighbour_cells(
+                                (i, j), self.organism_distribution
+                            )
+                            for row in neighbour_cells:
+                                for organism in row:
+                                    if organism:
+                                        partner: Union[
+                                            org.Organism, None
+                                        ] = organism
+                                        break
+                            if isinstance(partner, org.Organism):
+                                offspring: Union[
+                                    org.Organism, None
+                                ] = org.reproduce(organism, partner, 0.3)
+                            else:
+                                offspring: Union[org.Organism, None] = None
+
+                            if offspring:
+                                self.organism_distribution[y][x] = offspring
 
                     # if food is not available kill it and derive some food
                     # from its dead body.
