@@ -314,9 +314,9 @@ def get_feasible_position(
         current_position, preferred_position
     )
 
-    for row, column in possible_positions:
+    for index, (row, column) in enumerate(possible_positions):
         if distribution[column][row]:
-            return row, column
+            return possible_positions[index - 1]
     return preferred_position
 
 
@@ -351,6 +351,7 @@ def get_points_between_2_points(
     slope and intercept, and returns an array of these coordinates. The returned
     array is sorted by distance from the first input point.
     """
+
     x1, y1 = point_1
     x2, y2 = point_2
 
