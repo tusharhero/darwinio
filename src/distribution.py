@@ -31,7 +31,6 @@ coordinate in a distribution.
 
 import random
 import numpy as np
-from typing import Union
 import organism as org
 import utilities as utils
 
@@ -119,59 +118,21 @@ class World:
                     if self.food_distribution[i][j] >= organism.characters[2]:
                         self.food_distribution[i][j] -= organism.characters[2]
 
-                        neural_output: np.ndarray = (
-                            organism.neural_network.run_neural_network(
-                                np.array((food_direction, i, j))
-                            )
+                        nx, ny = organism.neural_network.run_neural_network(
+                            np.array((food_direction, i, j))
                         )
 
-                        neighbour_cells_org_dist: np.ndarray = (
-                            get_neighbour_cells(
-                                (i, j), self.organism_distribution
-                            )
+                        new_coordinates: tuple = get_feasible_position(
+                            (i, j),
+                            (i + nx, j + ny),
+                            self.organism_distribution,
                         )
 
-                        neighbour_org_population: int = (
-                            get_distribution_population(
-                                neighbour_cells_org_dist
-                            )
-                        )
-
-                        if neighbour_org_population < 9:
-                            new_coordinates = tuple(
-                                utils.clamp(
-                                    int(neural_output[k]) + (i, j)[k],
-                                    self.canvas_size[k] - 1,
-                                    0,
-                                )
-                                for k in range(2)
-                            )
-
-                            # While an organism already lives there the new
-                            # coordinates keep (changing) until there is no
-                            # one else there
-
-                            while isinstance(
-                                self.organism_distribution[new_coordinates[0]][
-                                    new_coordinates[1]
-                                ],
-                                org.Organism,
-                            ):
-                                new_coordinates = tuple(
-                                    utils.clamp(
-                                        new_coordinates[k]
-                                        + random.choice((-1, 1)),
-                                        self.canvas_size[k] - 1,
-                                        0,
-                                    )
-                                    for k in range(2)
-                                )
-
-                                # move the organism
-                            self.organism_distribution[i][j] = None
-                            self.organism_distribution[new_coordinates[0]][
-                                new_coordinates[1]
-                            ] = organism
+                        # move the organism
+                        self.organism_distribution[i][j] = None
+                        self.organism_distribution[new_coordinates[0]][
+                            new_coordinates[1]
+                        ] = organism
 
                     # if food is not available kill it and derive some food
                     # from its dead body.
