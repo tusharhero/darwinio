@@ -97,15 +97,19 @@ class World:
         position. It also considers the direction of food around it.
         """
 
-        for i in range(self.canvas_size[0]):
-            for j in range(self.canvas_size[1]):
+        rows, cols = self.canvas_size
+
+        for i in range(rows):
+            for j in range(cols):
                 organism = self.organism_distribution[i][j]
-                neighbour_cells: np.ndarray = get_neighbour_cells(
+
+                neighbour_cells_food_dist: np.ndarray = get_neighbour_cells(
                     (i, j), self.food_distribution
                 )
+
                 food_direction = int(
-                    np.argmax(neighbour_cells.flatten())
-                    if np.size(neighbour_cells.flatten())
+                    np.argmax(neighbour_cells_food_dist)
+                    if np.size(neighbour_cells_food_dist.flatten())
                     else -1
                 )
 
@@ -121,39 +125,53 @@ class World:
                             )
                         )
 
-                        new_coordinates = tuple(
-                            utils.clamp(
-                                int(neural_output[k]) + (i, j)[k],
-                                self.canvas_size[k] - 1,
-                                0,
+                        neighbour_cells_org_dist: np.ndarray = (
+                            get_neighbour_cells(
+                                (i, j), self.organism_distribution
                             )
-                            for k in range(2)
                         )
 
-                        # While an organism already lives there the new
-                        # coordinates keep changing until there is no one else
-                        # there
-                        while isinstance(
-                            self.organism_distribution[new_coordinates[0]][
-                                new_coordinates[1]
-                            ],
-                            org.Organism,
-                        ):
+                        neighbour_org_population: int = (
+                            get_distribution_population(
+                                neighbour_cells_org_dist
+                            )
+                        )
+
+                        if neighbour_org_population < 9:
                             new_coordinates = tuple(
                                 utils.clamp(
-                                    new_coordinates[k]
-                                    + random.choice((-1, 1)),
+                                    int(neural_output[k]) + (i, j)[k],
                                     self.canvas_size[k] - 1,
                                     0,
                                 )
                                 for k in range(2)
                             )
 
-                        # move the organism
-                        self.organism_distribution[i][j] = None
-                        self.organism_distribution[new_coordinates[0]][
-                            new_coordinates[1]
-                        ] = organism
+                            # While an organism already lives there the new
+                            # coordinates keep (changing) until there is no
+                            # one else there
+
+                            while isinstance(
+                                self.organism_distribution[new_coordinates[0]][
+                                    new_coordinates[1]
+                                ],
+                                org.Organism,
+                            ):
+                                new_coordinates = tuple(
+                                    utils.clamp(
+                                        new_coordinates[k]
+                                        + random.choice((-1, 1)),
+                                        self.canvas_size[k] - 1,
+                                        0,
+                                    )
+                                    for k in range(2)
+                                )
+
+                                # move the organism
+                            self.organism_distribution[i][j] = None
+                            self.organism_distribution[new_coordinates[0]][
+                                new_coordinates[1]
+                            ] = organism
 
                     # if food is not available kill it and derive some food
                     # from its dead body.
@@ -301,3 +319,43 @@ def get_distribution_population(distribution: np.ndarray) -> int:
     return sum(
         [sum([1 if cell else 0 for cell in row]) for row in distribution]
     )
+
+
+def get_feasible_position(
+    current_position: tuple[int, int],
+    preferred_position: tuple[int, int],
+    distribution: np.ndarray,
+) -> tuple[int, int]:
+    """
+    Find a feasible position
+    """
+    possible_positions: np.ndarray = get_points_between_2_points(
+        current_position, preferred_position
+    )
+    index = 0
+    for point in possible_positions:
+        x, y = point
+        if distribution[x][y]:
+            break
+        else:
+            index += 1
+            continue
+    feasible_position = tuple(possible_positions[index - 1])
+    return feasible_position
+
+
+def get_points_between_2_points(
+    point_1: tuple[int, int], point_2: tuple[int, int]
+) -> np.ndarray:
+    """
+    Get the coordinates of the points between 2 points.
+    """
+    x, y = relative_point = np.array(point_2) - np.array(point_1)
+    a, b = point_1
+    slope: float = y / x
+    points = []
+    for i in range(1, x):
+        for j in range(1, y):
+            if j == np.ceil(slope * i) or j == np.floor(slope * i):
+                points.append((i + a, j + b))
+    return np.array(points)
