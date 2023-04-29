@@ -47,7 +47,7 @@ class World:
     of the canvas.
 
     food_distribution (numpy.ndarray): A numpy array of random integers
-    between 0 and 500000 of size `canvas_size`.
+    between 0 and 5000 of size `canvas_size`.
 
     organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list
     of organisms and `None` values of size `canvas_size`.
@@ -69,7 +69,7 @@ class World:
         self.canvas_size: tuple = canvas_size
         self.mutation_factor: float = mutation_factor
         self.food_distribution: np.ndarray = np.random.random_integers(
-            0, 500000, self.canvas_size
+            0, 500, self.canvas_size
         )
 
         # Randomly distribute the organisms
@@ -114,7 +114,7 @@ class World:
                 )
 
                 # check if there is an organism at the current location
-                if isinstance(organism, org.Organism):
+                if organism is not None:
                     # if enough food is available
                     if self.food_distribution[i][j] >= organism.characters[2]:
                         self.food_distribution[i][j] -= organism.characters[2]
@@ -124,7 +124,7 @@ class World:
                                 np.array((food_direction, i, j))
                             )
                             * 10
-                        )
+                        ).astype(int)
 
                         new_coordinates: tuple = get_feasible_position(
                             (i, j),
@@ -139,7 +139,7 @@ class World:
                             new_coordinates[1]
                         ] = organism
 
-                    elif (
+                    if (
                         self.food_distribution[i][j]
                         >= 2 * organism.characters[2]
                     ):
@@ -165,13 +165,13 @@ class World:
                                 (i, j), self.organism_distribution
                             )
                             for row in neighbour_cells:
-                                for organism in row:
-                                    if organism:
+                                for other_organism in row:
+                                    if other_organism:
                                         partner: Union[
                                             org.Organism, None
-                                        ] = organism
+                                        ] = other_organism
                                         break
-                            if isinstance(partner, org.Organism):
+                            if partner is not None:
                                 offspring: Union[
                                     org.Organism, None
                                 ] = org.reproduce(organism, partner, 0.3)
@@ -188,102 +188,6 @@ class World:
                             organism.characters[2] * 10
                         )
                         self.organism_distribution[i][j] = None
-
-    def get_next_gen(self):
-        """
-        Calculate the distribution of organisms for the next generation based
-        on the current distribution.
-
-        Note:
-        ----
-        This method applies the rules of the simulation to the current
-        distribution of organisms and produces the distribution for the next
-        generation. The current distribution is first converted to a numpy
-        array for processing. Then, for each cell in the grid, the function
-        checks whether the organism at that cell can reproduce. If the
-        organism is asexual, it creates an offspring and adds food to the
-        current cell. If the organism is sexual, the function searches for a
-        valid partner among its neighboring cells. If a partner is found, the
-        two organisms reproduce to produce an offspring. The distribution of
-        organisms for the next generation is stored in a list of lists, and
-        is updated at the end of the function.
-        """
-
-        # Convert current generation to a binary numpy array for processing
-        reproductive_distribution = np.array(
-            [
-                [
-                    1 if isinstance(organism, org.Organism) else 0
-                    for organism in column
-                ]
-                for column in self.organism_distribution
-            ]
-        )
-
-        next_gen_organism_distribution = np.array(
-            [
-                [None for _ in range(self.canvas_size[1])]
-                for _ in range(self.canvas_size[0])
-            ]
-        )
-
-        for i in range(self.canvas_size[0]):
-            for j in range(self.canvas_size[1]):
-                organism = self.organism_distribution[i][j]
-
-                if isinstance(organism, org.Organism):
-                    # If the organism is asexual, create offspring
-                    if organism.characters[3] == 0:
-                        next_gen_organism_distribution[i][j] = org.reproduce(
-                            organism, organism, self.mutation_factor
-                        )
-                        self.food_distribution[i][j] += (
-                            organism.characters[2] * 10
-                        )
-                        reproductive_distribution[i][j] = 0
-                    # If organism is sexual
-                    else:
-                        neighbours: np.ndarray = get_neighbour_cells(
-                            (i, j), reproductive_distribution
-                        )
-                        x = y = 0
-
-                        # try to find a valid partner
-                        partner = self.organism_distribution[i + x - 1][
-                            j + y - 1
-                        ]
-                        while (
-                            neighbours[x][y] != 0
-                            and partner.characters[3] == 0
-                            if isinstance(partner, org.Organism)
-                            else True
-                        ):
-                            x += 1
-                            y += 1
-                            partner = self.organism_distribution[i + x - 1][
-                                j + y - 1
-                            ]
-                            # If all neighbours have been checked, break out
-                            # of loop
-                            if x == len(neighbours) and y == len(
-                                neighbours[0]
-                            ):
-                                partner = None
-                                break
-
-                        # if partner has been found reproduce
-                        if isinstance(partner, org.Organism):
-                            next_gen_organism_distribution[i][
-                                j
-                            ] = org.reproduce(
-                                organism, partner, self.mutation_factor
-                            )
-                            # Make sure the partner doesn't reproduce with
-                            # someother organism
-                            reproductive_distribution[i][j] = 0
-                            reproductive_distribution[i + x - 1][j + y - 1] = 0
-
-        self.organism_distribution: np.ndarray = next_gen_organism_distribution
 
 
 def get_neighbour_cells(
@@ -310,8 +214,8 @@ def get_neighbour_cells(
     x, y = coordinates
     rows, cols = np.shape(distribuion)
     return distribuion[
-        utils.clamp(x - 1, rows, 0) : utils.clamp(x + 1, rows, 0) + 1,
-        utils.clamp(y - 1, cols, 0) : utils.clamp(y + 1, cols, 0) + 1,
+        np.clip(x - 1, rows, 0) : utils.clamp(x + 1, rows, 0) + 1,
+        np.clip(y - 1, cols, 0) : utils.clamp(y + 1, cols, 0) + 1,
     ]
 
 
@@ -364,16 +268,24 @@ def get_feasible_position(
 
     for index, position in enumerate(possible_positions):
         row, column = tuple(position)
-        if distribution[utils.clamp(column, 0, y - 1)][
-            utils.clamp(row, 0, x - 1)
-        ]:
+        if distribution[np.clip(column, y - 1, 0)][np.clip(row, x - 1, 0)]:
+            print(position)
             return tuple(
-                possible_positions[index - 1 if index != 0 else index]
+                [
+                    np.clip(
+                        possible_positions[index - 1 if index != 0 else index][
+                            p
+                        ],
+                        (y, x)[p] - 1,
+                        0,
+                    )
+                    for p in range(2)
+                ]
             )
     return tuple(
         np.array(
             [
-                utils.clamp(preferred_position[p], 0, (x, y)[p] - 1)
+                np.clip(preferred_position[p], 0, (x, y)[p] - 1)
                 for p in range(2)
             ]
         ).astype(int)
@@ -442,4 +354,4 @@ def get_points_between_2_points(
     sorted_indices: np.ndarray = np.argsort(distances)
     points: np.ndarray = points[sorted_indices]
 
-    return points.astype(int)
+    return points[1:-1].astype(int)
