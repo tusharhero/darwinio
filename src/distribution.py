@@ -46,8 +46,8 @@ class World:
     canvas_size (tuple): A tuple of two integers representing the dimensions
     of the canvas.
 
-    food_distribution (numpy.ndarray): A numpy array of random integers between
-    0 and 500000 of size `canvas_size`.
+    food_distribution (numpy.ndarray): A numpy array of random integers
+    between 0 and 500000 of size `canvas_size`.
 
     organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list
     of organisms and `None` values of size `canvas_size`.
@@ -92,9 +92,9 @@ class World:
         -----
         Updates the state of the world by iterating over each organism and
         updating its position based on its neural network's output. If
-        another organism is not present at its current position after updating,
-        it is removed from the current position and added to the new
-        position. It also considers the direction of food around it.
+        another organism is not present at its current position after
+        updating , it is removed from the current position and added to the
+        new position. It also considers the direction of food around it.
         """
 
         rows, cols = self.canvas_size
@@ -119,14 +119,18 @@ class World:
                     if self.food_distribution[i][j] >= organism.characters[2]:
                         self.food_distribution[i][j] -= organism.characters[2]
 
-                        nx, ny = organism.neural_network.run_neural_network(
-                            np.array((food_direction, i, j))
+                        nx, ny = (
+                            organism.neural_network.run_neural_network(
+                                np.array((food_direction, i, j))
+                            )
+                            * 10
                         )
 
                         new_coordinates: tuple = get_feasible_position(
                             (i, j),
                             (i + nx, j + ny),
                             self.organism_distribution,
+                            self.canvas_size,
                         )
 
                         # move the organism
@@ -149,6 +153,7 @@ class World:
                             (i, j),
                             prefered_position,
                             self.organism_distribution,
+                            self.canvas_size,
                         )
                         if organism.characters[3] == 0:
                             offspring: Union[
@@ -328,15 +333,16 @@ def get_feasible_position(
     current_position: tuple[int, int],
     preferred_position: tuple[int, int],
     distribution: np.ndarray,
+    canvas_size: tuple[int, int],
 ) -> tuple[int, int]:
     """
-    Finds a feasible position given a current position, preferred position, and
-    a distribution.
+    Finds a feasible position given a current position, preferred position,
+    and a distribution.
 
     Args:
     ----
-    current_position: A tuple containing the x and y coordinates of the current
-    position.
+    current_position: A tuple containing the x and y coordinates of the
+    current position.
 
     preferred_position: A tuple containing the x and y coordinates of the
     preferred position.
@@ -347,21 +353,31 @@ def get_feasible_position(
     Returns:
     -------
     A tuple containing the x and y coordinates of a feasible position. If
-    there are no feasible positions between the current and preferred positions,
-    returns the preferred position if it is feasible, otherwise returns the
-    current position.
+    there are no feasible positions between the current and preferred
+    positions, returns the preferred position if it is feasible, otherwise
+    returns the current position.
     """
+    x, y = canvas_size
     possible_positions: np.ndarray = get_points_between_2_points(
         current_position, preferred_position
     )
 
     for index, position in enumerate(possible_positions):
         row, column = tuple(position)
-        if distribution[column][row]:
+        if distribution[utils.clamp(column, 0, y - 1)][
+            utils.clamp(row, 0, x - 1)
+        ]:
             return tuple(
                 possible_positions[index - 1 if index != 0 else index]
             )
-    return tuple(np.array(preferred_position).astype(int))
+    return tuple(
+        np.array(
+            [
+                utils.clamp(preferred_position[p], 0, (x, y)[p] - 1)
+                for p in range(2)
+            ]
+        ).astype(int)
+    )
 
 
 def get_points_between_2_points(
