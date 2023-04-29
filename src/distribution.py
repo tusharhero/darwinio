@@ -351,23 +351,25 @@ def get_feasible_position(
     returns the preferred position if it is feasible, otherwise returns the
     current position.
     """
-
     possible_positions: np.ndarray = get_points_between_2_points(
         current_position, preferred_position
     )
 
-    for index, (row, column) in enumerate(possible_positions):
+    for index, position in enumerate(possible_positions):
+        row, column = tuple(position)
         if distribution[column][row]:
-            return possible_positions[index - 1]
-    return preferred_position
+            return tuple(
+                possible_positions[index - 1 if index != 0 else index]
+            )
+    return tuple(np.array(preferred_position).astype(int))
 
 
 def get_points_between_2_points(
     point_1: tuple[int, int], point_2: tuple[int, int]
 ) -> np.ndarray:
     """
-    Return an array of coordinates of points that lie on the line between two given
-    points.
+    Return an array of coordinates of points that lie on the line between two
+    given points.
 
     Args:
     -----
@@ -384,18 +386,19 @@ def get_points_between_2_points(
 
     Note:
     -----
-    The function calculates the coordinates of the points that lie on the line
-    between the two input points, and returns an array of these coordinates. The
-    function first determines the slope and intercept of the line connecting the
-    two input points. If the line is vertical, the function returns an array of
-    points with the same x coordinate and a range of y coordinates. Otherwise,
-    the function calculates the coordinates of the points on the line using the
-    slope and intercept, and returns an array of these coordinates. The returned
-    array is sorted by distance from the first input point.
+    The function calculates the coordinates of the points that lie on the
+    line between the two input points, and returns an array of these
+    coordinates. The function first determines the slope and intercept of the
+    line connecting the two input points. If the line is vertical, the
+    function returns an array of points with the same x coordinate and a
+    range of y coordinates. Otherwise, the function calculates the
+    coordinates of the points on the line using the slope and intercept, and
+    returns an array of these coordinates. The returned array is sorted by
+    distance from the first input point.
     """
 
-    x1, y1 = point_1
-    x2, y2 = point_2
+    x1, y1 = np.array(point_1).astype(int)
+    x2, y2 = np.array(point_2).astype(int)
 
     # Calculate the slope of the line
     if x1 == x2:
@@ -423,4 +426,4 @@ def get_points_between_2_points(
     sorted_indices: np.ndarray = np.argsort(distances)
     points: np.ndarray = points[sorted_indices]
 
-    return points
+    return points.astype(int)
