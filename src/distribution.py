@@ -33,7 +33,6 @@ import random
 from typing import Union
 import numpy as np
 import organism as org
-import utilities as utils
 
 
 class World:
@@ -227,9 +226,7 @@ def get_distribution_population(distribution: np.ndarray) -> int:
     distribuion (np.ndarray): A 2D array of values representing a
     distribution of some kind.
     """
-    return sum(
-        [sum([1 if cell else 0 for cell in row]) for row in distribution]
-    )
+    return np.count_nonzero(distribution)
 
 
 def get_feasible_position(

@@ -94,7 +94,7 @@ class Organism:
 
             self.characters: np.ndarray = input_data
 
-        elif isinstance(input_data, str):
+        elif input_data is not None:
             self.genome: str = input_data + gn.get_random_genome(
                 size_of_genome - len(input_data)
             )
