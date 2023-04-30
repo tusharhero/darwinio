@@ -212,8 +212,8 @@ def get_neighbour_cells(
     x, y = coordinates
     rows, cols = np.shape(distribuion)
     return distribuion[
-        np.clip(x - 1, rows, 0) : np.clip(x + 1, rows, 0) + 1,
-        np.clip(y - 1, cols, 0) : np.clip(y + 1, cols, 0) + 1,
+        np.clip(x - 1, 0, rows) : np.clip(x + 1, 0, rows) + 1,
+        np.clip(y - 1, 0, cols) : np.clip(y + 1, 0, cols) + 1,
     ]
 
 
@@ -264,15 +264,15 @@ def get_feasible_position(
 
     for index, position in enumerate(possible_positions):
         row, column = tuple(position)
-        if distribution[np.clip(column, y - 1, 0)][np.clip(row, x - 1, 0)]:
+        if distribution[np.clip(column, 0, y - 1)][np.clip(row, 0, x - 1)]:
             return tuple(
                 [
                     np.clip(
                         possible_positions[index - 1 if index != 0 else index][
                             p
                         ],
-                        (y, x)[p] - 1,
                         0,
+                        (y, x)[p] - 1,
                     )
                     for p in range(2)
                 ]
