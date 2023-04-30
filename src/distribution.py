@@ -69,7 +69,7 @@ class World:
         self.canvas_size: tuple = canvas_size
         self.mutation_factor: float = mutation_factor
         self.food_distribution: np.ndarray = np.random.random_integers(
-            0, 500, self.canvas_size
+            0, 50000, self.canvas_size
         )
 
         # Randomly distribute the organisms
@@ -118,7 +118,6 @@ class World:
                     # if enough food is available
                     if self.food_distribution[i][j] >= organism.characters[2]:
                         self.food_distribution[i][j] -= organism.characters[2]
-
                         nx, ny = (
                             organism.neural_network.run_neural_network(
                                 np.array((food_direction, i, j))
@@ -214,8 +213,8 @@ def get_neighbour_cells(
     x, y = coordinates
     rows, cols = np.shape(distribuion)
     return distribuion[
-        np.clip(x - 1, rows, 0) : utils.clamp(x + 1, rows, 0) + 1,
-        np.clip(y - 1, cols, 0) : utils.clamp(y + 1, cols, 0) + 1,
+        np.clip(x - 1, rows, 0) : np.clip(x + 1, rows, 0) + 1,
+        np.clip(y - 1, cols, 0) : np.clip(y + 1, cols, 0) + 1,
     ]
 
 
@@ -269,7 +268,6 @@ def get_feasible_position(
     for index, position in enumerate(possible_positions):
         row, column = tuple(position)
         if distribution[np.clip(column, y - 1, 0)][np.clip(row, x - 1, 0)]:
-            print(position)
             return tuple(
                 [
                     np.clip(
