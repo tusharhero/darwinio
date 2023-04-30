@@ -349,4 +349,4 @@ def get_points_between_2_points(
     sorted_indices: np.ndarray = np.argsort(distances)
     points: np.ndarray = points[sorted_indices]
 
-    return points[1:-1].astype(int)
+    return points[:-1].astype(int)
