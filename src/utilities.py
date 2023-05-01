@@ -15,13 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Various functions which don't fit-in in other files.
-"""
+"""Various functions which don't fit-in in other files."""
+
+import numpy as np
 
 
-def clamp(value: int, max_value: int, min_value: int) -> int:
-    """
-    Ensure that its between two values.
-    """
-    return max(min_value, min(max_value, value))
+def normalize(arr: np.ndarray) -> np.ndarray:
+    """Normalize the Numpy Array."""
+    return np.nan_to_num(arr / np.linalg.norm(arr))
