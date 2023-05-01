@@ -14,6 +14,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """A module for representing a World with an array representing each layer.
 
 Classes:
@@ -25,6 +26,15 @@ Functions:
 ----------
 get_neighbour_cells: the values of neighbouring cells around a given
 coordinate in a distribution.
+
+get_distribution_population: Get the number of "truthy" values in
+the distribution.
+
+get_feasible_position: Finds a feasible position given a current
+position, preferred position, and a distribution.
+
+get_points_between_2_points: Return an array of coordinates of points
+that lie on the line between two given points.
 """
 
 import random
@@ -92,7 +102,8 @@ class World:
         another organism is not present at its current position after
         updating , it is removed from the current position and added to the
         new position. It also considers the direction of food around it.
-        Then it allows the organism to reproduce if it has access to 2x the amount of food.
+        Then it allows the organism to reproduce if it has access to 2x
+        the amount of food.
         """
 
         rows, cols = self.canvas_size
@@ -127,7 +138,6 @@ class World:
                             (i, j),
                             (i + nx, j + ny),
                             self.organism_distribution,
-                            self.canvas_size,
                         )
 
                         # move the organism
@@ -151,7 +161,6 @@ class World:
                             (i, j),
                             prefered_position,
                             self.organism_distribution,
-                            self.canvas_size,
                         )
 
                         # asexual
@@ -234,10 +243,9 @@ def get_feasible_position(
     current_position: tuple[int, int],
     preferred_position: tuple[int, int],
     distribution: np.ndarray,
-    canvas_size: tuple[int, int],
 ) -> tuple[int, int]:
-    """Finds a feasible position given a current position, preferred position,
-    and a distribution.
+    """Finds a feasible position given a current position, preferred
+    position, and a distribution.
 
     Args:
     ----
@@ -250,9 +258,6 @@ def get_feasible_position(
     distribution: A 2D numpy array representing the distribution of feasible
     positions.
 
-    canvas_size (tuple): A tuple of two integers representing the dimensions
-    of the canvas.
-
     Returns:
     -------
     A tuple containing the x and y coordinates of a feasible position. If
@@ -260,7 +265,7 @@ def get_feasible_position(
     positions, returns the preferred position if it is feasible, otherwise
     returns the current position.
     """
-    x, y = canvas_size
+    x, y = distribution.shape
     possible_positions: np.ndarray = get_points_between_2_points(
         current_position, preferred_position
     )[:-1]
