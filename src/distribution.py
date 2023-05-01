@@ -79,6 +79,9 @@ class World:
         self.food_distribution: np.ndarray = np.random.random_integers(
             0, 50000, self.canvas_size
         )
+        self.temp_distribution: np.ndarray = np.random.random_integers(
+            0, 350, self.canvas_size
+        )
 
         # Randomly distribute the organisms
         self.organism_distribution = np.array(
@@ -112,20 +115,39 @@ class World:
             for j in range(cols):
                 organism = self.organism_distribution[i][j]
 
-                neighbour_cells_food_dist: np.ndarray = get_neighbour_cells(
-                    (i, j), self.food_distribution
-                )
-
-                food_direction = int(
-                    np.argmax(neighbour_cells_food_dist)
-                    if np.size(neighbour_cells_food_dist.flatten())
-                    else -1
-                )
-
                 # check if there is an organism at the current location
                 if organism is not None:
-                    # if enough food is available
-                    if self.food_distribution[i][j] >= organism.characters[2]:
+                    temp_range = get_integer_neighbors(
+                        organism.characters[0], 25
+                    )
+                    food_value = self.food_distribution[i][j]
+
+                    # name the conditions
+
+                    has_enough_food: bool = (
+                        food_value >= organism.characters[2]
+                    )
+                    is_in_ideal_temp: bool = (
+                        self.temp_distribution[i][j] in temp_range
+                    )
+                    has_enough_food_for_reprod: bool = (
+                        food_value >= 2 * organism.characters[2]
+                    )
+                    is_in_ideal_temp_for_reprod: bool = (
+                        self.temp_distribution[i][j] in temp_range
+                    )
+
+                    if has_enough_food and is_in_ideal_temp:
+                        neighbour_cells_food_dist: np.ndarray = (
+                            get_neighbour_cells((i, j), self.food_distribution)
+                        )
+
+                        food_direction = int(
+                            np.argmax(neighbour_cells_food_dist)
+                            if np.size(neighbour_cells_food_dist.flatten())
+                            else -1
+                        )
+
                         self.food_distribution[i][j] -= organism.characters[2]
                         nx, ny = (
                             organism.neural_network.run_neural_network(
@@ -146,10 +168,9 @@ class World:
                             new_coordinates[1]
                         ] = organism
 
-                    # check if there is enough food for reproduction
                     if (
-                        self.food_distribution[i][j]
-                        >= 2 * organism.characters[2]
+                        has_enough_food_for_reprod
+                        and is_in_ideal_temp_for_reprod
                     ):
                         prefered_position = tuple(
                             [
@@ -177,9 +198,7 @@ class World:
                             for row in neighbour_cells:
                                 for other_organism in row:
                                     if other_organism:
-                                        partner: Union[
-                                            org.Organism, None
-                                        ] = other_organism
+                                        partner = other_organism
                                         break
                             if partner is not None:
                                 offspring: Union[
@@ -357,3 +376,8 @@ def get_points_between_2_points(
     points: np.ndarray = points[sorted_indices]
 
     return points.astype(int)
+
+
+def get_integer_neighbors(value: int, radius: int) -> np.ndarray:
+    """Get integers around a particular integers."""
+    return np.arange(value - radius, value + radius)
