@@ -37,9 +37,10 @@ get_points_between_2_points: Return an array of coordinates of points
 that lie on the line between two given points.
 """
 
-import random
 from typing import Union
 import numpy as np
+import random
+import opensimplex as simplex
 import organism as org
 
 
@@ -76,12 +77,10 @@ class World:
 
         self.canvas_size: tuple = canvas_size
         self.mutation_factor: float = mutation_factor
-        self.food_distribution: np.ndarray = np.random.random_integers(
-            0, 50000, self.canvas_size
-        )
-        self.temp_distribution: np.ndarray = np.random.random_integers(
-            0, 350, self.canvas_size
-        )
+        self.food_distribution: np.ndarray = (
+            (np.abs(simplex_noise(self.canvas_size)) + 1) * 5000
+        ).astype(int)
+        self.temp_distribution: np.ndarray = np.ones(self.canvas_size) * 300
 
         # Randomly distribute the organisms
         self.organism_distribution = np.array(
@@ -149,6 +148,7 @@ class World:
                         )
 
                         self.food_distribution[i][j] -= organism.characters[2]
+
                         nx, ny = (
                             organism.neural_network.run_neural_network(
                                 np.array((food_direction, i, j))
@@ -174,7 +174,7 @@ class World:
                     ):
                         prefered_position = tuple(
                             [
-                                (i, j)[p] + random.choice((-1, 1))
+                                (i, j)[p] + np.random.choice((-1, 1))
                                 for p in range(2)
                             ]
                         )
@@ -381,3 +381,59 @@ def get_points_between_2_points(
 def get_integer_neighbors(value: int, radius: int) -> np.ndarray:
     """Get integers around a particular integers."""
     return np.arange(value - radius, value + radius)
+
+
+def simplex_noise(
+    canvas_size,
+    scale=50.0,
+    octaves=6,
+    persistence=0.6,
+    lacunarity=2.0,
+    seed=None,
+):
+    """Generate 2D Simplex noise.
+
+    Args:
+    -----
+    canvas_size: The size of the canvas as a tuple (width, height).
+
+    scale: Controls the size of the features in the noise. Larger values
+    create larger features, smaller values create smaller features.
+
+    octaves: The number of octaves to combine to create the final noise.
+    Each additional octave adds finer detail to the noise.
+
+    persistence: Controls the decrease in amplitude of the octaves as they
+    are added. Larger values create more contrast between the high and low
+    values in the noise.
+
+    lacunarity: Controls the increase in frequency of the octaves as they
+    are added. Larger values create more fine-grained detail in the noise.
+
+    seed: The random seed to use for generating the noise. If None, a
+    random seed will be generated.
+
+    Returns:
+    --------
+    noise: np.ndarray
+        The generated noise as a 2D numpy array with shape (height, width).
+    """
+    size_x, size_y = canvas_size
+    noise = np.zeros(canvas_size)
+    if seed is not None:
+        simplex.seed(seed)
+    else:
+        simplex.seed(np.random.randint(0, 2**31 - 1))
+    for x in range(size_x):
+        for y in range(size_y):
+            amplitude = 1.0
+            frequency = 1.0
+            value = 0.0
+            for _ in range(octaves):
+                sample_x = x / scale * frequency
+                sample_y = y / scale * frequency
+                value += simplex.noise2(sample_x, sample_y) * amplitude
+                amplitude *= persistence
+                frequency *= lacunarity
+            noise[x][y] = value
+    return noise
