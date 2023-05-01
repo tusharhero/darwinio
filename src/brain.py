@@ -14,9 +14,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-"""
-Classes and methods for handling the neural network.
+"""Classes and methods for handling the neural network.
 
 Classes:
 -------------
@@ -35,33 +33,23 @@ import utilities as utils
 
 
 class NeuralNetwork:
-    """
-    A class for representing a neural network with a given genome and neural
+    """A class for representing a neural network with a given genome and neural
     structure.
-
-    Args:
-    -----
-    weights: An one-dimensional Numpy Array containing the weights for
-    the neural network.
-
-    neural_structure: A numpy ndarray representing the neural structure
-    of the organism.
 
     Attributes:
     ----------
+    weights: contains weights of the neural network.
+
     neural_structure: A numpy ndarray of integers representing the
     structure of the neural network, where each integer represents the number
     of neurons in that layer.
-
-    weights: contains weights of the neural network.
     """
 
     def __init__(
         self, weights: np.ndarray, neural_structure: np.ndarray
     ) -> None:
-        """
-        Initialize a neural network object with the given weight and
-        neural structure.
+        """Initialize a neural network object with the given weight and neural
+        structure.
 
         Args:
         -----
@@ -76,8 +64,7 @@ class NeuralNetwork:
         self.neural_structure: np.ndarray = neural_structure
 
     def run_neural_network(self, input_values: np.ndarray) -> np.ndarray:
-        """
-        Run the neural network according to input values.
+        """Run the neural network according to input values.
 
         Args:
         -----
@@ -137,9 +124,18 @@ class NeuralNetwork:
 
 
 def create_weights(genome: str, neural_structure: np.ndarray) -> np.ndarray:
-    """
-    Creates the weights for the neural network based on the genome and
+    """Creates the weights for the neural network based on the genome and
     neural structure.
+
+    Args:
+    -----
+    genome: A string representing the hexadecimal genome of the organism.
+
+    neural_structure: An Numpy Array representing the structure of the neural network.
+
+    Returns:
+    -------
+    A Numpy Array containing the weights.
 
     Note:
     -----

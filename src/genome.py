@@ -14,9 +14,7 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-"""
-Various methods for encoding and decoding genomes.
+"""Various methods for encoding and decoding genomes.
 
 Functions:
 --------
@@ -37,9 +35,7 @@ import numpy as np
 
 
 def get_random_genome(size: int) -> str:
-    """
-    Generates a random hexadecimal genome of the specified size.
-    """
+    """Generates a random hexadecimal genome of the specified size."""
     return "".join(
         [
             random.choice("0123456789abcdef")
@@ -49,8 +45,7 @@ def get_random_genome(size: int) -> str:
 
 
 def generate_basepairs(genome: str, letters_per_character: int) -> np.ndarray:
-    """
-    Convert a genome string into an array of base pairs.
+    """Convert a genome string into an array of base pairs.
 
     Args:
     -------
@@ -63,6 +58,8 @@ def generate_basepairs(genome: str, letters_per_character: int) -> np.ndarray:
     -------
     A NumPy array of strings representing the base pairs in the genome.
 
+    Note:
+    ------
     The function first splits the genome string into substrings of length
     letters_per_character the resulting strings are then returned as a NumPy
     array of base pairs.
@@ -81,8 +78,7 @@ def generate_offspring_genome(
     mutation_factor: float,
     letters_per_character: int = 1,
 ) -> str:
-    """
-    Generate a genome for an offspring of the given parents with mutations.
+    """Generate a genome for an offspring of the given parents with mutations.
 
     Args:
     -------
@@ -138,8 +134,7 @@ def generate_offspring_genome(
 def encode_organism_characteristics(
     characteristics: np.ndarray, length: int, letters_per_character: int = 1
 ) -> str:
-    """
-    Encode the given organism characteristics into a genome string.
+    """Encode the given organism characteristics into a genome string.
 
     Args:
     -------
@@ -186,8 +181,7 @@ def encode_organism_characteristics(
 def decode_organism_characteristics(
     genome: str, array_length: int, letters_per_character: int = 1
 ) -> np.ndarray:
-    """
-    Decode the given genome into an array of organism characteristics.
+    """Decode the given genome into an array of organism characteristics.
 
     Args:
     -------

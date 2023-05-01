@@ -14,16 +14,11 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-"""
-Various functions which don't fit-in in other files.
-"""
+"""Various functions which don't fit-in in other files."""
 
 import numpy as np
 
 
 def normalize(arr: np.ndarray) -> np.ndarray:
-    """
-    Normalize the Numpy Array
-    """
+    """Normalize the Numpy Array."""
     return np.nan_to_num(arr / np.linalg.norm(arr))
