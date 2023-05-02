@@ -29,7 +29,7 @@ reproduce: Generate offspring of the two Organisms.
 
 Note:
 --------
-Characteristics are stored as:
+Characters are stored as:
     0: ideal temperature
     1: trophic level
     2: energy requirement
@@ -49,7 +49,7 @@ class Organism:
     ---------
     genome: A string representing the organism's genome.
 
-    characters: A NumPy array containing the organism's characteristics.
+    characters: A NumPy array containing the organism's characters.
 
     neural_network: A neural network generated from the genome of the organism
 
@@ -69,9 +69,9 @@ class Organism:
         Args:
         -----
         input_data : A string representing the organism's genome or a NumPy
-        array containing the organism's characteristics.
+        array containing the organism's characters.
 
-        number_of_characters : The number of characteristics
+        number_of_characters : The number of characters
 
         size_of_genome: Its the length of the genome string.
 
@@ -81,9 +81,9 @@ class Organism:
 
         self.letters_per_character: int = letters_per_character
 
-        # check if input is genome or characteristics
+        # check if input is genome or characters
         if isinstance(input_data, np.ndarray):
-            self.genome: str = gn.encode_organism_characteristics(
+            self.genome: str = gn.encode_organism_characters(
                 input_data,
                 number_of_characters
                 if number_of_characters > size_of_genome
@@ -98,7 +98,7 @@ class Organism:
                 size_of_genome - len(input_data)
             )
 
-            self.characters: np.ndarray = gn.decode_organism_characteristics(
+            self.characters: np.ndarray = gn.decode_organism_characters(
                 input_data, number_of_characters, self.letters_per_character
             )
         # assign a neural_network generated from the the genome
@@ -110,7 +110,6 @@ class Organism:
 def get_random_organism(
     size_of_genome: int = 8 * 3,
     letters_per_character: int = 3,
-    allow_immortality: bool = False,
 ) -> Organism:
     """Generate a random organism.
 
@@ -118,19 +117,28 @@ def get_random_organism(
     -----
     size_of_genome : the size of the genome
 
-    allow_immortality: allow the organism to be immortal
+    letters_per_character: The number of digits that would be used for
+    representing each character.
 
     Returns:
     ---------
     Organism: A random instance of the Organism class.
     """
-    organism: Organism = Organism(
-        input_data=gn.get_random_genome(size_of_genome),
-        letters_per_character=letters_per_character,
+
+    characters: np.ndarray = np.array(
+        (
+            np.random.randint(230, 400),  # ideal temperature
+            np.random.randint(0, 3),  # trophic level
+            np.random.randint(100, 1000),  # energy requirement
+            np.random.randint(0, 1 + 1),  # reproductive type
+        )
     )
-    if not allow_immortality:
-        if organism.characters[2] == 0:
-            organism.characters[2] = np.random.randint(1, 16)
+
+    organism: Organism = Organism(
+        input_data=characters,
+        letters_per_character=letters_per_character,
+        size_of_genome=size_of_genome,
+    )
 
     return organism
 

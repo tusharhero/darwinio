@@ -14,7 +14,6 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 """Various methods for encoding and decoding genomes.
 
 Functions:
@@ -24,11 +23,11 @@ get_random_genome: a random hexadecimal genome of the specified size.
 generate_offspring_genome: Generate a genome for an offspring of the given
 parents with mutations.
 
-encode_organism_characteristics: Encode the given organism characteristics
+encode_organism_characters: Encode the given organism characters
 into a genome string.
 
-decode_organism_characteristics: Decode the given genome into an array of
-organism characteristics.
+decode_organism_characters: Decode the given genome into an array of
+organism characters.
 """
 
 import random
@@ -59,8 +58,6 @@ def generate_basepairs(genome: str, letters_per_character: int) -> np.ndarray:
     -------
     A NumPy array of strings representing the base pairs in the genome.
 
-    Note:
-    ------
     The function first splits the genome string into substrings of length
     letters_per_character the resulting strings are then returned as a NumPy
     array of base pairs.
@@ -132,16 +129,15 @@ def generate_offspring_genome(
     return "".join(offspring_genome)
 
 
-def encode_organism_characteristics(
-    characteristics: np.ndarray, length: int, letters_per_character: int = 1
+def encode_organism_characters(
+    characters: np.ndarray, length: int, letters_per_character: int = 1
 ) -> str:
-    """Encode the given organism characteristics into a genome string.
+    """Encode the given organism characters into a genome string.
 
     Args:
     -------
-    characteristics: A numpy ndarray of integers representing the
-    characteristics to be encoded. Each characteristic should be between 0
-    and 16**letters_per_character-1.
+    characters: A numpy ndarray of integers representing the
+    characters to be encoded.
 
     length: An integer representing length of the genome, if its larger than
     the size of the array, the rest will be generated randomly.
@@ -151,58 +147,59 @@ def encode_organism_characteristics(
 
     Returns:
     -------
-    A string representing the genome encoded from the given characteristics.
+    A string representing the genome encoded from the given characters.
     The genome is in hexadecimal format, with each characteristic encoded as
     hexadecimal digits.
     """
 
     # check for errors
-    if not isinstance(characteristics, np.ndarray):
-        raise TypeError("Characteristics must be a NumPy ndarray")
-    if not characteristics.dtype == np.int64:
-        raise ValueError("Characteristics must be integers")
+    if not isinstance(characters, np.ndarray):
+        raise TypeError("Characters must be a NumPy ndarray")
+    if not characters.dtype == np.int64:
+        raise ValueError("Characters must be integers")
     if not np.all(
-        (0 <= characteristics)
-        & (characteristics <= 16**letters_per_character)
+        (0 <= characters) & (characters <= 16**letters_per_character)
     ):
         raise ValueError(
-            f"Characteristics must be between 0 and {16**letters_per_character -1}inclusive"
+            f"Characters must be between 0 and {16**letters_per_character -1}inclusive"
         )
-    if not length >= len(characteristics):
-        raise ValueError("length must be larger than size of Characteristics")
+    if not length >= len(characters):
+        raise ValueError("length must be larger than size of Characters")
 
-    genome = [
-        hex("0" * (letters_per_character - len(character)) + character)[2:]
-        for character in characteristics
+    hex_characters = [hex(character)[2:] for character in characters]
+
+    genome_list: list = [
+        "0" * (letters_per_character - len(character)) + character
+        for character in hex_characters
     ]
 
-    return "".join(genome) + get_random_genome(length - len(characteristics))
+    return "".join(genome_list) + get_random_genome(length - len(characters))
 
 
-def decode_organism_characteristics(
+def decode_organism_characters(
     genome: str, array_length: int, letters_per_character: int = 1
 ) -> np.ndarray:
-    """Decode the given genome into an array of organism characteristics.
+    """Decode the given genome into an array of organism characters.
 
     Args:
     -------
     genome: The genome string to be decoded.
 
     array_length: The length of the genome, actually intended to contain
-    characteristics
+    characters
 
     letters_per_character: The amount of digits used for representing each
     character.
 
     Returns:
     -------
-    A NumPy array containing the decoded organism characteristics. Each
+    A NumPy array containing the decoded organism characters. Each
     element of the array represents a characteristic and is an integer
     between 0 and 16**letters_per_character-1.
     """
 
     if not 0 <= array_length <= len(genome):
-        raise ValueError("length must be larger than size of Characteristics")
+        raise ValueError("length must be larger than size of Characters")
 
     return np.array(
         [
