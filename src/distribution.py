@@ -66,7 +66,7 @@ class World:
         """Initializes a new World instance.
 
         Args:
-        -----
+        ------
         canvas_size (tuple): A tuple of two integers representing the
         dimensions of the canvas.
 
@@ -78,11 +78,11 @@ class World:
         self.mutation_factor: float = mutation_factor
 
         self.food_distribution: np.ndarray = self.generate_distribution(
-            300, 100
+            500, 100
         ).astype(int)
 
         self.temp_distribution: np.ndarray = self.generate_distribution(
-            300, 30
+            315, 50
         ).astype(int)
 
         # Randomly distribute the organisms
@@ -120,7 +120,7 @@ class World:
                 # check if there is an organism at the current location
                 if organism is not None:
                     temp_range = get_integer_neighbors(
-                        organism.characters[0], 15
+                        organism.characters[0], 100
                     )
                     food_value = self.food_distribution[i][j]
 
@@ -406,4 +406,4 @@ def get_points_between_2_points(
 
 def get_integer_neighbors(value: int, radius: int) -> np.ndarray:
     """Get integers around a particular integers."""
-    return np.arange(value - radius, value + radius)
+    return np.arange(value - radius, value + radius + 1)
