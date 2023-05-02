@@ -143,10 +143,18 @@ class World:
                         neighbour_cells_food_dist: np.ndarray = (
                             get_neighbour_cells((i, j), self.food_distribution)
                         )
+                        neighbour_cells_temp_dist: np.ndarray = (
+                            get_neighbour_cells((i, j), self.temp_distribution)
+                        )
 
                         food_direction = int(
                             np.argmax(neighbour_cells_food_dist)
                             if np.size(neighbour_cells_food_dist.flatten())
+                            else -1
+                        )
+                        temp_direction = int(
+                            np.argmax(neighbour_cells_temp_dist)
+                            if np.size(neighbour_cells_temp_dist.flatten())
                             else -1
                         )
 
@@ -154,7 +162,7 @@ class World:
 
                         nx, ny = (
                             organism.neural_network.run_neural_network(
-                                np.array((food_direction, i, j))
+                                np.array((food_direction, temp_direction))
                             )
                             * 10
                         ).astype(int)
