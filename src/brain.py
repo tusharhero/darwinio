@@ -149,9 +149,7 @@ def create_weights(genome: str, neural_structure: np.ndarray) -> np.ndarray:
     )
 
     # convert the genome into an array of base10 numbers.
-    genome_seq: np.ndarray = gn.decode_organism_characteristics(
-        genome, len(genome)
-    )
+    genome_seq: np.ndarray = gn.decode_organism_characters(genome, len(genome))
 
     # generate the weights
     weights: np.ndarray = genome_seq[:number_of_neural_connections]

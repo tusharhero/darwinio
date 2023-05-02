@@ -37,9 +37,9 @@ get_points_between_2_points: Return an array of coordinates of points
 that lie on the line between two given points.
 """
 
-import random
 from typing import Union
 import numpy as np
+import random
 import organism as org
 
 
@@ -66,7 +66,7 @@ class World:
         """Initializes a new World instance.
 
         Args:
-        -----
+        ------
         canvas_size (tuple): A tuple of two integers representing the
         dimensions of the canvas.
 
@@ -76,9 +76,14 @@ class World:
 
         self.canvas_size: tuple = canvas_size
         self.mutation_factor: float = mutation_factor
-        self.food_distribution: np.ndarray = np.random.random_integers(
-            0, 50000, self.canvas_size
-        )
+
+        self.food_distribution: np.ndarray = self.generate_distribution(
+            500, 100
+        ).astype(int)
+
+        self.temp_distribution: np.ndarray = self.generate_distribution(
+            315, 50
+        ).astype(int)
 
         # Randomly distribute the organisms
         self.organism_distribution = np.array(
@@ -112,24 +117,52 @@ class World:
             for j in range(cols):
                 organism = self.organism_distribution[i][j]
 
-                neighbour_cells_food_dist: np.ndarray = get_neighbour_cells(
-                    (i, j), self.food_distribution
-                )
-
-                food_direction = int(
-                    np.argmax(neighbour_cells_food_dist)
-                    if np.size(neighbour_cells_food_dist.flatten())
-                    else -1
-                )
-
                 # check if there is an organism at the current location
                 if organism is not None:
-                    # if enough food is available
-                    if self.food_distribution[i][j] >= organism.characters[2]:
+                    temp_range = get_integer_neighbors(
+                        organism.characters[0], 100
+                    )
+                    food_value = self.food_distribution[i][j]
+
+                    # name the conditions
+
+                    has_enough_food: bool = (
+                        food_value >= organism.characters[2]
+                    )
+                    is_in_ideal_temp: bool = (
+                        self.temp_distribution[i][j] in temp_range
+                    )
+                    has_enough_food_for_reprod: bool = (
+                        food_value >= 2 * organism.characters[2]
+                    )
+                    is_in_ideal_temp_for_reprod: bool = (
+                        self.temp_distribution[i][j] in temp_range
+                    )
+
+                    if has_enough_food and is_in_ideal_temp:
+                        neighbour_cells_food_dist: np.ndarray = (
+                            get_neighbour_cells((i, j), self.food_distribution)
+                        )
+                        neighbour_cells_temp_dist: np.ndarray = (
+                            get_neighbour_cells((i, j), self.temp_distribution)
+                        )
+
+                        food_direction = int(
+                            np.argmax(neighbour_cells_food_dist)
+                            if np.size(neighbour_cells_food_dist.flatten())
+                            else -1
+                        )
+                        temp_direction = int(
+                            np.argmax(neighbour_cells_temp_dist)
+                            if np.size(neighbour_cells_temp_dist.flatten())
+                            else -1
+                        )
+
                         self.food_distribution[i][j] -= organism.characters[2]
+
                         nx, ny = (
                             organism.neural_network.run_neural_network(
-                                np.array((food_direction, i, j))
+                                np.array((food_direction, temp_direction))
                             )
                             * 10
                         ).astype(int)
@@ -146,14 +179,13 @@ class World:
                             new_coordinates[1]
                         ] = organism
 
-                    # check if there is enough food for reproduction
                     if (
-                        self.food_distribution[i][j]
-                        >= 2 * organism.characters[2]
+                        has_enough_food_for_reprod
+                        and is_in_ideal_temp_for_reprod
                     ):
                         prefered_position = tuple(
                             [
-                                (i, j)[p] + random.choice((-1, 1))
+                                (i, j)[p] + np.random.choice((-1, 1))
                                 for p in range(2)
                             ]
                         )
@@ -177,9 +209,7 @@ class World:
                             for row in neighbour_cells:
                                 for other_organism in row:
                                     if other_organism:
-                                        partner: Union[
-                                            org.Organism, None
-                                        ] = other_organism
+                                        partner = other_organism
                                         break
                             if partner is not None:
                                 offspring: Union[
@@ -198,6 +228,29 @@ class World:
                             organism.characters[2] * 10
                         )
                         self.organism_distribution[i][j] = None
+
+    def generate_distribution(self, loc: int, scale: int) -> np.ndarray:
+        """
+        Generate a 2D numpy array of random values sampled from a normal
+        distribution.
+
+        Args:
+        -----
+        canvas_size: A tuple of two integers representing the desired size of the
+        output array.
+
+        loc: An integer representing the mean of the normal distribution.
+
+        scale: An integer representing the standard deviation of the normal
+        distribution.
+
+        Returns:
+        --------
+        A 2D numpy array with the shape canvas_size where each element is a
+        random value sampled from a normal distribution with the specified mean
+        and standard deviation.
+        """
+        return np.random.normal(loc=loc, scale=scale, size=self.canvas_size)
 
 
 def get_neighbour_cells(
@@ -357,3 +410,8 @@ def get_points_between_2_points(
     points: np.ndarray = points[sorted_indices]
 
     return points.astype(int)
+
+
+def get_integer_neighbors(value: int, radius: int) -> np.ndarray:
+    """Get integers around a particular integers."""
+    return np.arange(value - radius, value + radius + 1)
