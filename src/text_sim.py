@@ -78,5 +78,4 @@ for _ in range(1000):
     population = distribution.get_distribution_population(
         world.organism_distribution
     )
-    print(f"time:{_} \n  population:{population}")
     world.update_state()
