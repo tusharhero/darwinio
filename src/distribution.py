@@ -140,87 +140,14 @@ class World:
                     )
 
                     if has_enough_food and is_in_ideal_temp:
-                        neighbour_cells_food_dist: np.ndarray = (
-                            get_neighbour_cells((i, j), self.food_distribution)
-                        )
-                        neighbour_cells_temp_dist: np.ndarray = (
-                            get_neighbour_cells((i, j), self.temp_distribution)
-                        )
-
-                        food_direction = int(
-                            np.argmax(neighbour_cells_food_dist)
-                            if np.size(neighbour_cells_food_dist.flatten())
-                            else -1
-                        )
-                        temp_direction = int(
-                            np.argmax(neighbour_cells_temp_dist)
-                            if np.size(neighbour_cells_temp_dist.flatten())
-                            else -1
-                        )
-
                         self.food_distribution[i][j] -= organism.characters[2]
-
-                        nx, ny = (
-                            organism.neural_network.run_neural_network(
-                                np.array((food_direction, temp_direction))
-                            )
-                            * 10
-                        ).astype(int)
-
-                        new_coordinates: tuple = get_feasible_position(
-                            (i, j),
-                            (i + nx, j + ny),
-                            self.organism_distribution,
-                        )
-
-                        # move the organism
-                        self.organism_distribution[i][j] = None
-                        self.organism_distribution[new_coordinates[0]][
-                            new_coordinates[1]
-                        ] = organism
+                        self.move(organism, (i, j))
 
                     if (
                         has_enough_food_for_reprod
                         and is_in_ideal_temp_for_reprod
                     ):
-                        prefered_position = tuple(
-                            [
-                                (i, j)[p] + np.random.choice((-1, 1))
-                                for p in range(2)
-                            ]
-                        )
-                        x, y = get_feasible_position(
-                            (i, j),
-                            prefered_position,
-                            self.organism_distribution,
-                        )
-
-                        # asexual
-                        if organism.characters[3] == 0:
-                            offspring: Union[
-                                org.Organism, None
-                            ] = org.reproduce(organism, organism, 0.3)
-                        # sexual
-                        else:
-                            partner: Union[org.Organism, None] = None
-                            neighbour_cells: np.ndarray = get_neighbour_cells(
-                                (i, j), self.organism_distribution
-                            )
-                            for row in neighbour_cells:
-                                for other_organism in row:
-                                    if other_organism:
-                                        partner = other_organism
-                                        break
-                            if partner is not None:
-                                offspring: Union[
-                                    org.Organism, None
-                                ] = org.reproduce(organism, partner, 0.3)
-                            else:
-                                offspring: Union[org.Organism, None] = None
-
-                            if offspring:
-                                self.organism_distribution[y][x] = offspring
-
+                        self.reproduce(organism, (i, j))
                     # if food is not available kill it and derive some food
                     # from its dead body.
                     else:
@@ -228,6 +155,84 @@ class World:
                             organism.characters[2] * 10
                         )
                         self.organism_distribution[i][j] = None
+
+    def move(self, organism: org.Organism, current_position: tuple[int, int]):
+        i, j = current_position
+        neighbour_cells_food_dist: np.ndarray = get_neighbour_cells(
+            (i, j), self.food_distribution
+        )
+        neighbour_cells_temp_dist: np.ndarray = get_neighbour_cells(
+            (i, j), self.temp_distribution
+        )
+
+        food_direction = int(
+            np.argmax(neighbour_cells_food_dist)
+            if np.size(neighbour_cells_food_dist.flatten())
+            else -1
+        )
+        temp_direction = int(
+            np.argmax(neighbour_cells_temp_dist)
+            if np.size(neighbour_cells_temp_dist.flatten())
+            else -1
+        )
+
+        nx, ny = (
+            organism.neural_network.run_neural_network(
+                np.array((food_direction, temp_direction))
+            )
+            * 10
+        ).astype(int)
+
+        new_coordinates: tuple = get_feasible_position(
+            (i, j),
+            (i + nx, j + ny),
+            self.organism_distribution,
+        )
+
+        # move the organism
+        self.organism_distribution[i][j] = None
+        self.organism_distribution[new_coordinates[0]][
+            new_coordinates[1]
+        ] = organism
+
+    def reproduce(
+        self, organism: org.Organism, current_position: tuple[int, int]
+    ):
+        i, j = current_position
+        prefered_position = tuple(
+            [(i, j)[p] + np.random.choice((-1, 1)) for p in range(2)]
+        )
+        x, y = get_feasible_position(
+            (i, j),
+            prefered_position,
+            self.organism_distribution,
+        )
+
+        # asexual
+        if organism.characters[3] == 0:
+            offspring: Union[org.Organism, None] = org.reproduce(
+                organism, organism, 0.3
+            )
+        # sexual
+        else:
+            partner: Union[org.Organism, None] = None
+            neighbour_cells: np.ndarray = get_neighbour_cells(
+                (i, j), self.organism_distribution
+            )
+            for row in neighbour_cells:
+                for other_organism in row:
+                    if other_organism:
+                        partner = other_organism
+                        break
+            if partner is not None:
+                offspring: Union[org.Organism, None] = org.reproduce(
+                    organism, partner, 0.3
+                )
+            else:
+                offspring: Union[org.Organism, None] = None
+
+            if offspring:
+                self.organism_distribution[y][x] = offspring
 
     def generate_distribution(self, loc: int, scale: int) -> np.ndarray:
         """
