@@ -17,12 +17,13 @@
 
 import pygame as pg
 import sys
+import time
 import distribution as dist
 import numpy as np
 
 
 # CONSTANTS
-X_SIZE, Y_SIZE = CANVAS_SIZE = (10, 10)
+X_SIZE, Y_SIZE = CANVAS_SIZE = (100, 100)
 X_CELL_SIZE, Y_CELL_SIZE = CELL_SIZE = (20, 20)
 
 
@@ -49,9 +50,9 @@ class Button:
 
         # top rectangle
         self.top_rect = pg.Rect(position, size)
-        self.top_color_not_pressed = "#475F77"
-        self.top_color_pressed = "#D74B4B"
-        self.top_color = self.top_color_not_pressed
+        self.top_color_not_hover = "#475F77"
+        self.top_color_hover = "#D74B4B"
+        self.top_color = self.top_color_not_hover
 
         # bottom rectangle
         self.bottom_rect = pg.Rect(position, (size[0], max_elevation))
@@ -60,7 +61,7 @@ class Button:
         # text
         self.font: pg.font.Font = font
         self.text_color = "#FFFFFF"
-        self.text_surface = font.render(text, False, self.text_color)
+        self.text_surface = self.font.render(text, False, self.text_color)
         self.text_rect = self.text_surface.get_rect(
             center=self.top_rect.center
         )
@@ -83,7 +84,7 @@ class Button:
         mouse_pos: tuple[int, int] = pg.mouse.get_pos()
         pressed = False
         if self.top_rect.collidepoint(mouse_pos):
-            self.top_color = self.top_color_pressed
+            self.top_color = self.top_color_hover
             for event in events:
                 if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                     self.elevation = 0
@@ -91,7 +92,7 @@ class Button:
                 else:
                     self.elevation = self.max_elevation
         else:
-            self.top_color = self.top_color_not_pressed
+            self.top_color = self.top_color_not_hover
         return pressed
 
 
@@ -117,25 +118,20 @@ class World(dist.World):
                     )
 
 
-organism_surface = pg.Surface((200, 200))
+organism_surface = pg.Surface(CELL_SIZE)
+organism_surface.fill("white")
 world = World(CANVAS_SIZE, organism_surface)
-button = Button("click", (100, 40), (90, 100))
 
-# Main game loop
-i = 0
+
 while True:
     events = pg.event.get()
     for event in events:
         if event.type == pg.QUIT:
             pg.quit()
             sys.exit()
-    screen.fill("white")
+
+    screen.fill("black")
+    world.update_state()
     world.render()
-    button.draw()
-    if button.check_click(events):
-        print(1)
     pg.display.update()
-    if i % 60 == 0:
-        world.update_state()
-    i += 1
     clock.tick(60)
