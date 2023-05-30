@@ -394,14 +394,12 @@ def get_points_between_2_points(
         x_coords: np.ndarray = np.full(abs(y2 - y1) + 1, x1)
         y_coords: np.ndarray = np.arange(min(y1, y2), max(y1, y2) + 1)
     else:
-        slope: float = (y2 - y1) / (x2 - x1)
-        intercept: float = y1 - slope * x1
+        slope: int = (y2 - y1) // (x2 - x1)
+        intercept: int = y1 - slope * x1
 
         # Calculate the coordinates of the points on the line
         x_coords: np.ndarray = np.arange(min(x1, x2), max(x1, x2) + 1)
-        y_coords: np.ndarray = np.around(slope * x_coords + intercept).astype(
-            int
-        )
+        y_coords: np.ndarray = np.around(slope * x_coords + intercept)
 
     # Combine the x and y coordinates into a single array
     points: np.ndarray = np.column_stack((x_coords, y_coords))
