@@ -1,6 +1,6 @@
 # The GPLv3 License (GPLv3)
 
-# Copyright (c) 2023 Tushar Maharana, and Mihir Nallagonda
+# Copyright © 2023 Tushar Maharana, and Mihir Nallagonda
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ class World:
         Updates the state of the world by iterating over each organism and
         updating its position based on its neural network's output. If
         another organism is not present at its current position after
-        updating , it is removed from the current position and added to the
+        updating, it is removed from the current position and added to the
         new position. It also considers the direction of food around it.
         Then it allows the organism to reproduce if it has access to 2x
         the amount of food.
@@ -275,7 +275,7 @@ def get_neighbour_cells(
     Returns:
     --------
     np.ndarray: A 2D array containing the values of neighbouring cells around
-    the given coordinates. Specifically, this array contains a 3x3 subset(not
+    the given coordinates. Specifically, this array contains a 3x3 subset (not
     always) of ` distribution` centered around the given coordinates.
     """
     x, y = coordinates
@@ -418,5 +418,5 @@ def get_points_between_2_points(
 
 
 def get_integer_neighbors(value: int, radius: int) -> np.ndarray:
-    """Get integers around a particular integers."""
+    """Get integers around a particular integer."""
     return np.arange(value - radius, value + radius + 1)
