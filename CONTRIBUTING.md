@@ -12,7 +12,7 @@ git clone https://github.com/tusharhero/darwinio.git
 
 ```
 
-*Note: windows users need to install git bash and set it up with your GitHub account. *
+*Note: Windows users need to install git bash and set it up with your GitHub account. *
 
 ## Step 3: Change to Your Specific Branch
 
@@ -69,6 +69,6 @@ These commands will `pull` all the new stuff from GitHub. Now to get those stuff
 git merge origin/master
 ```
 
-If there are new changes to master you can git
+If there are new changes to master you can get
 
 That's it! Thank you for your contribution to Darwinio. We appreciate your time and effort.

@@ -18,7 +18,7 @@ through a simulation.
 
 ## License
 
-This program is copyright (c) 2023 Tushar Maharana <tusharhero@sdf.org> ,
+This program is copyright © 2023 Tushar Maharana <tusharhero@sdf.org>,
 and Mihir Nallagonda <adhikshithamihir@gmail.com>.
 
 This program is licensed under the terms of the
