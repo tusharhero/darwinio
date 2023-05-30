@@ -1,6 +1,6 @@
 # The GPLv3 License (GPLv3)
 
-# Copyright (c) 2023 Tushar Maharana, and Mihir Nallagonda
+# Copyright © 2023 Tushar Maharana, and Mihir Nallagonda
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class Organism:
 
         number_of_characters : The number of characters
 
-        size_of_genome: Its the length of the genome string.
+        size_of_genome: It's the length of the genome string.
 
         letters_per_character: The number of digits that would be used for
         representing each character.
@@ -101,7 +101,7 @@ class Organism:
             self.characters: np.ndarray = gn.decode_organism_characters(
                 input_data, number_of_characters, self.letters_per_character
             )
-        # assign a neural_network generated from the the genome
+        # assign a neural_network generated from the genome
         neural_structure = np.array([2, 2])
         weights: np.ndarray = brn.create_weights(self.genome, neural_structure)
         self.neural_network = brn.NeuralNetwork(weights, neural_structure)

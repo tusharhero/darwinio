@@ -1,6 +1,6 @@
 # The GPLv3 License (GPLv3)
 
-# Copyright (c) 2023 Tushar Maharana, and Mihir Nallagonda
+# Copyright © 2023 Tushar Maharana, and Mihir Nallagonda
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ def encode_organism_characters(
     characters: A numpy ndarray of integers representing the
     characters to be encoded.
 
-    length: An integer representing length of the genome, if its larger than
+    length: An integer representing length of the genome, if it's larger than
     the size of the array, the rest will be generated randomly.
 
     letters_per_character: The amount of digits used for representing each
