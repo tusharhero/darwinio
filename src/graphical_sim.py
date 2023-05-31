@@ -16,65 +16,87 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pygame as pg
-import sys
-import time
-import distribution as dist
-import numpy as np
+import pygame_gui as pgui
 
 
-# CONSTANTS
-X_SIZE, Y_SIZE = CANVAS_SIZE = (30, 30)
-X_CELL_SIZE, Y_CELL_SIZE = CELL_SIZE = (20, 20)
-
-
-# initialize
-pg.init()
-screen: pg.Surface = pg.display.set_mode((X_SIZE * 20, Y_SIZE * 20))
-pg.display.set_caption("darwinio")
-clock = pg.time.Clock()
-
-
-class World(dist.World):
+class State:
     def __init__(
-        self,
-        canvas_size: tuple,
-        organism_surface: pg.Surface,
-        mutation_factor: float = 0.3,
-    ):
-        super().__init__(canvas_size, mutation_factor)
-        self.organism_surface = organism_surface
+        self, surf: pg.Surface, manager_size: tuple[int, int]
+    ) -> None:
+        self.manager = pgui.UIManager(manager_size)
+        self.screen = surf
 
-    def render(self):
-        x, y = self.canvas_size
-        for i in range(x):
-            for j in range(y):
-                organism = self.organism_distribution[i][j]
-                if organism is not None:
-                    organism_surface.fill(f"#{organism.genome[:6]}")
-                    screen.blit(
-                        self.organism_surface,
-                        (i * X_CELL_SIZE, j * Y_CELL_SIZE),
-                    )
+    def render(self) -> None:
+        self.manager.draw_ui(self.screen)
+
+    def update(self, events: list[pg.Event], time_delta: float):
+        for event in events:
+            self.manager.process_events(event)
+        self.manager.update(time_delta)
 
 
-organism_surface = pg.Surface(CELL_SIZE)
-organism_surface.fill("white")
-world = World(CANVAS_SIZE, organism_surface)
+class TitleScreen(State):
+    def __init__(self, surf: pg.Surface, text: str) -> None:
+        font = pg.font.SysFont("monospace", 25)
+        self.title_surf = font.render(text, True, "white")
+        self.screen = surf
 
-timer = 0
-while True:
-    dt = clock.tick(60) / 1000
-    events = pg.event.get()
-    for event in events:
-        if event.type == pg.QUIT:
-            pg.quit()
-            sys.exit()
-    screen.fill("black")
-    timer += 1 / dt
-    if timer >= 60:
-        timer = 0
-        start = time.time()
-        world.update_state()
-        print("upt", time.time() - start)
-    world.render()
-    pg.display.update()
+    def render(self) -> None:
+        self.title_surf = pg.transform.scale(
+            self.title_surf,
+            (self.screen.get_width(), self.title_surf.get_height()),
+        )
+        self.rect = self.title_surf.get_rect(
+            center=self.screen.get_rect().center
+        )
+        self.screen.blit(self.title_surf, self.rect)
+
+    def fade(self):
+        current_alpha = self.title_surf.get_alpha()
+        self.title_surf.set_alpha(0)
+
+    def update(self, events: list[pg.Event], time_delta: float):
+        for event in events:
+            if event.type == pg.KEYDOWN:
+                self.fade()
+
+        rect = self.title_surf.get_rect(center=self.screen.get_rect().center)
+
+
+class GameScreen(State):
+    pass
+
+
+def main():
+    title_screen = """
+ ______   _______  _______          _________ _       _________ _______ 
+(  __  \ (  ___  )(  ____ )|\     /|\__   __/( (    /|\__   __/(  ___  )
+| (  \  )| (   ) || (    )|| )   ( |   ) (   |  \  ( |   ) (   | (   ) |
+| |   ) || (___) || (____)|| | _ | |   | |   |   \ | |   | |   | |   | |
+| |   | ||  ___  ||     __)| |( )| |   | |   | (\ \) |   | |   | |   | |
+| |   ) || (   ) || (\ (   | || || |   | |   | | \   |   | |   | |   | |
+| (__/  )| )   ( || ) \ \__| () () |___) (___| )  \  |___) (___| (___) |
+(______/ |/     \||/   \__/(_______)\_______/|/    )_)\_______/(_______)
+    """
+    pg.init()
+    screen = pg.display.set_mode((600, 500), pg.SCALED | pg.RESIZABLE)
+    pg.display.set_caption("darwinio")
+    clock = pg.time.Clock()
+    title = TitleScreen(screen, title_screen)
+
+    while True:
+        time_delta = clock.tick(60) / 1000.0
+        events = pg.event.get()
+        for event in events:
+            if event.type == pg.QUIT:
+                pg.quit()
+                raise SystemExit
+        title.update(events, time_delta)
+        screen.fill("black")
+        title.render()
+        pg.display.flip()
+        clock.tick(60)
+
+
+if __name__ == "__main__":
+    main()

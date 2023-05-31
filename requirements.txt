@@ -1,2 +1,2 @@
-numpy==1.24.2
-pygame==2.4.0
+numpy==1.24.3
+pygame-ce==2.2.1
