@@ -33,6 +33,7 @@ class State:
         for event in events:
             self.manager.process_events(event)
         self.manager.update(time_delta)
+        return None
 
 
 class TitleScreen(State):
@@ -52,23 +53,39 @@ class TitleScreen(State):
         self.screen.blit(self.title_surf, self.rect)
 
     def fade(self):
-        current_alpha = self.title_surf.get_alpha()
+        # current_alpha = self.title_surf.get_alpha()
         self.title_surf.set_alpha(0)
 
     def update(self, events: list[pg.Event], time_delta: float):
         for event in events:
             if event.type == pg.KEYDOWN:
                 self.fade()
-
+                return 1
         rect = self.title_surf.get_rect(center=self.screen.get_rect().center)
+        return None
+
+    def next_state():
+        self.state = states[self.state_index + 1]
 
 
 class GameScreen(State):
     pass
 
 
+class StateMachine:
+    def __init__(self, states: list[State]):
+        self.states: list[State] = states
+        self.state: int = 0
+
+    def run_state(self, events: list[pg.Event], time_delta: float):
+        state = self.states[self.state]
+        new_state = state.update(events, time_delta)
+        state.render()
+        self.state = new_state if new_state or new_state == 0 else self.state
+
+
 def main():
-    title_screen = """
+    title_ascii_art = """
  ______   _______  _______          _________ _       _________ _______ 
 (  __  \ (  ___  )(  ____ )|\     /|\__   __/( (    /|\__   __/(  ___  )
 | (  \  )| (   ) || (    )|| )   ( |   ) (   |  \  ( |   ) (   | (   ) |
@@ -82,7 +99,9 @@ def main():
     screen = pg.display.set_mode((600, 500), pg.SCALED | pg.RESIZABLE)
     pg.display.set_caption("darwinio")
     clock = pg.time.Clock()
-    title = TitleScreen(screen, title_screen)
+    title = TitleScreen(screen, title_ascii_art)
+    game = TitleScreen(screen, "Game")
+    statemachine = StateMachine([title, game])
 
     while True:
         time_delta = clock.tick(60) / 1000.0
@@ -91,9 +110,8 @@ def main():
             if event.type == pg.QUIT:
                 pg.quit()
                 raise SystemExit
-        title.update(events, time_delta)
         screen.fill("black")
-        title.render()
+        statemachine.run_state(events, time_delta)
         pg.display.flip()
         clock.tick(60)
 
