@@ -157,6 +157,17 @@ class World:
                         self.organism_distribution[i][j] = None
 
     def move(self, organism: org.Organism, current_position: tuple[int, int]):
+        """Move the organism to a new position based on the current position
+        and environmental conditions.
+
+        Args:
+        ------
+        organism (org.Organism): An instance of the Organism class
+        representing the organism to be moved.
+
+        current_position (tuple[int, int]): A tuple of two integers
+        representing the current position of the organism.
+        """
         i, j = current_position
         neighbour_cells_food_dist: np.ndarray = get_neighbour_cells(
             (i, j), self.food_distribution
@@ -198,6 +209,16 @@ class World:
     def reproduce(
         self, organism: org.Organism, current_position: tuple[int, int]
     ):
+        """Reproduce the organism at the current position.
+
+        Args:
+        ------
+        organism (org.Organism): An instance of the Organism class representing
+        the organism to be reproduced.
+
+        current_position (tuple[int, int]): A tuple of two integers
+        representing the current position of the organism.
+        """
         i, j = current_position
         prefered_position = tuple(
             [(i, j)[p] + np.random.choice((-1, 1)) for p in range(2)]
@@ -241,8 +262,8 @@ class World:
 
         Args:
         -----
-        canvas_size: A tuple of two integers representing the desired size of the
-        output array.
+        canvas_size: A tuple of two integers representing the desired size of
+        the output array.
 
         loc: An integer representing the mean of the normal distribution.
 
