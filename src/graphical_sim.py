@@ -15,22 +15,52 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Union
 import pygame as pg
 import pygame_gui as pgui
 import constants
 
 
 class State:
-    def __init__(
-        self, surf: pg.Surface, manager_size: tuple[int, int]
-    ) -> None:
-        self.manager = pgui.UIManager(manager_size)
-        self.surface = surf
+    """
+    Represents a game state.
 
-    def render(self) -> None:
+    Attributes:
+    -----------
+        manager (pygame_gui.UIManager): The UI manager for the state.
+        surface (pygame.Surface): The surface on which the state is rendered.
+    """
+
+    def __init__(self, surf: pg.Surface, manager_size: tuple[int, int]):
+        """
+        Args:
+        ------
+            surface (pygame.Surface): The surface on which the state will be rendered.
+            initial_manager_size (tuple[int, int]): The initial size of the UI manager.
+        """
+        self.manager = pgui.UIManager(manager_size)
+        self.surface: pg.Surface = surf
+
+    def render(self):
+        """Render the state."""
         self.manager.draw_ui(self.surface)
 
-    def update(self, events: list[pg.Event], time_delta: float):
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
+        """
+        Update the state.
+
+        Args:
+        ------
+            events (list[pygame.event.Event]): The list of pygame events.
+            time_delta (float): The time elapsed since the last update.
+
+        Returns:
+        --------
+            None: if the state is not changing, Or the the index of the next
+            scene.
+        """
         for event in events:
             self.manager.process_events(event)
         self.manager.update(time_delta)
@@ -38,9 +68,27 @@ class State:
 
 
 class MainScreen(State):
-    def __init__(self, surf: pg.Surface) -> None:
-        size = height, width = surf.get_size()
-        super().__init__(surf, surf.get_size())
+    """
+    Represents the main screen state of the game.
+
+
+    Attributes:
+    -----------
+        game_view (pygame.Surface): The surface for the game view.
+        container (pygame_gui.core.UIContainer): The UI container for the main screen state.
+        button (pygame_gui.elements.UIButton): The UI button for starting the game.
+    """
+
+    def __init__(self, surface: pg.Surface):
+        """
+        Args:
+        -----
+            surface (pygame.Surface): The surface on which the state will be rendered.
+        """
+
+        surface_size = height, width = surface.get_size()
+        super().__init__(surface, surface_size)
+
         gui_rect = pg.Rect(-height, -width // 2, height, width // 2)
         self.game_view = pg.Surface((500, 500))
         self.container = pgui.core.UIContainer(
@@ -57,16 +105,39 @@ class MainScreen(State):
         )
 
     def render(self) -> None:
+        """Render the main screen state."""
         self.manager.draw_ui(self.surface)
 
 
 class TitleScreen(State):
-    def __init__(self, surf: pg.Surface, text: str) -> None:
+    """
+    Represents the title screen state of the game.
+
+    Args:
+    -----
+        surface (pygame.Surface): The surface on which the state will be rendered.
+        title_text (str): The text to be displayed as the title.
+
+    Attributes:
+    -----------
+        font (pygame.font.Font): The font used for rendering the title.
+        title_surf (pygame.Surface): The rendered title surface.
+        surface (pygame.Surface): The surface on which the state is rendered.
+    """
+
+    def __init__(self, surface: pg.Surface, title_text: str) -> None:
+        """
+        Args:
+        -----
+            surface (pygame.Surface): The surface on which the state will be rendered.
+            title_text (str): The text to be displayed as the title.
+        """
         self.font = pg.font.SysFont("monospace", 25)
-        self.title_surf = self.font.render(text, True, "white")
-        self.surface = surf
+        self.title_surf = self.font.render(title_text, True, "white")
+        self.surface = surface
 
     def render(self) -> None:
+        """Render the title screen state."""
         self.title_surf = pg.transform.scale(
             self.title_surf,
             (self.surface.get_width(), self.title_surf.get_height()),
@@ -76,7 +147,21 @@ class TitleScreen(State):
         )
         self.surface.blit(self.title_surf, self.rect)
 
-    def update(self, events: list[pg.Event], time_delta: float):
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
+        """
+        Update the title screen state.
+
+        Args:
+        -----
+            events (list[pygame.event.Event]): The list of pygame events.
+            time_delta (float): The time elapsed since the last update.
+
+        Returns:
+        -------
+            int: The index of the next state to transition to, or None if no transition is needed.
+        """
         for event in events:
             if event.type == pg.KEYDOWN:
                 return 1
@@ -87,13 +172,41 @@ class TitleScreen(State):
 
 
 class TextScreen(State):
-    def __init__(self, surf: pg.Surface, text: str) -> None:
-        super().__init__(surf, surf.get_size())
+    """
+    Represents a screen with text content.
+
+    Attributes:
+    -----------
+        text_box (pygame_gui.elements.UITextBox): The UI text box for displaying the text content.
+    """
+
+    def __init__(self, surface: pg.Surface, screen_text: str):
+        """
+        Args:
+        -----
+            surface (pygame.Surface): The surface on which the state will be rendered.
+            screen_text (str): The text content to be displayed on the screen.
+        """
+        super().__init__(surface, surface.get_size())
         self.text_box = pgui.elements.UITextBox(
-            text, self.surface.get_rect(), self.manager
+            screen_text, self.surface.get_rect(), self.manager
         )
 
-    def update(self, events: list[pg.Event], time_delta: float):
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
+        """
+        Update the text screen state.
+
+        Args:
+        -----
+            events (list[pygame.event.Event]): The list of pygame events.
+            time_delta (float): The time elapsed since the last update.
+
+        Returns:
+        -------
+            int: The index of the next state to transition to, or None if no transition is needed.
+        """
         for event in events:
             if event.type == pg.KEYDOWN:
                 return 2
@@ -101,31 +214,73 @@ class TextScreen(State):
 
 
 class StateMachine:
+    """
+    Represents a state machine that manages a collection of states.
+
+
+    Attributes:
+    -----------
+        states (list[State]): The list of states in the state machine.
+        state_index (int): The index of the current active state.
+    """
+
     def __init__(self, states: list[State]):
-        self.states: list[State] = states
-        self.state_index: int = 0
+        """
+        Initialize the StateMachine object.
+
+        Args:
+        -----
+            states (list[State]): The list of states in the state machine.
+        """
+        self.states = states
+        self.state_index = 0
 
     def run_state(self, events: list[pg.Event], time_delta: float):
+        """
+        Run the current active state in the state machine.
+
+        Args:
+        -----
+            events (list[pg.Event]): The list of pygame events.
+            time_delta (float): The time elapsed since the last update.
+        """
         state = self.states[self.state_index]
         new_state = state.update(events, time_delta)
         state.render()
         self.state_index = (
-            new_state if new_state or new_state == 0 else self.state_index
+            new_state
+            if new_state is not None or new_state == 0
+            else self.state_index
         )
 
 
-def main():
+def main(resolution: tuple[int, int], fps: int):
+    """
+    The main function that runs the game.
+
+    Args:
+    -----
+        resolution (tuple[int, int]): The resolution of the game screen.
+        fps (int): The desired frame rate of the game.
+    """
+
+    # Initialize Pygame
     pg.init()
-    screen = pg.display.set_mode((1000, 750), pg.SCALED | pg.RESIZABLE)
+    screen = pg.display.set_mode(resolution, pg.SCALED | pg.RESIZABLE)
     pg.display.set_caption("darwinio")
     clock = pg.time.Clock()
+
+    # Create the states
     title = TitleScreen(screen, constants.title_ascii_art)
     license_notice = TextScreen(screen, constants.license_notice)
     main_game = MainScreen(screen)
+
+    # Create the state machine
     statemachine = StateMachine([title, license_notice, main_game])
 
     while True:
-        time_delta = clock.tick(60) / 1000.0
+        time_delta = clock.tick(fps) / 1000.0
+
         events = pg.event.get()
         for event in events:
             if event.type == pg.QUIT:
@@ -134,11 +289,11 @@ def main():
             if event.type == pg.KEYUP:
                 if event.key == pg.K_F11:
                     pg.display.toggle_fullscreen()
+
         screen.fill("black")
         statemachine.run_state(events, time_delta)
         pg.display.flip()
-        clock.tick(60)
 
 
 if __name__ == "__main__":
-    main()
+    main((1000, 750), 60)
