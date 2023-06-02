@@ -127,10 +127,10 @@ def get_random_organism(
 
     characters: np.ndarray = np.array(
         (
-            np.random.randint(230, 400),  # ideal temperature
-            np.random.randint(0, 3),  # trophic level
-            np.random.randint(100, 1000),  # energy requirement
-            np.random.randint(0, 1 + 1),  # reproductive type
+            np.random.randint(230, 400, dtype=np.int64),  # ideal temperature
+            np.random.randint(0, 3, dtype=np.int64),  # trophic level
+            np.random.randint(100, 1000, dtype=np.int64),  # energy requirement
+            np.random.randint(0, 1 + 1, dtype=np.int64),  # reproductive type
         )
     )
 
