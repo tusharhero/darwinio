@@ -29,7 +29,9 @@ class World(dist.World):
             for x, organism in enumerate(row):
                 if organism is not None:
                     pg.draw.rect(
-                        surface, "white", pg.Rect(x * 10, y * 10, 10, 10)
+                        surface,
+                        f"#{organism.genome[:6]}",
+                        pg.Rect(x * 10, y * 10, 10, 10),
                     )
                 else:
                     pg.draw.rect(
@@ -82,6 +84,47 @@ class State:
             self.manager.process_events(event)
         self.manager.update(time_delta)
         return None
+
+
+class StateMachine:
+    """
+    Represents a state machine that manages a collection of states.
+
+
+    Attributes:
+    -----------
+    states (list[State]): The list of states in the state machine.
+    state_index (int): The index of the current active state.
+    """
+
+    def __init__(self, states: list[State]):
+        """
+        Initialize the StateMachine object.
+
+        Args:
+        -----
+        states (list[State]): The list of states in the state machine.
+        """
+        self.states = states
+        self.state_index = 0
+
+    def run_state(self, events: list[pg.Event], time_delta: float):
+        """
+        Run the current active state in the state machine.
+
+        Args:
+        -----
+        events (list[pg.Event]): The list of pygame events.
+        time_delta (float): The time elapsed since the last update.
+        """
+        state = self.states[self.state_index]
+        new_state = state.update(events, time_delta)
+        state.render()
+        self.state_index = (
+            new_state
+            if new_state is not None or new_state == 0
+            else self.state_index
+        )
 
 
 class MainScreen(State):
@@ -250,47 +293,6 @@ class TextScreen(State):
             if event.type == pg.KEYDOWN:
                 return 2
         super().update(events, time_delta)
-
-
-class StateMachine:
-    """
-    Represents a state machine that manages a collection of states.
-
-
-    Attributes:
-    -----------
-    states (list[State]): The list of states in the state machine.
-    state_index (int): The index of the current active state.
-    """
-
-    def __init__(self, states: list[State]):
-        """
-        Initialize the StateMachine object.
-
-        Args:
-        -----
-        states (list[State]): The list of states in the state machine.
-        """
-        self.states = states
-        self.state_index = 0
-
-    def run_state(self, events: list[pg.Event], time_delta: float):
-        """
-        Run the current active state in the state machine.
-
-        Args:
-        -----
-        events (list[pg.Event]): The list of pygame events.
-        time_delta (float): The time elapsed since the last update.
-        """
-        state = self.states[self.state_index]
-        new_state = state.update(events, time_delta)
-        state.render()
-        self.state_index = (
-            new_state
-            if new_state is not None or new_state == 0
-            else self.state_index
-        )
 
 
 def main(resolution: tuple[int, int], fps: int):
