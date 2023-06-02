@@ -174,8 +174,6 @@ class MainScreen(State):
             height // 2, width // 2 // 2, world_height, world_width
         )
         self.world_surface = pg.surface.Surface(world.canvas_size)
-        self.world_surface_scaled = self.world_surface.copy()
-
         self.sim_rect = pg.Rect(0, 0, height, width // 2)
         self.sim_surface = pg.surface.Surface((height, width // 2))
 
@@ -183,7 +181,7 @@ class MainScreen(State):
         """Render the main screen state."""
         self.sim_surface.fill("black")
         self.world.render(self.world_surface)
-        self.sim_surface.blit(self.world_surface_scaled, self.world_rect)
+        self.sim_surface.blit(self.world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
 
@@ -205,21 +203,6 @@ class MainScreen(State):
             self.world_rect.centerx += 5
         if keys_pressed[pg.K_LEFT]:
             self.world_rect.centerx -= 5
-        if keys_pressed[pg.K_PLUS]:
-            self.world_surface_scaled = pg.transform.scale_by(
-                self.world_surface, 3
-            )
-            self.world_rect = self.world_surface_scaled.get_rect(
-                center=self.sim_rect.center
-            )
-        if keys_pressed[pg.K_MINUS]:
-            self.world_surface_scaled = pg.transform.scale_by(
-                self.world_surface, 0.3
-            )
-            self.world_rect = self.world_surface_scaled.get_rect(
-                center=self.sim_rect.center
-            )
-
         if pg.time.get_ticks() % 1000 == 0 and self.running:
             self.world.update_state()
         self.manager.update(time_delta)
