@@ -22,4 +22,5 @@ import numpy as np
 
 def normalize(arr: np.ndarray) -> np.ndarray:
     """Normalize the Numpy Array."""
-    return np.nan_to_num(arr / np.linalg.norm(arr))
+    magnitude: np.floating = np.linalg.norm(arr)
+    return np.nan_to_num(arr / magnitude)

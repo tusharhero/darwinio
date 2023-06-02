@@ -135,7 +135,8 @@ class MainScreen(State):
     Attributes:
     -----------
     game_view (pygame.Surface): The surface for the game view.
-    container (pygame_gui.core.UIContainer): The UI container for the main screen state.
+    container (pygame_gui.core.UIContainer): The UI container for the main
+    screen state.
     button (pygame_gui.elements.UIButton): The UI button for starting the game.
     """
 
@@ -167,12 +168,22 @@ class MainScreen(State):
         # Simulation Interface
         self.running = False
         self.world = world
+        world_height, world_width = world.canvas_size
+
+        self.world_rect = pg.Rect(
+            height // 2, width // 2 // 2, world_height, world_width
+        )
+        self.world_surface = pg.surface.Surface(world.canvas_size)
+        self.world_surface_scaled = self.world_surface.copy()
+
         self.sim_rect = pg.Rect(0, 0, height, width // 2)
         self.sim_surface = pg.surface.Surface((height, width // 2))
 
     def render(self) -> None:
         """Render the main screen state."""
-        self.world.render(self.sim_surface)
+        self.sim_surface.fill("black")
+        self.world.render(self.world_surface)
+        self.sim_surface.blit(self.world_surface_scaled, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
 
@@ -183,8 +194,32 @@ class MainScreen(State):
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.button:
                     self.running = not self.running
-                    print(self.running)
             self.manager.process_events(event)
+
+        keys_pressed = pg.key.get_pressed()
+        if keys_pressed[pg.K_UP]:
+            self.world_rect.centery -= 5
+        if keys_pressed[pg.K_DOWN]:
+            self.world_rect.centery += 5
+        if keys_pressed[pg.K_RIGHT]:
+            self.world_rect.centerx += 5
+        if keys_pressed[pg.K_LEFT]:
+            self.world_rect.centerx -= 5
+        if keys_pressed[pg.K_PLUS]:
+            self.world_surface_scaled = pg.transform.scale_by(
+                self.world_surface, 3
+            )
+            self.world_rect = self.world_surface_scaled.get_rect(
+                center=self.sim_rect.center
+            )
+        if keys_pressed[pg.K_MINUS]:
+            self.world_surface_scaled = pg.transform.scale_by(
+                self.world_surface, 0.3
+            )
+            self.world_rect = self.world_surface_scaled.get_rect(
+                center=self.sim_rect.center
+            )
+
         if pg.time.get_ticks() % 1000 == 0 and self.running:
             self.world.update_state()
         self.manager.update(time_delta)
@@ -319,7 +354,8 @@ def main(resolution: tuple[int, int], fps: int):
     main_game = MainScreen(screen, world)
 
     # Create the state machine
-    statemachine = StateMachine([title, license_notice, main_game])
+    # statemachine = StateMachine([title, license_notice, main_game])
+    statemachine = StateMachine([main_game])
 
     while True:
         time_delta = clock.tick(fps) / 1000.0
