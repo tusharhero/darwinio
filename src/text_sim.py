@@ -47,9 +47,7 @@ def create_string_organism(world: distribution.World) -> str:
         [
             " ".join(
                 [
-                    animal_emojis[organism.genome[:1]]
-                    if organism is not None
-                    else " "
+                    animal_emojis[organism.genome[:1]] if organism is not None else " "
                     for organism in row
                 ]
             )
@@ -60,10 +58,7 @@ def create_string_organism(world: distribution.World) -> str:
 
 def create_string_food(world: distribution.World) -> str:
     return "\n".join(
-        [
-            " ".join([str(food) for food in row])
-            for row in world.temp_distribution
-        ]
+        [" ".join([str(food) for food in row]) for row in world.temp_distribution]
     )
 
 
@@ -75,8 +70,6 @@ def print_world(world: distribution.World):
 
 for _ in range(1000):
     print_world(world)
-    population = distribution.get_distribution_population(
-        world.organism_distribution
-    )
+    population = distribution.get_distribution_population(world.organism_distribution)
     print(f"time:{_} \n  population:{population}")
     world.update_state()
