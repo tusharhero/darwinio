@@ -171,9 +171,11 @@ class MainScreen(State):
         world_height, world_width = world.canvas_size
 
         self.world_rect = pg.Rect(
-            height // 2, width // 2 // 2, world_height, world_width
+            height // 2, width // 2 // 2, world_height * 10, world_width * 10
         )
-        self.world_surface = pg.surface.Surface(world.canvas_size)
+        self.world_surface = pg.surface.Surface(
+            (world_height * 10, world_width * 10)
+        )
         self.sim_rect = pg.Rect(0, 0, height, width // 2)
         self.sim_surface = pg.surface.Surface((height, width // 2))
 
@@ -196,13 +198,14 @@ class MainScreen(State):
 
         keys_pressed = pg.key.get_pressed()
         if keys_pressed[pg.K_UP]:
-            self.world_rect.centery -= 5
-        if keys_pressed[pg.K_DOWN]:
             self.world_rect.centery += 5
+        if keys_pressed[pg.K_DOWN]:
+            self.world_rect.centery -= 5
         if keys_pressed[pg.K_RIGHT]:
-            self.world_rect.centerx += 5
-        if keys_pressed[pg.K_LEFT]:
             self.world_rect.centerx -= 5
+        if keys_pressed[pg.K_LEFT]:
+            self.world_rect.centerx += 5
+
         if pg.time.get_ticks() % 1000 == 0 and self.running:
             self.world.update_state()
         self.manager.update(time_delta)
