@@ -20,6 +20,7 @@ import pygame as pg
 import pygame_gui as pgui
 import constants
 import distribution as dist
+import graphical_components as gcomp
 
 
 class World(dist.World):
@@ -29,10 +30,6 @@ class World(dist.World):
             for x, organism in enumerate(row):
                 if organism is not None:
                     surface.blit(image, (x * 64, y * 64))
-                else:
-                    pg.draw.rect(
-                        surface, "black", pg.Rect(x * 64, y * 64, 64, 64)
-                    )
 
 
 class State:
@@ -146,8 +143,15 @@ class MainScreen(State):
         super().__init__(surface, surface_size)
 
         # User Interface
+
         self.button = pgui.elements.UIButton(
             pg.Rect(width - 100, height - 100, -1, -1), "start", self.manager
+        )
+        self.temp_slider = gcomp.Slider(
+            "adjust temperature",
+            (width - 500, height - 60),
+            (-10, 10),
+            self.manager,
         )
 
         # Simulation Interface
@@ -178,6 +182,7 @@ class MainScreen(State):
     def render(self) -> None:
         """Render the main screen state."""
         self.sim_surface.fill("black")
+        self.world_surface.fill("Deepskyblue3")
         self.world.render(self.world_surface, self.image)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
@@ -190,6 +195,16 @@ class MainScreen(State):
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.button:
                     self.running = not self.running
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    self.running = not self.running
+            if event.type == pgui.UI_HORIZONTAL_SLIDER_MOVED:
+                if event.ui_element == self.temp_slider:
+                    loc = self.temp_slider.slider.get_current_value()
+                    self.world.temp_distribution = (
+                        self.world.generate_distribution(int(loc), 50)
+                    )
+                    self.temp_slider.update()
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()
@@ -201,7 +216,6 @@ class MainScreen(State):
             self.world_rect.centerx -= 5
         if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
             self.world_rect.centerx += 5
-
         if keys_pressed[pg.K_EQUALS] and self.world_scale < 1.5:
             self.world_scale += 0.05
             self.scaled_world_surface = pg.transform.scale_by(
@@ -365,7 +379,6 @@ def main(resolution: tuple[int, int], fps: int):
 
     # Create the state machine
     statemachine = StateMachine([title, license_notice, main_game])
-    # statemachine = StateMachine([main_game])
 
     while True:
         time_delta = clock.tick(fps) / 1000.0
