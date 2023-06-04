@@ -142,18 +142,6 @@ class MainScreen(State):
         surface_size = width, height = surface.get_size()
         super().__init__(surface, surface_size)
 
-        # User Interface
-
-        self.button = pgui.elements.UIButton(
-            pg.Rect(width - 100, height - 100, -1, -1), "start", self.manager
-        )
-        self.temp_slider = gcomp.Slider(
-            "adjust temperature",
-            (width - 500, height - 60),
-            (-10, 10),
-            self.manager,
-        )
-
         # Simulation Interface
         self.image = pg.transform.scale(
             pg.image.load(image_path).convert_alpha(), (64, 64)
@@ -161,14 +149,13 @@ class MainScreen(State):
         self.running = False
         self.world = world
         world_width, world_height = world.canvas_size
-
         self.world_surface = pg.surface.Surface(
             (world_height * 64, world_width * 64)
         )
-
         self.world_rect = self.world_surface.get_rect(
             center=(width // 2, height // 2)
         )
+        self.world_scale = 1
 
         self.scaled_world_surface = self.world_surface
 
@@ -177,7 +164,17 @@ class MainScreen(State):
             center=(width // 2, height // 2)
         )
 
-        self.world_scale = 1
+        # User Interface
+        self.button = pgui.elements.UIButton(
+            pg.Rect(width - 100, height - 100, -1, -1), "start", self.manager
+        )
+        self.temp_slider = gcomp.Slider(
+            "adjust temperature",
+            (width - 500, height - 60),
+            50,
+            (0, 500),
+            self.manager,
+        )
 
     def render(self) -> None:
         """Render the main screen state."""
@@ -199,7 +196,7 @@ class MainScreen(State):
                 if event.key == pg.K_SPACE:
                     self.running = not self.running
             if event.type == pgui.UI_HORIZONTAL_SLIDER_MOVED:
-                if event.ui_element == self.temp_slider:
+                if event.ui_element == self.temp_slider.slider:
                     loc = self.temp_slider.slider.get_current_value()
                     self.world.temp_distribution = (
                         self.world.generate_distribution(int(loc), 50)
