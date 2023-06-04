@@ -23,9 +23,8 @@ import distribution as dist
 
 
 class World(dist.World):
-    def render(self, surface: pg.Surface, scale: float):
+    def render(self, surface: pg.Surface):
         organisms = self.organism_distribution
-        # print(organisms)
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
@@ -35,7 +34,9 @@ class World(dist.World):
                         pg.Rect(x * 10, y * 10, 10, 10),
                     )
                 else:
-                    pg.draw.rect(surface, "black", pg.Rect(x * 10, y * 10, 10, 10))
+                    pg.draw.rect(
+                        surface, "black", pg.Rect(x * 10, y * 10, 10, 10)
+                    )
 
 
 class State:
@@ -62,7 +63,9 @@ class State:
         """Render the state."""
         self.manager.draw_ui(self.surface)
 
-    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
         """
         Update the state.
 
@@ -117,7 +120,9 @@ class StateMachine:
         new_state = state.update(events, time_delta)
         state.render()
         self.state_index = (
-            new_state if new_state is not None or new_state == 0 else self.state_index
+            new_state
+            if new_state is not None or new_state == 0
+            else self.state_index
         )
 
 
@@ -145,18 +150,8 @@ class MainScreen(State):
         super().__init__(surface, surface_size)
 
         # User Interface
-        gui_rect = pg.Rect(-height, -width // 2, height, width // 2)
-        self.container = pgui.core.UIContainer(
-            gui_rect,
-            self.manager,
-            anchors={"right": "right", "bottom": "bottom"},
-        )
         self.button = pgui.elements.UIButton(
-            pg.Rect(0, 0, -1, -1),
-            "start",
-            self.manager,
-            self.container,
-            anchors={"center": "center"},
+            pg.Rect(width - 100, height - 100, -1, -1), "start", self.manager
         )
 
         # Simulation Interface
@@ -164,26 +159,34 @@ class MainScreen(State):
         self.world = world
         world_width, world_height = world.canvas_size
 
-        self.world_surface = pg.surface.Surface((world_height * 10, world_width * 10))
+        self.world_surface = pg.surface.Surface(
+            (world_height * 10, world_width * 10)
+        )
 
-        self.world_rect = self.world_surface.get_rect(center=(width // 2, height // 4))
+        self.world_rect = self.world_surface.get_rect(
+            center=(width // 2, height // 2)
+        )
 
         self.scaled_world_surface = self.world_surface
 
-        self.sim_surface = pg.surface.Surface((width, height // 2))
-        self.sim_rect = self.sim_surface.get_rect(center=(width // 2, height // 4))
+        self.sim_surface = pg.surface.Surface((width, height))
+        self.sim_rect = self.sim_surface.get_rect(
+            center=(width // 2, height // 2)
+        )
 
         self.world_scale = 1
 
     def render(self) -> None:
         """Render the main screen state."""
         self.sim_surface.fill("black")
-        self.world.render(self.world_surface, self.world_scale)
+        self.world.render(self.world_surface)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
 
-    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
         for event in events:
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.button:
@@ -191,16 +194,16 @@ class MainScreen(State):
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()
-        if keys_pressed[pg.K_UP]:
+        if keys_pressed[pg.K_UP] or keys_pressed[pg.K_k]:
             self.world_rect.centery += 5
-        if keys_pressed[pg.K_DOWN]:
+        if keys_pressed[pg.K_DOWN] or keys_pressed[pg.K_j]:
             self.world_rect.centery -= 5
-        if keys_pressed[pg.K_RIGHT]:
+        if keys_pressed[pg.K_RIGHT] or keys_pressed[pg.K_l]:
             self.world_rect.centerx -= 5
-        if keys_pressed[pg.K_LEFT]:
+        if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
             self.world_rect.centerx += 5
 
-        if keys_pressed[pg.K_u] and self.world_scale < 1.5:
+        if keys_pressed[pg.K_EQUALS] and self.world_scale < 1.5:
             self.world_scale += 0.05
             self.scaled_world_surface = pg.transform.scale_by(
                 self.world_surface, self.world_scale
@@ -209,7 +212,7 @@ class MainScreen(State):
                 center=self.world_rect.center
             )
 
-        if keys_pressed[pg.K_d] and self.world_scale > 0.2:
+        if keys_pressed[pg.K_MINUS] and self.world_scale > 0.2:
             self.world_scale -= 0.05
             self.scaled_world_surface = pg.transform.scale_by(
                 self.world_surface, self.world_scale
@@ -218,7 +221,13 @@ class MainScreen(State):
                 center=self.world_rect.center
             )
 
+        if self.running:
+            self.button.set_text("running")
+        else:
+            self.button.set_text("start")
+
         if pg.time.get_ticks() % 1000 == 0 and self.running:
+            self.button.set_text("wait")
             self.world.update_state()
 
         self.manager.update(time_delta)
@@ -258,10 +267,14 @@ class TitleScreen(State):
             self.title_surf,
             (self.surface.get_width(), self.title_surf.get_height()),
         )
-        self.rect = self.title_surf.get_rect(center=self.surface.get_rect().center)
+        self.rect = self.title_surf.get_rect(
+            center=self.surface.get_rect().center
+        )
         self.surface.blit(self.title_surf, self.rect)
 
-    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
         """
         Update the title screen state.
 
@@ -272,12 +285,15 @@ class TitleScreen(State):
 
         Returns:
         -------
-        int: The index of the next state to transition to, or None if no transition is needed.
+        int: The index of the next state to transition to, or None if no
+        transition is needed.
         """
         for event in events:
             if event.type == pg.KEYDOWN:
                 return 1
-        self.rect = self.title_surf.get_rect(center=self.surface.get_rect().center)
+        self.rect = self.title_surf.get_rect(
+            center=self.surface.get_rect().center
+        )
         return None
 
 
@@ -302,7 +318,9 @@ class TextScreen(State):
             screen_text, self.surface.get_rect(), self.manager
         )
 
-    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
         """
         Update the text screen state.
 
