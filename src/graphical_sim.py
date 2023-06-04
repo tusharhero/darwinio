@@ -23,19 +23,20 @@ import distribution as dist
 
 
 class World(dist.World):
-    def render(self, surface: pg.Surface):
+    def render(self, surface: pg.Surface, image: pg.Surface):
         organisms = self.organism_distribution
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
-                    pg.draw.rect(
-                        surface,
-                        f"#{organism.genome[:6]}",
-                        pg.Rect(x * 10, y * 10, 10, 10),
-                    )
+                    # pg.draw.rect(
+                    #     surface,
+                    #     f"#{organism.genome[:6]}",
+                    #     pg.Rect(x * 16, y * 16, 16, 16),
+                    # )
+                    surface.blit(image, (x * 16, y * 16))
                 else:
                     pg.draw.rect(
-                        surface, "black", pg.Rect(x * 10, y * 10, 10, 10)
+                        surface, "black", pg.Rect(x * 16, y * 16, 16, 16)
                     )
 
 
@@ -139,7 +140,7 @@ class MainScreen(State):
     button (pygame_gui.elements.UIButton): The UI button for starting the game.
     """
 
-    def __init__(self, surface: pg.Surface, world: World):
+    def __init__(self, surface: pg.Surface, world: World, image_path: str):
         """
         Args:
         -----
@@ -155,12 +156,15 @@ class MainScreen(State):
         )
 
         # Simulation Interface
+        self.image = pg.transform.scale(
+            pg.image.load(image_path).convert_alpha(), (16, 16)
+        )
         self.running = False
         self.world = world
         world_width, world_height = world.canvas_size
 
         self.world_surface = pg.surface.Surface(
-            (world_height * 10, world_width * 10)
+            (world_height * 16, world_width * 16)
         )
 
         self.world_rect = self.world_surface.get_rect(
@@ -179,7 +183,7 @@ class MainScreen(State):
     def render(self) -> None:
         """Render the main screen state."""
         self.sim_surface.fill("black")
-        self.world.render(self.world_surface)
+        self.world.render(self.world_surface, self.image)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
@@ -360,11 +364,13 @@ def main(resolution: tuple[int, int], fps: int):
     # Create the states
     title = TitleScreen(screen, constants.title_ascii_art)
     license_notice = TextScreen(screen, constants.license_notice)
-    main_game = MainScreen(screen, world)
+    main_game = MainScreen(
+        screen, world, "../art/archaebacteria_halophile.png"
+    )
 
     # Create the state machine
-    # statemachine = StateMachine([title, license_notice, main_game])
-    statemachine = StateMachine([main_game])
+    statemachine = StateMachine([title, license_notice, main_game])
+    # statemachine = StateMachine([main_game])
 
     while True:
         time_delta = clock.tick(fps) / 1000.0
