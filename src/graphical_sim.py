@@ -28,15 +28,10 @@ class World(dist.World):
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
-                    # pg.draw.rect(
-                    #     surface,
-                    #     f"#{organism.genome[:6]}",
-                    #     pg.Rect(x * 16, y * 16, 16, 16),
-                    # )
-                    surface.blit(image, (x * 16, y * 16))
+                    surface.blit(image, (x * 64, y * 64))
                 else:
                     pg.draw.rect(
-                        surface, "black", pg.Rect(x * 16, y * 16, 16, 16)
+                        surface, "black", pg.Rect(x * 64, y * 64, 64, 64)
                     )
 
 
@@ -157,14 +152,14 @@ class MainScreen(State):
 
         # Simulation Interface
         self.image = pg.transform.scale(
-            pg.image.load(image_path).convert_alpha(), (16, 16)
+            pg.image.load(image_path).convert_alpha(), (64, 64)
         )
         self.running = False
         self.world = world
         world_width, world_height = world.canvas_size
 
         self.world_surface = pg.surface.Surface(
-            (world_height * 16, world_width * 16)
+            (world_height * 64, world_width * 64)
         )
 
         self.world_rect = self.world_surface.get_rect(
