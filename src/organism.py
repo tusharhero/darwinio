@@ -110,6 +110,10 @@ class Organism:
 def get_random_organism(
     size_of_genome: int = 8 * 3,
     letters_per_character: int = 3,
+    temp_range: tuple[int, int] = (230, 400),
+    trophic_level_range: tuple[int, int] = (0, 3),
+    energy_range: tuple[int, int] = (100, 1000),
+    reproductive_types: tuple[int, int] = (0, 1 + 1),
 ) -> Organism:
     """Generate a random organism.
 
@@ -127,10 +131,10 @@ def get_random_organism(
 
     characters: np.ndarray = np.array(
         (
-            np.random.randint(230, 400, dtype=np.int64),  # ideal temperature
-            np.random.randint(0, 3, dtype=np.int64),  # trophic level
-            np.random.randint(100, 1000, dtype=np.int64),  # energy requirement
-            np.random.randint(0, 1 + 1, dtype=np.int64),  # reproductive type
+            np.random.randint(*temp_range, dtype=np.int64),
+            np.random.randint(*trophic_level_range, dtype=np.int64),
+            np.random.randint(*energy_range, dtype=np.int64),
+            np.random.randint(*reproductive_types, dtype=np.int64),
         )
     )
 

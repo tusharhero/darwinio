@@ -175,6 +175,13 @@ class MainScreen(State):
             (0, 500),
             self.manager,
         )
+        self.food_slider = gcomp.Slider(
+            "adjust the food content",
+            (width - 1000, height - 60),
+            500,
+            (0, 1200),
+            self.manager,
+        )
 
     def render(self) -> None:
         """Render the main screen state."""
@@ -202,6 +209,12 @@ class MainScreen(State):
                         self.world.generate_distribution(int(loc), 50)
                     )
                     self.temp_slider.update()
+                if event.ui_element == self.food_slider.slider:
+                    loc = self.food_slider.slider.get_current_value()
+                    self.world.food_distribution = (
+                        self.world.generate_distribution(int(loc), 100)
+                    )
+                    self.food_slider.update()
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()

@@ -62,7 +62,11 @@ class World:
     of organisms and `None` values of size `canvas_size`.
     """
 
-    def __init__(self, canvas_size: tuple, mutation_factor: float = 0.3):
+    def __init__(
+        self,
+        canvas_size: tuple,
+        mutation_factor: float = 0.3,
+    ):
         """Initializes a new World instance.
 
         Args:
