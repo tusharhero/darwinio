@@ -238,7 +238,7 @@ class Simulation(State):
 
         # User Interface
         self.button = pgui.elements.UIButton(
-            pg.Rect(width - 100, height - 100, -1, -1), "start", self.manager
+            pg.Rect(width - 100, height - 60, 100, 60), "start", self.manager
         )
         self.temp_slider = gcomp.Slider(
             "adjust temperature",
@@ -249,7 +249,7 @@ class Simulation(State):
         )
         self.food_slider = gcomp.Slider(
             "adjust the food content",
-            (width - 1000, height - 60),
+            (width - 950, height - 60),
             500,
             (0, 1200),
             self.manager,
@@ -321,7 +321,7 @@ class Simulation(State):
         else:
             self.button.set_text("start")
 
-        if pg.time.get_ticks() % 1000 == 0 and self.running:
+        if pg.time.get_ticks() % 500 == 0 and self.running:
             self.button.set_text("wait")
             self.world.update_state()
 

@@ -30,19 +30,19 @@ class Slider:
     ):
         x, y = position
         self.slider = pgui.elements.UIHorizontalSlider(
-            pg.Rect(x, y, 500, 30),
+            pg.Rect(x, y, 400, 30),
             starting_value,
             slider_range,
             manager,
         )
         self.value_label = pgui.elements.UITextBox(
             str(self.slider.get_current_value()),
-            pg.Rect(x - 50, y + 30, 50, 30),
+            pg.Rect(x - 50, y, 50, 60),
             manager,
         )
         self.label = pgui.elements.UITextBox(
             label,
-            pg.Rect(x, y + 30, 500, 30),
+            pg.Rect(x, y + 30, 400, 30),
             manager,
         )
 
