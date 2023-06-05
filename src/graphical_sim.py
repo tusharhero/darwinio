@@ -132,21 +132,30 @@ class Organism_selection(State):
         )
 
         self.energy_slider_min = gcomp.Slider(
-            "Food min:", (150, 150), 100, (1, 2000), self.manager
+            "Food min:", (250, 150), 100, (1, 2000), self.manager
         )
         self.energy_slider_max = gcomp.Slider(
-            "Food max:", (150, 250), 1000, (1, 2000), self.manager
+            "Food max:", (250, 250), 1000, (1, 2000), self.manager
         )
 
         self.temp_slider_min = gcomp.Slider(
-            "Temp min:", (150, 350), 230, (1, 2000), self.manager
+            "Temp min:", (250, 350), 230, (1, 2000), self.manager
         )
         self.temp_slider_max = gcomp.Slider(
-            "Temp max:", (150, 450), 400, (1, 2000), self.manager
+            "Temp max:", (250, 450), 400, (1, 2000), self.manager
         )
 
         self.done_button = pgui.elements.UIButton(
-            pg.Rect(150, 550, -1, -1), "Done!", self.manager
+            pg.Rect(0, 550, -1, -1),
+            "Done!",
+            self.manager,
+            anchors={"centerx": "centerx"},
+        )
+        self.skip_button = pgui.elements.UIButton(
+            pg.Rect(0, 600, -1, -1),
+            "skip",
+            self.manager,
+            anchors={"centerx": "centerx"},
         )
 
     def update(
@@ -168,6 +177,8 @@ class Organism_selection(State):
                             energy_range=energy_range, temp_range=temp_range
                         )
                     )
+                    return 3
+                if event.ui_element == self.skip_button:
                     return 3
             self.manager.process_events(event)
 
