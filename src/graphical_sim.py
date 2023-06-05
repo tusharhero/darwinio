@@ -439,10 +439,20 @@ class LicenseNotice(TextScreen):
     def __init__(self, surface: pg.Surface, screen_text: str):
         super().__init__(surface, screen_text)
         self.button = pgui.elements.UIButton(
-            pg.Rect(self.width // 2, self.height, *self.surface_size),
+            pg.Rect(self.width // 2, self.height - 100, -1, -1),
             "License",
             self.manager,
         )
+        self.button.change_layer(1)
+
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
+        for event in events:
+            if event.type == pgui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.button:
+                    return 4
+        super().update(events, time_delta)
 
 
 def main(resolution: tuple[int, int], fps: int):
@@ -466,13 +476,16 @@ def main(resolution: tuple[int, int], fps: int):
     # Create the states
     title = TitleScreen(screen, constants.TITLE_ASCII_ART)
     license_notice = LicenseNotice(screen, constants.LICENSE_NOTICE)
+    license_state = TextScreen(screen, constants.FULL_LICENSE)
     world_build = Organism_selection(screen, world)
     main_game = Simulation(
         screen, world, "../art/archaebacteria_halophile.png"
     )
 
     # Create the state machine
-    statemachine = StateMachine([license_notice])
+    statemachine = StateMachine(
+        [title, license_notice, world_build, main_game, license_state]
+    )
 
     while True:
         time_delta = clock.tick(fps) / 1000.0
