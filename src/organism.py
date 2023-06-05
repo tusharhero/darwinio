@@ -108,12 +108,12 @@ class Organism:
 
 
 def get_random_organism(
+    temp_range,
+    trophic_level_range,
+    energy_range,
+    reproductive_types,
     size_of_genome: int = 8 * 3,
     letters_per_character: int = 3,
-    temp_range: tuple[int, int] = (230, 400),
-    trophic_level_range: tuple[int, int] = (0, 3),
-    energy_range: tuple[int, int] = (100, 1000),
-    reproductive_types: tuple[int, int] = (0, 1 + 1),
 ) -> Organism:
     """Generate a random organism.
 

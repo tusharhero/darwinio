@@ -42,7 +42,7 @@ class State:
     surface (pygame.Surface): The surface on which the state is rendered.
     """
 
-    def __init__(self, surf: pg.Surface, manager_size: tuple[int, int]):
+    def __init__(self, surface: pg.Surface, manager_size: tuple[int, int]):
         """
         Args:
         ------
@@ -50,7 +50,7 @@ class State:
         initial_manager_size (tuple[int, int]): The initial size of the UI manager.
         """
         self.manager = pgui.UIManager(manager_size)
-        self.surface: pg.Surface = surf
+        self.surface: pg.Surface = surface
 
     def render(self):
         """Render the state."""
@@ -119,7 +119,68 @@ class StateMachine:
         )
 
 
-class MainScreen(State):
+class Organism_selection(State):
+    def __init__(self, surface: pg.Surface, world: World):
+        surface_size = width, height = surface.get_size()
+        super().__init__(surface, surface_size)
+        self.world: World = world
+
+        self.title = pgui.elements.UITextBox(
+            "<b>Select the range of your random organisms</b>",
+            pg.Rect((width // 2) - 350 // 2, 50, 350, 50),
+            self.manager,
+        )
+
+        self.energy_slider_min = gcomp.Slider(
+            "Food min:", (150, 150), 100, (1, 2000), self.manager
+        )
+        self.energy_slider_max = gcomp.Slider(
+            "Food max:", (150, 250), 1000, (1, 2000), self.manager
+        )
+
+        self.temp_slider_min = gcomp.Slider(
+            "Temp min:", (150, 350), 230, (1, 2000), self.manager
+        )
+        self.temp_slider_max = gcomp.Slider(
+            "Temp max:", (150, 450), 400, (1, 2000), self.manager
+        )
+
+        self.done_button = pgui.elements.UIButton(
+            pg.Rect(150, 550, -1, -1), "Done!", self.manager
+        )
+
+    def update(
+        self, events: list[pg.Event], time_delta: float
+    ) -> Union[int, None]:
+        for event in events:
+            if event.type == pgui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.done_button:
+                    energy_range = (
+                        int(self.energy_slider_min.slider.get_current_value()),
+                        int(self.energy_slider_max.slider.get_current_value()),
+                    )
+                    temp_range = (
+                        int(self.temp_slider_min.slider.get_current_value()),
+                        int(self.temp_slider_max.slider.get_current_value()),
+                    )
+                    self.world.organism_distribution = (
+                        self.world.generate_organism_distribution(
+                            energy_range=energy_range, temp_range=temp_range
+                        )
+                    )
+                    return 3
+            self.manager.process_events(event)
+
+        self.energy_slider_max.update()
+        self.energy_slider_min.update()
+        self.temp_slider_max.update()
+        self.temp_slider_min.update()
+
+        self.manager.update(time_delta)
+        return None
+
+
+class Simulation(State):
     """
     Represents the main screen state of the game.
 
@@ -383,12 +444,15 @@ def main(resolution: tuple[int, int], fps: int):
     # Create the states
     title = TitleScreen(screen, constants.title_ascii_art)
     license_notice = TextScreen(screen, constants.license_notice)
-    main_game = MainScreen(
+    world_build = Organism_selection(screen, world)
+    main_game = Simulation(
         screen, world, "../art/archaebacteria_halophile.png"
     )
 
     # Create the state machine
-    statemachine = StateMachine([title, license_notice, main_game])
+    statemachine = StateMachine(
+        [title, license_notice, world_build, main_game]
+    )
 
     while True:
         time_delta = clock.tick(fps) / 1000.0

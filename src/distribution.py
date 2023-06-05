@@ -88,17 +88,8 @@ class World:
         self.temp_distribution: np.ndarray = self.generate_distribution(
             315, 50
         )
-
-        # Randomly distribute the organisms
-        self.organism_distribution = np.array(
-            [
-                [
-                    random.choice((org.get_random_organism(), None))
-                    for _ in range(self.canvas_size[1])
-                ]
-                for _ in range(self.canvas_size[0])
-            ],
-            dtype=object,
+        self.organism_distribution: np.ndarray = (
+            self.generate_organism_distribution()
         )
 
     def update_state(self):
@@ -283,6 +274,34 @@ class World:
         return np.random.normal(
             loc=loc, scale=scale, size=self.canvas_size
         ).astype(int)
+
+    def generate_organism_distribution(
+        self,
+        temp_range: tuple[int, int] = (230, 400),
+        trophic_level_range: tuple[int, int] = (0, 3),
+        energy_range: tuple[int, int] = (100, 1000),
+        reproductive_types: tuple[int, int] = (0, 1 + 1),
+    ) -> np.ndarray:
+        return np.array(
+            [
+                [
+                    random.choice(
+                        (
+                            org.get_random_organism(
+                                temp_range,
+                                trophic_level_range,
+                                energy_range,
+                                reproductive_types,
+                            ),
+                            None,
+                        )
+                    )
+                    for _ in range(self.canvas_size[1])
+                ]
+                for _ in range(self.canvas_size[0])
+            ],
+            dtype=object,
+        )
 
 
 def get_neighbour_cells(
