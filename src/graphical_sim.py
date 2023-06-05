@@ -42,15 +42,16 @@ class State:
     surface (pygame.Surface): The surface on which the state is rendered.
     """
 
-    def __init__(self, surface: pg.Surface, manager_size: tuple[int, int]):
+    def __init__(self, surface: pg.Surface):
         """
         Args:
         ------
         surface (pygame.Surface): The surface on which the state will be rendered.
         initial_manager_size (tuple[int, int]): The initial size of the UI manager.
         """
-        self.manager = pgui.UIManager(manager_size)
         self.surface: pg.Surface = surface
+        self.surface_size = self.width, self.height = self.surface.get_size()
+        self.manager = pgui.UIManager(self.surface_size)
 
     def render(self):
         """Render the state."""
@@ -121,13 +122,12 @@ class StateMachine:
 
 class Organism_selection(State):
     def __init__(self, surface: pg.Surface, world: World):
-        surface_size = width, height = surface.get_size()
-        super().__init__(surface, surface_size)
+        super().__init__(surface)
         self.world: World = world
 
         self.title = pgui.elements.UITextBox(
             "<b>Select the range of your random organisms</b>",
-            pg.Rect((width // 2) - 350 // 2, 50, 350, 50),
+            pg.Rect((self.width // 2) - 350 // 2, 50, 350, 50),
             self.manager,
         )
 
@@ -211,8 +211,7 @@ class Simulation(State):
         surface (pygame.Surface): The surface on which the state will be rendered.
         """
 
-        surface_size = width, height = surface.get_size()
-        super().__init__(surface, surface_size)
+        super().__init__(surface)
 
         # Simulation Interface
         self.image = pg.transform.scale(
@@ -225,31 +224,33 @@ class Simulation(State):
             (world_height * 64, world_width * 64)
         )
         self.world_rect = self.world_surface.get_rect(
-            center=(width // 2, height // 2)
+            center=(self.width // 2, self.height // 2)
         )
         self.world_scale = 1
 
         self.scaled_world_surface = self.world_surface
 
-        self.sim_surface = pg.surface.Surface((width, height))
+        self.sim_surface = pg.surface.Surface((self.width, self.height))
         self.sim_rect = self.sim_surface.get_rect(
-            center=(width // 2, height // 2)
+            center=(self.width // 2, self.height // 2)
         )
 
         # User Interface
         self.button = pgui.elements.UIButton(
-            pg.Rect(width - 100, height - 60, 100, 60), "start", self.manager
+            pg.Rect(self.width - 100, self.height - 60, 100, 60),
+            "start",
+            self.manager,
         )
         self.temp_slider = gcomp.Slider(
             "adjust temperature",
-            (width - 500, height - 60),
+            (self.width - 500, self.height - 60),
             50,
             (0, 500),
             self.manager,
         )
         self.food_slider = gcomp.Slider(
             "adjust the food content",
-            (width - 950, height - 60),
+            (self.width - 950, self.height - 60),
             500,
             (0, 1200),
             self.manager,
@@ -408,7 +409,7 @@ class TextScreen(State):
         surface (pygame.Surface): The surface on which the state will be rendered.
         screen_text (str): The text content to be displayed on the screen.
         """
-        super().__init__(surface, surface.get_size())
+        super().__init__(surface)
         self.text_box = pgui.elements.UITextBox(
             screen_text, self.surface.get_rect(), self.manager
         )
@@ -434,6 +435,16 @@ class TextScreen(State):
         super().update(events, time_delta)
 
 
+class LicenseNotice(TextScreen):
+    def __init__(self, surface: pg.Surface, screen_text: str):
+        super().__init__(surface, screen_text)
+        self.button = pgui.elements.UIButton(
+            pg.Rect(self.width // 2, self.height, *self.surface_size),
+            "License",
+            self.manager,
+        )
+
+
 def main(resolution: tuple[int, int], fps: int):
     """
     The main function that runs the game.
@@ -453,17 +464,15 @@ def main(resolution: tuple[int, int], fps: int):
     world = World((100, 100))
 
     # Create the states
-    title = TitleScreen(screen, constants.title_ascii_art)
-    license_notice = TextScreen(screen, constants.license_notice)
+    title = TitleScreen(screen, constants.TITLE_ASCII_ART)
+    license_notice = LicenseNotice(screen, constants.LICENSE_NOTICE)
     world_build = Organism_selection(screen, world)
     main_game = Simulation(
         screen, world, "../art/archaebacteria_halophile.png"
     )
 
     # Create the state machine
-    statemachine = StateMachine(
-        [title, license_notice, world_build, main_game]
-    )
+    statemachine = StateMachine([license_notice])
 
     while True:
         time_delta = clock.tick(fps) / 1000.0

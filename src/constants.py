@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-title_ascii_art = """
+TITLE_ASCII_ART = """
  ______   _______  _______          _________ _       _________ _______ 
 (  __  \ (  ___  )(  ____ )|\     /|\__   __/( (    /|\__   __/(  ___  )
 | (  \  )| (   ) || (    )|| )   ( |   ) (   |  \  ( |   ) (   | (   ) |
@@ -26,7 +26,7 @@ title_ascii_art = """
 (______/ |/     \||/   \__/(_______)\_______/|/    )_)\_______/(_______)
     """
 
-license_notice = """
+LICENSE_NOTICE = """
 The GPLv3 License (GPLv3)
 
 Copyright © 2023 Tushar Maharana, and Mihir Nallagonda
@@ -40,10 +40,7 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 with open("../LICENSE.md", "r") as file:
-    license = file.read()
+    FULL_LICENSE = file.read()
