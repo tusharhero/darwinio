@@ -115,27 +115,29 @@ class World:
                 # check if there is an organism at the current location
                 if organism is not None:
                     temp_range = get_integer_neighbors(
-                        organism.characters[0], 100
+                        organism.genome_array[0], 100
                     )
                     food_value = self.food_distribution[i][j]
 
                     # name the conditions
 
                     has_enough_food: bool = (
-                        food_value >= organism.characters[2]
+                        food_value >= organism.genome_array[2]
                     )
                     is_in_ideal_temp: bool = (
                         self.temp_distribution[i][j] in temp_range
                     )
                     has_enough_food_for_reprod: bool = (
-                        food_value >= 2 * organism.characters[2]
+                        food_value >= 2 * organism.genome_array[2]
                     )
                     is_in_ideal_temp_for_reprod: bool = (
                         self.temp_distribution[i][j] in temp_range
                     )
 
                     if has_enough_food and is_in_ideal_temp:
-                        self.food_distribution[i][j] -= organism.characters[2]
+                        self.food_distribution[i][j] -= organism.genome_array[
+                            2
+                        ]
                         self.move(organism, (i, j))
 
                     if (
@@ -147,7 +149,7 @@ class World:
                     # from its dead body.
                     else:
                         self.food_distribution[i][j] += (
-                            organism.characters[2] * 10
+                            organism.genome_array[2] * 10
                         )
                         self.organism_distribution[i][j] = None
 
@@ -225,7 +227,7 @@ class World:
         )
 
         # asexual
-        if organism.characters[3] == 0:
+        if organism.genome_array[3] == 0:
             offspring: Union[org.Organism, None] = org.reproduce(
                 organism, organism, 0.3
             )

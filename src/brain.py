@@ -29,7 +29,6 @@ genome and neural structure.
 """
 
 import numpy as np
-import genome as gn
 import utilities as utils
 
 

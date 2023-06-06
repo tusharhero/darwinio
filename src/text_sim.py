@@ -46,12 +46,7 @@ def create_string_organism(world: distribution.World) -> str:
     return "\n".join(
         [
             " ".join(
-                [
-                    animal_emojis[organism.genome[:1]]
-                    if organism is not None
-                    else " "
-                    for organism in row
-                ]
+                ["O" if organism is not None else " " for organism in row]
             )
             for row in world.organism_distribution
         ]
