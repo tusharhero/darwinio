@@ -42,14 +42,13 @@ class State:
     surface (pygame.Surface): The surface on which the state is rendered.
     """
 
-    def __init__(self, surface: pg.Surface, next_state_index: int):
+    def __init__(self, surface: pg.Surface):
         """
         Args:
         ------
         surface (pygame.Surface): The surface on which the state will be rendered.
         initial_manager_size (tuple[int, int]): The initial size of the UI manager.
         """
-        self.next_state_index = next_state_index
         self.surface: pg.Surface = surface
         self.surface_size = self.width, self.height = self.surface.get_size()
         self.manager = pgui.UIManager(self.surface_size)
@@ -122,8 +121,8 @@ class StateMachine:
 
 
 class Organism_selection(State):
-    def __init__(self, surface: pg.Surface, world: World, next_state_index):
-        super().__init__(surface, next_state_index)
+    def __init__(self, surface: pg.Surface, world: World):
+        super().__init__(surface)
         self.world: World = world
 
         self.title = pgui.elements.UITextBox(
@@ -178,9 +177,9 @@ class Organism_selection(State):
                             energy_range=energy_range, temp_range=temp_range
                         )
                     )
-                    return self.next_state_index
+                    return 3
                 if event.ui_element == self.skip_button:
-                    return self.next_state_index
+                    return 3
             self.manager.process_events(event)
 
         self.energy_slider_max.update()
@@ -205,20 +204,14 @@ class Simulation(State):
     button (pygame_gui.elements.UIButton): The UI button for starting the game.
     """
 
-    def __init__(
-        self,
-        surface: pg.Surface,
-        world: World,
-        image_path: str,
-        next_state_index,
-    ):
+    def __init__(self, surface: pg.Surface, world: World, image_path: str):
         """
         Args:
         -----
         surface (pygame.Surface): The surface on which the state will be rendered.
         """
 
-        super().__init__(surface, next_state_index)
+        super().__init__(surface)
 
         # Simulation Interface
         self.image = pg.transform.scale(
@@ -353,16 +346,13 @@ class TitleScreen(State):
     surface (pygame.Surface): The surface on which the state is rendered.
     """
 
-    def __init__(
-        self, surface: pg.Surface, title_text: str, next_state_index: int
-    ) -> None:
+    def __init__(self, surface: pg.Surface, title_text: str) -> None:
         """
         Args:
         -----
         surface (pygame.Surface): The surface on which the state will be rendered.
         title_text (str): The text to be displayed as the title.
         """
-        self.next_state_index = next_state_index
         self.font = pg.font.SysFont("monospace", 25)
         self.title_surf = self.font.render(title_text, True, "white")
         self.surface = surface
@@ -396,7 +386,7 @@ class TitleScreen(State):
         """
         for event in events:
             if event.type == pg.KEYDOWN:
-                return self.next_state_index
+                return 1
         self.rect = self.title_surf.get_rect(
             center=self.surface.get_rect().center
         )
@@ -412,16 +402,14 @@ class TextScreen(State):
     text_box (pygame_gui.elements.UITextBox): The UI text box for displaying the text content.
     """
 
-    def __init__(
-        self, surface: pg.Surface, screen_text: str, next_state_index
-    ):
+    def __init__(self, surface: pg.Surface, screen_text: str):
         """
         Args:
         -----
         surface (pygame.Surface): The surface on which the state will be rendered.
         screen_text (str): The text content to be displayed on the screen.
         """
-        super().__init__(surface, next_state_index)
+        super().__init__(surface)
         self.text_box = pgui.elements.UITextBox(
             screen_text, self.surface.get_rect(), self.manager
         )
@@ -448,10 +436,8 @@ class TextScreen(State):
 
 
 class LicenseNotice(TextScreen):
-    def __init__(
-        self, surface: pg.Surface, screen_text: str, next_state_index: int
-    ):
-        super().__init__(surface, screen_text, next_state_index)
+    def __init__(self, surface: pg.Surface, screen_text: str):
+        super().__init__(surface, screen_text)
         self.button = pgui.elements.UIButton(
             pg.Rect(self.width // 2, self.height - 100, -1, -1),
             "License",
@@ -488,12 +474,12 @@ def main(resolution: tuple[int, int], fps: int):
     world = World((100, 100))
 
     # Create the states
-    title = TitleScreen(screen, constants.TITLE_ASCII_ART, 1)
-    license_notice = LicenseNotice(screen, constants.LICENSE_NOTICE, 5)
-    license_state = TextScreen(screen, constants.FULL_LICENSE, 2)
-    world_build = Organism_selection(screen, world, 3)
+    title = TitleScreen(screen, constants.TITLE_ASCII_ART)
+    license_notice = LicenseNotice(screen, constants.LICENSE_NOTICE)
+    license_state = TextScreen(screen, constants.FULL_LICENSE)
+    world_build = Organism_selection(screen, world)
     main_game = Simulation(
-        screen, world, "../art/archaebacteria_halophile.png", 4
+        screen, world, "../art/archaebacteria_halophile.png"
     )
 
     # Create the state machine
