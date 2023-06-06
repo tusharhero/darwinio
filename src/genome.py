@@ -19,16 +19,8 @@
 
 Functions:
 --------
-get_random_genome: a random hexadecimal genome of the specified size.
-
-generate_offspring_genome: Generate a genome for an offspring of the given
+generate_offspring_genome: Generate a genome_array for an offspring of the given
 parents with mutations.
-
-encode_organism_characters: Encode the given organism characters
-into a genome string.
-
-decode_organism_characters: Decode the given genome into an array of
-organism characters.
 """
 
 import random
@@ -40,7 +32,7 @@ def generate_offspring_genome(
     parent_2: np.ndarray,
     mutation_factor: float,
 ) -> np.ndarray:
-    """Generate a genome for an offspring of the given parents with mutations.
+    """Generate a genome_array for an offspring of the given parents with mutations.
 
     Args:
     -------
@@ -51,20 +43,17 @@ def generate_offspring_genome(
     mutation_factor: A value between 0 and 1 (inclusive) representing the
     probability of a mutation occurring in the offspring's genome.
 
-    letters_per_character: The amount of digits used for representing each
-    character.
-
     Returns:
     -------
     A string representing the genome of the offspring.
 
     Notes:
     -------
-    The function performs a bitwise random choice between each base pair of
+    The function performs a bit-wise random choice between each base pair of
     the parents' genomes to generate the offspring's genome. If the
-    mutationfactor is greater than 0, there is a chance for a random mutation
+    mutation factor is greater than 0, there is a chance for a random mutation
     to occur in one of the offspring's base pairs. The function then returns
-    the offspring's genome as a string.
+    the offspring's genome_array.
     """
 
     if not 0 <= mutation_factor <= 1:

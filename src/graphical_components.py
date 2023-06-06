@@ -20,6 +20,8 @@ import pygame_gui as pgui
 
 
 class Slider:
+    """A class representing a custom UI element"""
+
     def __init__(
         self,
         label: str,

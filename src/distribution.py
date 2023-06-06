@@ -145,6 +145,7 @@ class World:
                         and is_in_ideal_temp_for_reprod
                     ):
                         self.reproduce(organism, (i, j))
+
                     # if food is not available kill it and derive some food
                     # from its dead body.
                     else:
@@ -259,9 +260,6 @@ class World:
 
         Args:
         -----
-        canvas_size: A tuple of two integers representing the desired size of
-        the output array.
-
         loc: An integer representing the mean of the normal distribution.
 
         scale: An integer representing the standard deviation of the normal

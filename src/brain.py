@@ -131,18 +131,13 @@ def create_weights(
 
     Args:
     -----
-    genome: A string representing the hexadecimal genome of the organism.
+    genome_array: A Numpy Array representing the hexadecimal genome of the organism.
 
-    neural_structure: An Numpy Array representing the structure of the neural network.
+    neural_structure: A Numpy Array representing the structure of the neural network.
 
     Returns:
     -------
     A Numpy Array containing the weights.
-
-    Note:
-    -----
-    The weights are extracted from the genome by converting the genome into
-    decimals.
     """
 
     number_of_neural_connections = int(

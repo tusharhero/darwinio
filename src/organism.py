@@ -26,20 +26,11 @@ Functions:
 get_random_organism: A function to generate a random organism.
 
 reproduce: Generate offspring of the two Organisms.
-
-Note:
---------
-Characters are stored as:
-    0: ideal temperature
-    1: trophic level
-    2: energy requirement
-    3: reproductive type
 """
 
 import brain as brn
 import genome as gn
 import numpy as np
-from typing import Union
 
 
 class Organism:
@@ -47,14 +38,9 @@ class Organism:
 
     Attributes:
     ---------
-    genome: A string representing the organism's genome.
-
-    characters: A NumPy array containing the organism's characters.
+    genome_array: A Numpy array representing the organism's genome.
 
     neural_network: A neural network generated from the genome of the organism
-
-    letters_per_character: The number of digits that would be used for
-    representing each character.
     """
 
     def __init__(
@@ -87,19 +73,23 @@ class Organism:
 
 
 def get_random_organism(
-    temp_range,
-    trophic_level_range,
-    energy_range,
-    reproductive_types,
+    temp_range: tuple[int, int],
+    trophic_level_range: tuple[int, int],
+    energy_range: tuple[int, int],
+    reproductive_types: tuple[int, int],
 ) -> Organism:
     """Generate a random organism.
 
     Args:
     -----
-    size_of_genome : the size of the genome
-
-    letters_per_character: The number of digits that would be used for
-    representing each character.
+    temp_range (Tuple[int, int]): Range of temperature values for the
+    organism's adaptation.
+    trophic_level_range (Tuple[int, int]): Range of trophic level values for
+    the organism's position in the food chain.
+    energy_range (Tuple[int, int]): Range of energy values for the organism's
+    energy capacity.
+    reproductive_types (Tuple[int, int]): Range of reproductive type values for
+    the organism's reproductive strategy.
 
     Returns:
     ---------
@@ -127,11 +117,11 @@ def reproduce(
 
     Args:
     -----
-    parent_1: One of the parent Organisms
+    parent_1(np,ndarray): One of the parent Organisms
 
-    parent_2: One of the parent Organisms
+    parent_2(np,ndarray): One of the parent Organisms
 
-    mutation_factor: A value between 0 and 1 (inclusive) representing the
+    mutation_factor(int): A value between 0 and 1 (inclusive) representing the
     probability of a mutation occurring in the offspring's genome.
 
     Returns:
