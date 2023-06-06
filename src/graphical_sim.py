@@ -453,8 +453,8 @@ def main(resolution: tuple[int, int], fps: int):
     world = World((100, 100))
 
     # Create the states
-    title = TitleScreen(screen, constants.title_ascii_art)
-    license_notice = TextScreen(screen, constants.license_notice)
+    title = TitleScreen(screen, constants.TITLE_ACSII_ART)
+    license_notice = TextScreen(screen, constants.LICENSE_NOTICE)
     world_build = Organism_selection(screen, world)
     main_game = Simulation(
         screen, world, "../art/archaebacteria_halophile.png"
