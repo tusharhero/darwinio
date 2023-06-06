@@ -84,10 +84,13 @@ def get_random_organism(
     -----
     temp_range (Tuple[int, int]): Range of temperature values for the
     organism's adaptation.
+
     trophic_level_range (Tuple[int, int]): Range of trophic level values for
     the organism's position in the food chain.
+
     energy_range (Tuple[int, int]): Range of energy values for the organism's
     energy capacity.
+
     reproductive_types (Tuple[int, int]): Range of reproductive type values for
     the organism's reproductive strategy.
 

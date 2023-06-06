@@ -50,3 +50,9 @@ class Slider:
 
     def update(self):
         self.value_label.set_text(str(self.slider.get_current_value()))
+
+
+def tint(surface: pg.Surface, color: pg.Color) -> pg.Surface:
+    new_surface = surface.copy()
+    new_surface.fill(color, special_flags=pg.BLEND_RGB_ADD)
+    return new_surface

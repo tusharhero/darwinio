@@ -21,25 +21,35 @@ import pygame_gui as pgui
 import constants
 import distribution as dist
 import graphical_components as gcomp
+import utilities as util
 
 
 class World(dist.World):
-    """
-    Renders the organisms on the given surface using the provided image.
-
-    Args:
-    -----
-    surface (pg.Surface): The surface on which the organisms will be rendered.
-
-    image (pg.Surface): The image representing an organism.
-    """
-
     def render(self, surface: pg.Surface, image: pg.Surface):
+        """
+        Renders the organisms on the given surface using the provided image.
+
+        Args:
+        -----
+        surface (pg.Surface): The surface on which the organisms will be rendered.
+
+        image (pg.Surface): The image representing an organism.
+        """
         organisms = self.organism_distribution
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
-                    surface.blit(image, (x * 64, y * 64))
+                    tint = pg.Color(
+                        f"#{util.array2hex(organism.genome_array)[-6:]}"
+                    )
+                    tinted_image = gcomp.tint(
+                        image,
+                        tint,
+                    )
+                    surface.blit(
+                        tinted_image,
+                        (x * 64, y * 64),
+                    )
 
 
 class State:
@@ -357,7 +367,7 @@ class Simulation(State):
     def render(self) -> None:
         """Render the main screen state."""
         self.sim_surface.fill("black")
-        self.world_surface.fill("Deepskyblue3")
+        self.world_surface.fill("LightBlue")
         self.world.render(self.world_surface, self.image)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
@@ -577,7 +587,9 @@ def main(resolution: tuple[int, int], fps: int):
     license_notice = TextScreen(screen, constants.LICENSE_NOTICE)
     world_build = Organism_selection(screen, world)
     main_game = Simulation(
-        screen, world, "../art/archaebacteria_halophile.png"
+        screen,
+        world,
+        "../art/grayscale/archaebacteria_halophile_grayscale.png",
     )
 
     # Create the state machine

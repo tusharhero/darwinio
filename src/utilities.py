@@ -18,9 +18,14 @@
 """Various functions which don't fit-in in other files."""
 
 import numpy as np
+import hashlib as hlib
 
 
 def normalize(arr: np.ndarray) -> np.ndarray:
     """Normalize the Numpy Array."""
     magnitude: np.floating = np.linalg.norm(arr)
     return np.nan_to_num(arr / magnitude)
+
+
+def array2hex(array: np.ndarray) -> str:
+    return hlib.sha1(array.tobytes()).hexdigest()
