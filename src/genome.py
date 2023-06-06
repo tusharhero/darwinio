@@ -38,7 +38,10 @@ import numpy as np
 def get_random_genome(size: int) -> str:
     """Generates a random hexadecimal genome of the specified size."""
     return "".join(
-        [random.choice("0123456789abcdef") for _ in range(size if size >= 0 else 0)]
+        [
+            random.choice("0123456789abcdef")
+            for _ in range(size if size >= 0 else 0)
+        ]
     )
 
 
@@ -69,11 +72,10 @@ def generate_basepairs(genome: str, letters_per_character: int) -> np.ndarray:
 
 
 def generate_offspring_genome(
-    parent_1: str,
-    parent_2: str,
+    parent_1: np.ndarray,
+    parent_2: np.ndarray,
     mutation_factor: float,
-    letters_per_character: int = 1,
-) -> str:
+) -> np.ndarray:
     """Generate a genome for an offspring of the given parents with mutations.
 
     Args:
@@ -102,27 +104,24 @@ def generate_offspring_genome(
     """
 
     if not 0 <= mutation_factor <= 1:
-        raise ValueError("mutation_factor must be a value between 0 and 1 (inclusive)")
+        raise ValueError(
+            "mutation_factor must be a value between 0 and 1 (inclusive)"
+        )
     if len(parent_1) != len(parent_2):
         raise ValueError("parent_1 and parent_2 must have the same length")
 
-    # generate basepairs
-    parent_1_basepairs = generate_basepairs(parent_1, letters_per_character)
-    parent_2_basepairs = generate_basepairs(parent_2, letters_per_character)
-
     # bitwise random choice between each base_pair
     offspring_genome: list = [
-        random.choice(base_pair)
-        for base_pair in zip(parent_1_basepairs, parent_2_basepairs)
+        random.choice(base_pair) for base_pair in zip(parent_1, parent_2)
     ]
 
     # mutations
     if random.random() < mutation_factor:
         random_index: int = random.randrange(len(offspring_genome))
-        random_value: str = hex(random.randrange(16))[2:]
+        random_value: int = random.randrange(16**3)
         offspring_genome[random_index] = random_value
 
-    return "".join(offspring_genome)
+    return np.array(offspring_genome)
 
 
 def encode_organism_characters(
@@ -153,7 +152,9 @@ def encode_organism_characters(
         raise TypeError("Characters must be a NumPy ndarray")
     if not characters.dtype == np.int64:
         raise ValueError("Characters must be integers")
-    if not np.all((0 <= characters) & (characters <= 16**letters_per_character)):
+    if not np.all(
+        (0 <= characters) & (characters <= 16**letters_per_character)
+    ):
         raise ValueError(
             f"Characters must be between 0 and {16**letters_per_character -1}inclusive"
         )

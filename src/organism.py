@@ -59,10 +59,7 @@ class Organism:
 
     def __init__(
         self,
-        input_data: Union[str, np.ndarray],
-        number_of_characters: int = 4,
-        size_of_genome: int = 10,
-        letters_per_character: int = 3,
+        genome_array: np.ndarray,
     ) -> None:
         """Initializes an instance of the Organism class.
 
@@ -79,31 +76,13 @@ class Organism:
         representing each character.
         """
 
-        self.letters_per_character: int = letters_per_character
+        self.genome_array: np.ndarray = genome_array
 
-        # check if input is genome or characters
-        if isinstance(input_data, np.ndarray):
-            self.genome: str = gn.encode_organism_characters(
-                input_data,
-                number_of_characters
-                if number_of_characters > size_of_genome
-                else size_of_genome,
-                self.letters_per_character,
-            )
-
-            self.characters: np.ndarray = input_data
-
-        elif input_data is not None:
-            self.genome: str = input_data + gn.get_random_genome(
-                size_of_genome - len(input_data)
-            )
-
-            self.characters: np.ndarray = gn.decode_organism_characters(
-                input_data, number_of_characters, self.letters_per_character
-            )
         # assign a neural_network generated from the genome
         neural_structure = np.array([2, 2])
-        weights: np.ndarray = brn.create_weights(self.genome, neural_structure)
+        weights: np.ndarray = brn.create_weights(
+            self.genome_array, neural_structure
+        )
         self.neural_network = brn.NeuralNetwork(weights, neural_structure)
 
 
@@ -112,8 +91,6 @@ def get_random_organism(
     trophic_level_range,
     energy_range,
     reproductive_types,
-    size_of_genome: int = 8 * 3,
-    letters_per_character: int = 3,
 ) -> Organism:
     """Generate a random organism.
 
@@ -138,11 +115,7 @@ def get_random_organism(
         )
     )
 
-    organism: Organism = Organism(
-        input_data=characters,
-        letters_per_character=letters_per_character,
-        size_of_genome=size_of_genome,
-    )
+    organism: Organism = Organism(characters)
 
     return organism
 
@@ -165,7 +138,7 @@ def reproduce(
     ---------
     offspring: Child of the parents.
     """
-    offspring_genome: str = gn.generate_offspring_genome(
-        parent_1.genome, parent_2.genome, mutation_factor
+    offspring_genome: np.ndarray = gn.generate_offspring_genome(
+        parent_1.genome_array, parent_2.genome_array, mutation_factor
     )
     return Organism(offspring_genome)
