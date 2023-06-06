@@ -24,6 +24,15 @@ import graphical_components as gcomp
 
 
 class World(dist.World):
+    """
+    Renders the organisms on the given surface using the provided image.
+
+    Args:
+    -----
+    surface (pg.Surface): The surface on which the organisms will be rendered.
+    image (pg.Surface): The image representing an organism.
+    """
+
     def render(self, surface: pg.Surface, image: pg.Surface):
         organisms = self.organism_distribution
         for y, row in enumerate(organisms):
@@ -120,6 +129,23 @@ class StateMachine:
 
 
 class Organism_selection(State):
+    """
+    Represents a organism criteria selection screen.
+
+
+    Attributes:
+    -----------
+    surface (pg.Surface): The surface on which the screen is displayed.
+    world  (World): The world object containing the organisms.
+    title  (pgui.elements.UITextBox): The title textbox displayed on the screen.
+    energy_slider_min  (gcomp.Slider): The slider for selecting the minimum energy range of organisms.
+    energy_slider_max (gcomp.Slider): The slider for selecting the maximum energy range of organisms.
+    temp_slider_min (gcomp.Slider): The slider for selecting the minimum temperature range of organisms.
+    temp_slider_max (gcomp.Slider): The slider for selecting the maximum temperature range of organisms.
+    done_button (pgui.elements.UIButton): The button for indicating completion of organism selection.
+    skip_button (pgui.elements.UIButton): The button for skipping organism selection.
+    """
+
     def __init__(self, surface: pg.Surface, world: World):
         surface_size = width, height = surface.get_size()
         super().__init__(surface, surface_size)
@@ -161,6 +187,14 @@ class Organism_selection(State):
     def update(
         self, events: list[pg.Event], time_delta: float
     ) -> Union[int, None]:
+        """
+        Updates the state based on the given events and time delta.
+
+        Args:
+        -----
+        events (list[pg.Event]): A list of Pygame events.
+        time_delta (float): The time difference between the current and previous frame.
+        """
         for event in events:
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.done_button:
@@ -198,10 +232,22 @@ class Simulation(State):
 
     Attributes:
     -----------
+    surface (pg.Surface): The surface on which the state will be rendered.
+    world (World): The world object containing the simulation data.
+    image_path (str): The path to the image used for the game view.
     game_view (pygame.Surface): The surface for the game view.
-    container (pygame_gui.core.UIContainer): The UI container for the main
-    screen state.
+    container (pygame_gui.core.UIContainer): The UI container for the main screen state.
     button (pygame_gui.elements.UIButton): The UI button for starting the game.
+    image (pygame.Surface): The scaled image loaded from the image path.
+    running (bool): Indicates whether the simulation is currently running.
+    world_surface (pg.Surface): The surface representing the world in the simulation.
+    world_rect (pg.Rect): The rectangle representing the position and size of the world surface.
+    world_scale (int): The scale factor applied to the world surface.
+    scaled_world_surface (pg.Surface): The world surface after applying the scale factor.
+    sim_surface (pg.Surface): The simulation surface.
+    sim_rect (pg.Rect): The rectangle representing the position and size of the simulation surface.
+    temp_slider (gcomp.Slider): The slider for adjusting the temperature in the simulation.
+    food_slider (gcomp.Slider): The slider for adjusting the food content in the simulation.
     """
 
     def __init__(self, surface: pg.Surface, world: World, image_path: str):
@@ -209,6 +255,8 @@ class Simulation(State):
         Args:
         -----
         surface (pygame.Surface): The surface on which the state will be rendered.
+        world (World): The world object containing the simulation data.
+        image_path: The path of the image which will be used for the organism.
         """
 
         surface_size = width, height = surface.get_size()
@@ -274,6 +322,8 @@ class Simulation(State):
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.running = not self.running
+
+            # change the temp/food content
             if event.type == pgui.UI_HORIZONTAL_SLIDER_MOVED:
                 if event.ui_element == self.temp_slider.slider:
                     loc = self.temp_slider.slider.get_current_value()
@@ -290,6 +340,7 @@ class Simulation(State):
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()
+        # moving
         if keys_pressed[pg.K_UP] or keys_pressed[pg.K_k]:
             self.world_rect.centery += 5
         if keys_pressed[pg.K_DOWN] or keys_pressed[pg.K_j]:
@@ -298,6 +349,7 @@ class Simulation(State):
             self.world_rect.centerx -= 5
         if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
             self.world_rect.centerx += 5
+        # zooming
         if keys_pressed[pg.K_EQUALS] and self.world_scale < 1.5:
             self.world_scale += 0.05
             self.scaled_world_surface = pg.transform.scale_by(
@@ -321,6 +373,7 @@ class Simulation(State):
         else:
             self.button.set_text("start")
 
+        # run every 500 milliseconds
         if pg.time.get_ticks() % 500 == 0 and self.running:
             self.button.set_text("wait")
             self.world.update_state()
@@ -448,6 +501,7 @@ def main(resolution: tuple[int, int], fps: int):
     pg.init()
     screen = pg.display.set_mode(resolution, pg.SCALED | pg.RESIZABLE)
     pg.display.set_caption("darwinio")
+    pg.display.set_icon(pg.image.load("../art/eubacteria_BGA.png"))
     clock = pg.time.Clock()
 
     world = World((100, 100))
