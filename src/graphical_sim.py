@@ -413,10 +413,19 @@ class Simulation(State):
         if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
             self.world_rect.centerx += 500 * time_delta
 
+        if self.world_rect.top > self.sim_rect.top:
+            self.world_rect.top = self.sim_rect.top
+        if self.world_rect.bottom < self.sim_rect.bottom:
+            self.world_rect.bottom = self.sim_rect.bottom
+        if self.world_rect.left > self.sim_rect.left:
+            self.world_rect.left = self.sim_rect.left
+        if self.world_rect.right < self.sim_rect.right:
+            self.world_rect.right = self.sim_rect.right
+
         # zooming
         if keys_pressed[pg.K_EQUALS] and self.world_scale < 2:
             self.world_scale += 0.5 * time_delta
-        if keys_pressed[pg.K_MINUS] and self.world_scale > 0.2:
+        if keys_pressed[pg.K_MINUS] and self.world_scale > 0.5:
             self.world_scale -= 0.5 * time_delta
         self.scaled_world_surface = pg.transform.scale_by(
             self.world_surface, self.world_scale
