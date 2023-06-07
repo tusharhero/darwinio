@@ -26,10 +26,12 @@ Functions:
 -------------
 create_weights: Creates the weights for the neural network based on the
 genome and neural structure.
+
+normalize_array: Creates the weights for the neural network based on the genome
+and neural structure.
 """
 
 import numpy as np
-import utilities as utils
 
 
 class NeuralNetwork:
@@ -123,6 +125,12 @@ class NeuralNetwork:
         return np.array(neural_network[-1])
 
 
+def normalize(arr: np.ndarray) -> np.ndarray:
+    """Normalize the Numpy Array."""
+    magnitude: np.floating = np.linalg.norm(arr)
+    return np.nan_to_num(arr / magnitude)
+
+
 def create_weights(
     genome_array: np.ndarray, neural_structure: np.ndarray
 ) -> np.ndarray:
@@ -148,6 +156,6 @@ def create_weights(
     weights: np.ndarray = genome_array[:number_of_neural_connections]
 
     # normalize to the range [-1, 1]
-    weights: np.ndarray = utils.normalize(weights)
+    weights: np.ndarray = normalize(weights)
 
     return weights

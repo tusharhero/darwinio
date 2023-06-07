@@ -19,8 +19,7 @@ from typing import Union
 import pygame as pg
 import pygame_gui as pgui
 import distribution as dist
-import graphical_components as gcomp
-import utilities as util
+import genome as gn
 
 
 class World(dist.World):
@@ -40,9 +39,9 @@ class World(dist.World):
             for x, organism in enumerate(row):
                 if organism is not None:
                     tint = pg.Color(
-                        f"#{util.array2hex(organism.genome_array)[-6:]}"
+                        f"#{gn.array2hex(organism.genome_array)[-6]}"
                     )
-                    tinted_image = gcomp.tint(
+                    tinted_image = tint(
                         image,
                         tint,
                     )
@@ -153,6 +152,39 @@ class StateMachine:
         )
 
 
+class Slider:
+    """A class representing a custom UI element"""
+
+    def __init__(
+        self,
+        label: str,
+        position: tuple[int, int],
+        starting_value: int,
+        slider_range: tuple[int, int],
+        manager: pgui.UIManager,
+    ):
+        x, y = position
+        self.slider = pgui.elements.UIHorizontalSlider(
+            pg.Rect(x, y, 400, 30),
+            starting_value,
+            slider_range,
+            manager,
+        )
+        self.value_label = pgui.elements.UITextBox(
+            str(self.slider.get_current_value()),
+            pg.Rect(x - 50, y, 50, 60),
+            manager,
+        )
+        self.label = pgui.elements.UITextBox(
+            label,
+            pg.Rect(x, y + 30, 400, 30),
+            manager,
+        )
+
+    def update(self):
+        self.value_label.set_text(str(self.slider.get_current_value()))
+
+
 class Organism_selection(State):
     """
     Represents a organism criteria selection screen.
@@ -166,16 +198,16 @@ class Organism_selection(State):
 
     title (pgui.elements.UITextBox): The title textbox displayed on the screen.
 
-    energy_slider_min (gcomp.Slider): The slider for selecting the minimum
+    energy_slider_min (Slider): The slider for selecting the minimum
     energy range of organisms.
 
-    energy_slider_max (gcomp.Slider): The slider for selecting the maximum
+    energy_slider_max (Slider): The slider for selecting the maximum
     energy range of organisms.
 
-    temp_slider_min (gcomp.Slider): The slider for selecting the minimum
+    temp_slider_min (Slider): The slider for selecting the minimum
     temperature range of organisms.
 
-    temp_slider_max (gcomp.Slider): The slider for selecting the maximum
+    temp_slider_max (Slider): The slider for selecting the maximum
     temperature range of organisms.
 
     done_button (pgui.elements.UIButton): The button for indicating completion
@@ -196,17 +228,17 @@ class Organism_selection(State):
             self.manager,
         )
 
-        self.energy_slider_min = gcomp.Slider(
+        self.energy_slider_min = Slider(
             "Food min:", (350, 150), 100, (1, 2000), self.manager
         )
-        self.energy_slider_max = gcomp.Slider(
+        self.energy_slider_max = Slider(
             "Food max:", (350, 250), 1000, (1, 2000), self.manager
         )
 
-        self.temp_slider_min = gcomp.Slider(
+        self.temp_slider_min = Slider(
             "Temp min:", (350, 350), 230, (1, 2000), self.manager
         )
-        self.temp_slider_max = gcomp.Slider(
+        self.temp_slider_max = Slider(
             "Temp max:", (350, 450), 400, (1, 2000), self.manager
         )
 
@@ -308,10 +340,10 @@ class Simulation(State):
 
     last_time (int): The last time
 
-    temp_slider (gcomp.Slider): The slider for adjusting the temperature in the
+    temp_slider (Slider): The slider for adjusting the temperature in the
     simulation.
 
-    food_slider (gcomp.Slider): The slider for adjusting the food content in
+    food_slider (Slider): The slider for adjusting the food content in
     the simulation.
     """
 
@@ -362,14 +394,14 @@ class Simulation(State):
         self.population_label = pgui.elements.UITextBox(
             "0", pg.Rect(0, 0, -1, -1), self.manager
         )
-        self.temp_slider = gcomp.Slider(
+        self.temp_slider = Slider(
             "adjust temperature",
             (width - 500, height - 60),
             50,
             (0, 500),
             self.manager,
         )
-        self.food_slider = gcomp.Slider(
+        self.food_slider = Slider(
             "adjust the food content",
             (width - 950, height - 60),
             500,
@@ -583,3 +615,9 @@ class TextScreen(State):
             if event.type == pg.KEYDOWN:
                 return self.next_state_index
         super().update(events, time_delta)
+
+
+def tint(surface: pg.Surface, color: pg.Color) -> pg.Surface:
+    new_surface = surface.copy()
+    new_surface.fill(color, special_flags=pg.BLEND_RGB_ADD)
+    return new_surface

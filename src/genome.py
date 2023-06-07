@@ -25,6 +25,7 @@ parents with mutations.
 
 import random
 import numpy as np
+import nilsimsa as nil
 
 
 def generate_offspring_genome(
