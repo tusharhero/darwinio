@@ -18,7 +18,7 @@
 """Various functions which don't fit-in in other files."""
 
 import numpy as np
-import hashlib as hlib
+import nilsimsa as nil
 
 
 def normalize(arr: np.ndarray) -> np.ndarray:
@@ -28,4 +28,4 @@ def normalize(arr: np.ndarray) -> np.ndarray:
 
 
 def array2hex(array: np.ndarray) -> str:
-    return hlib.sha1(array.tobytes()).hexdigest()
+    return nil.Nilsimsa(array.tobytes()).hexdigest()
