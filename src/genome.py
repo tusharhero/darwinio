@@ -75,3 +75,7 @@ def generate_offspring_genome(
         offspring_genome[random_index] = random_value
 
     return np.array(offspring_genome)
+
+
+def array2hex(array: np.ndarray) -> str:
+    return nil.Nilsimsa(array.tobytes()).hexdigest()
