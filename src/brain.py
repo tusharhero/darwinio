@@ -89,7 +89,7 @@ class NeuralNetwork:
         Finally, the output of the last layer is returned as a Numpy Array.
         """
 
-        normalized_input_values: np.ndarray = utils.normalize(input_values)
+        normalized_input_values: np.ndarray = normalize(input_values)
         weights: np.ndarray = self.weights
         neural_structure: np.ndarray = self.neural_structure
         neural_network: list[list[float]] = [

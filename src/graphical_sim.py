@@ -38,13 +38,10 @@ class World(dist.World):
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
-                    tint = pg.Color(
-                        f"#{gn.array2hex(organism.genome_array)[-6]}"
+                    color = pg.Color(
+                        f"#{gn.array2hex(organism.genome_array)[-6:]}"
                     )
-                    tinted_image = tint(
-                        image,
-                        tint,
-                    )
+                    tinted_image = tint(image, color)
                     surface.blit(
                         tinted_image,
                         (x * 64, y * 64),

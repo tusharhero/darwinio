@@ -80,7 +80,7 @@ def main(resolution: tuple[int, int], fps: int):
                         pg.mixer.music.pause()
                     else:
                         pg.mixer.music.unpause()
-                    music_playing = not music_playing
+                        music_playing = not music_playing
                 if event.mod & pg.KMOD_LSHIFT and event.key == pg.K_h:
                     prev_index: int = statemachine.state_index
                     statemachine.state_index = 4
