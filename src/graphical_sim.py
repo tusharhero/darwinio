@@ -365,9 +365,9 @@ class Simulation(State):
         )
 
     def render(self) -> None:
-        """Render the main screen state."""
+        """render the main screen state."""
         self.sim_surface.fill("black")
-        self.world_surface.fill("LightBlue")
+        self.world_surface.fill("lightblue")
         self.world.render(self.world_surface, self.image)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
@@ -415,21 +415,14 @@ class Simulation(State):
         # zooming
         if keys_pressed[pg.K_EQUALS] and self.world_scale < 1.5:
             self.world_scale += 0.05
-            self.scaled_world_surface = pg.transform.scale_by(
-                self.world_surface, self.world_scale
-            )
-            self.world_rect = self.scaled_world_surface.get_rect(
-                center=self.world_rect.center
-            )
-
         if keys_pressed[pg.K_MINUS] and self.world_scale > 0.2:
             self.world_scale -= 0.05
-            self.scaled_world_surface = pg.transform.scale_by(
-                self.world_surface, self.world_scale
-            )
-            self.world_rect = self.scaled_world_surface.get_rect(
-                center=self.world_rect.center
-            )
+        self.scaled_world_surface = pg.transform.scale_by(
+            self.world_surface, self.world_scale
+        )
+        self.world_rect = self.scaled_world_surface.get_rect(
+            center=self.world_rect.center
+        )
 
         if self.running:
             self.button.set_text("running")
