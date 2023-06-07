@@ -67,6 +67,7 @@ class State:
         self,
         surface: pg.Surface,
         manager_size: tuple[int, int],
+        next_state_index: Union[int, None],
         theme: str = "theme.json",
     ):
         """
@@ -78,6 +79,7 @@ class State:
         initial_manager_size (tuple[int, int]): The initial size of the UI
         manager.
         """
+        self.next_state_index = next_state_index
         self.manager = pgui.UIManager(manager_size, theme)
         self.surface: pg.Surface = surface
 
@@ -185,7 +187,7 @@ class Organism_selection(State):
 
     def __init__(self, surface: pg.Surface, world: World):
         surface_size = width, height = surface.get_size()
-        super().__init__(surface, surface_size)
+        super().__init__(surface, surface_size, 3)
         self.world: World = world
 
         self.title = pgui.elements.UITextBox(
@@ -195,17 +197,17 @@ class Organism_selection(State):
         )
 
         self.energy_slider_min = gcomp.Slider(
-            "Food min:", (250, 150), 100, (1, 2000), self.manager
+            "Food min:", (350, 150), 100, (1, 2000), self.manager
         )
         self.energy_slider_max = gcomp.Slider(
-            "Food max:", (250, 250), 1000, (1, 2000), self.manager
+            "Food max:", (350, 250), 1000, (1, 2000), self.manager
         )
 
         self.temp_slider_min = gcomp.Slider(
-            "Temp min:", (250, 350), 230, (1, 2000), self.manager
+            "Temp min:", (350, 350), 230, (1, 2000), self.manager
         )
         self.temp_slider_max = gcomp.Slider(
-            "Temp max:", (250, 450), 400, (1, 2000), self.manager
+            "Temp max:", (350, 450), 400, (1, 2000), self.manager
         )
 
         self.done_button = pgui.elements.UIButton(
@@ -250,9 +252,9 @@ class Organism_selection(State):
                             energy_range=energy_range, temp_range=temp_range
                         )
                     )
-                    return 3
+                    return self.next_state_index
                 if event.ui_element == self.skip_button:
-                    return 3
+                    return self.next_state_index
             self.manager.process_events(event)
 
         self.energy_slider_max.update()
@@ -325,7 +327,7 @@ class Simulation(State):
         """
 
         surface_size = width, height = surface.get_size()
-        super().__init__(surface, surface_size)
+        super().__init__(surface, surface_size, None)
 
         # Simulation Interface
         self.image = pg.transform.scale(
@@ -351,8 +353,11 @@ class Simulation(State):
         self.last_time = 0
 
         # User Interface
-        self.button = pgui.elements.UIButton(
-            pg.Rect(width - 100, height - 60, 100, 60), "start", self.manager
+        self.start_button = pgui.elements.UIButton(
+            pg.Rect(width - 100, height - 30, 100, 30), "start", self.manager
+        )
+        self.restart_button = pgui.elements.UIButton(
+            pg.Rect(width - 100, height - 60, 100, 30), "restart", self.manager
         )
         self.temp_slider = gcomp.Slider(
             "adjust temperature",
@@ -383,9 +388,11 @@ class Simulation(State):
     ) -> Union[int, None]:
         for event in events:
             if event.type == pgui.UI_BUTTON_PRESSED:
-                if event.ui_element == self.button:
+                if event.ui_element == self.start_button:
                     self.running = not self.running
                     self.last_time = 0
+                if event.ui_element == self.restart_button:
+                    return 2
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.running = not self.running
@@ -441,15 +448,15 @@ class Simulation(State):
         )
 
         if self.running:
-            self.button.set_text("running")
+            self.start_button.set_text("running")
         else:
-            self.button.set_text("start")
+            self.start_button.set_text("start")
 
         # run every 1000 milliseconds
         current_time = pg.time.get_ticks()
         if current_time - self.last_time > 1000 and self.running:
             self.last_time = current_time
-            self.button.set_text("wait")
+            self.start_button.set_text("wait")
             self.world.update_state()
 
         self.manager.update(time_delta)
@@ -534,7 +541,9 @@ class TextScreen(State):
     the text content.
     """
 
-    def __init__(self, surface: pg.Surface, screen_text: str):
+    def __init__(
+        self, surface: pg.Surface, screen_text: str, next_state_index: int
+    ):
         """
         Args:
         -----
@@ -543,7 +552,7 @@ class TextScreen(State):
 
         screen_text (str): The text content to be displayed on the screen.
         """
-        super().__init__(surface, surface.get_size())
+        super().__init__(surface, surface.get_size(), next_state_index)
         self.text_box = pgui.elements.UITextBox(
             screen_text, self.surface.get_rect(), self.manager
         )
@@ -567,7 +576,7 @@ class TextScreen(State):
         """
         for event in events:
             if event.type == pg.KEYDOWN:
-                return 2
+                return self.next_state_index
         super().update(events, time_delta)
 
 
@@ -599,8 +608,9 @@ def main(resolution: tuple[int, int], fps: int):
 
     # Create the states
     title = TitleScreen(screen, constants.TITLE_ACSII_ART)
-    license_notice = TextScreen(screen, constants.LICENSE_NOTICE)
+    license_notice = TextScreen(screen, constants.LICENSE_NOTICE, 2)
     world_build = Organism_selection(screen, world)
+    help_screen = TextScreen(screen, constants.HELP, 4)
     main_game = Simulation(
         screen,
         world,
@@ -609,7 +619,7 @@ def main(resolution: tuple[int, int], fps: int):
 
     # Create the state machine
     statemachine = StateMachine(
-        [title, license_notice, world_build, main_game]
+        [title, license_notice, world_build, main_game, help_screen]
     )
     while True:
         time_delta = clock.tick(fps) / 1000.0
@@ -622,12 +632,19 @@ def main(resolution: tuple[int, int], fps: int):
             if event.type == pg.KEYUP:
                 if event.key == pg.K_F11:
                     pg.display.toggle_fullscreen()
+                if event.key == pg.K_ESCAPE:
+                    pg.quit()
+                    raise SystemExit
                 if event.key == pg.K_m:
                     if music_playing:
                         pg.mixer.music.pause()
                     else:
                         pg.mixer.music.unpause()
                     music_playing = not music_playing
+                if event.mod & pg.KMOD_LSHIFT and event.key == pg.K_h:
+                    prev_index: int = statemachine.state_index
+                    statemachine.state_index = 4
+                    help_screen.next_state_index = prev_index
 
         screen.fill("#423E4A")
         statemachine.run_state(events, time_delta)

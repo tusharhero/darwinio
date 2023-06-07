@@ -47,3 +47,13 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 with open("../LICENSE.md", "r") as file:
     LICENSE = file.read()
+
+HELP = """
+To get help, press <b>SHIFT+H</b>.
+To zoom in, zoom out do <b>-</b> , <b>=</b> respectively.
+To move around use the <b>arrow keys</b> or vim keys for moving around the
+text.
+To exit the game do <b>ESC</b>.
+For Full screen do <b>F11</b>.
+To mute/unmute the music, do <b>m</b>.
+"""
