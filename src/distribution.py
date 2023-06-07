@@ -166,6 +166,7 @@ class World:
         current_position (tuple[int, int]): A tuple of two integers
         representing the current position of the organism.
         """
+
         i, j = current_position
         neighbour_cells_food_dist: np.ndarray = get_neighbour_cells(
             (i, j), self.food_distribution
@@ -277,6 +278,7 @@ class World:
 
     def generate_organism_distribution(
         self,
+        weights: tuple[float, float] = (0.1, 0.9),
         temp_range: tuple[int, int] = (230, 400),
         trophic_level_range: tuple[int, int] = (0, 3),
         energy_range: tuple[int, int] = (100, 1000),
@@ -285,7 +287,7 @@ class World:
         return np.array(
             [
                 [
-                    random.choice(
+                    random.choices(
                         (
                             org.get_random_organism(
                                 temp_range,
@@ -294,8 +296,10 @@ class World:
                                 reproductive_types,
                             ),
                             None,
-                        )
-                    )
+                        ),
+                        weights=weights,
+                        k=1,
+                    )[0]
                     for _ in range(self.canvas_size[1])
                 ]
                 for _ in range(self.canvas_size[0])
