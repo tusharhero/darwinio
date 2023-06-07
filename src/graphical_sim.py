@@ -573,6 +573,12 @@ def main(resolution: tuple[int, int], fps: int):
     pg.display.set_icon(pg.image.load("../art/eubacteria_BGA.png"))
     clock = pg.time.Clock()
 
+    # music
+    music_playing = True
+    pg.mixer.music.load("../audio/Darwinio.mp3")
+    pg.mixer.music.set_volume(0.1)
+    pg.mixer.music.play()
+
     world = World((50, 50))
 
     # Create the states
@@ -589,7 +595,6 @@ def main(resolution: tuple[int, int], fps: int):
     statemachine = StateMachine(
         [title, license_notice, world_build, main_game]
     )
-
     while True:
         time_delta = clock.tick(fps) / 1000.0
 
@@ -601,6 +606,12 @@ def main(resolution: tuple[int, int], fps: int):
             if event.type == pg.KEYUP:
                 if event.key == pg.K_F11:
                     pg.display.toggle_fullscreen()
+                if event.key == pg.K_m:
+                    if music_playing:
+                        pg.mixer.music.pause()
+                    else:
+                        pg.mixer.music.unpause()
+                    music_playing = not music_playing
 
         screen.fill("black")
         statemachine.run_state(events, time_delta)
