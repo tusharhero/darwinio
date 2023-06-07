@@ -582,7 +582,7 @@ def main(resolution: tuple[int, int], fps: int):
     main_game = Simulation(
         screen,
         world,
-        "../art/grayscale/archaebacteria_halophile_grayscale.png",
+        "../art/archaebacteria_halophile.png",
     )
 
     # Create the state machine
