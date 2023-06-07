@@ -367,7 +367,7 @@ class Simulation(State):
     def render(self) -> None:
         """render the main screen state."""
         self.sim_surface.fill("black")
-        self.world_surface.fill("lightblue")
+        self.world_surface.fill("#5498C6")
         self.world.render(self.world_surface, self.image)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
@@ -405,18 +405,19 @@ class Simulation(State):
         keys_pressed = pg.key.get_pressed()
         # moving
         if keys_pressed[pg.K_UP] or keys_pressed[pg.K_k]:
-            self.world_rect.centery += 5
+            self.world_rect.centery += 500 * time_delta
         if keys_pressed[pg.K_DOWN] or keys_pressed[pg.K_j]:
-            self.world_rect.centery -= 5
+            self.world_rect.centery -= 500 * time_delta
         if keys_pressed[pg.K_RIGHT] or keys_pressed[pg.K_l]:
-            self.world_rect.centerx -= 5
+            self.world_rect.centerx -= 500 * time_delta
         if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
-            self.world_rect.centerx += 5
+            self.world_rect.centerx += 500 * time_delta
+
         # zooming
-        if keys_pressed[pg.K_EQUALS] and self.world_scale < 1.5:
-            self.world_scale += 0.05
+        if keys_pressed[pg.K_EQUALS] and self.world_scale < 2:
+            self.world_scale += 0.5 * time_delta
         if keys_pressed[pg.K_MINUS] and self.world_scale > 0.2:
-            self.world_scale -= 0.05
+            self.world_scale -= 0.5 * time_delta
         self.scaled_world_surface = pg.transform.scale_by(
             self.world_surface, self.world_scale
         )
