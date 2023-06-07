@@ -305,12 +305,7 @@ class World:
 
     def get_population(self) -> int:
         """Gets you the population of the world."""
-        return sum(
-            [
-                1 if organism is not None else 0
-                for organism in self.organism_distribution
-            ]
-        )
+        return get_distribution_population(self.organism_distribution)
 
 
 def get_neighbour_cells(

@@ -31,7 +31,8 @@ class World(dist.World):
 
         Args:
         -----
-        surface (pg.Surface): The surface on which the organisms will be rendered.
+        surface (pg.Surface): The surface on which the organisms will be
+        rendered.
 
         image (pg.Surface): The image representing an organism.
         """
@@ -359,6 +360,9 @@ class Simulation(State):
         self.restart_button = pgui.elements.UIButton(
             pg.Rect(width - 100, height - 60, 100, 30), "restart", self.manager
         )
+        self.population_label = pgui.elements.UITextBox(
+            "0", pg.Rect(0, 0, -1, -1), self.manager
+        )
         self.temp_slider = gcomp.Slider(
             "adjust temperature",
             (width - 500, height - 60),
@@ -426,14 +430,15 @@ class Simulation(State):
             self.world_rect.centerx += 500 * time_delta
 
         # can't move beyond
-        if self.world_rect.top > self.sim_rect.top:
-            self.world_rect.top = self.sim_rect.top
-        if self.world_rect.bottom < self.sim_rect.bottom:
-            self.world_rect.bottom = self.sim_rect.bottom
-        if self.world_rect.left > self.sim_rect.left:
-            self.world_rect.left = self.sim_rect.left
-        if self.world_rect.right < self.sim_rect.right:
-            self.world_rect.right = self.sim_rect.right
+        wiggle_room: int = 100
+        if self.world_rect.top > self.sim_rect.top + wiggle_room:
+            self.world_rect.top = self.sim_rect.top + wiggle_room
+        if self.world_rect.bottom < self.sim_rect.bottom - wiggle_room:
+            self.world_rect.bottom = self.sim_rect.bottom - wiggle_room
+        if self.world_rect.left > self.sim_rect.left + wiggle_room:
+            self.world_rect.left = self.sim_rect.left + wiggle_room
+        if self.world_rect.right < self.sim_rect.right - wiggle_room:
+            self.world_rect.right = self.sim_rect.right - wiggle_room
 
         # zooming
         if keys_pressed[pg.K_EQUALS] and self.world_scale < 2:
@@ -458,6 +463,7 @@ class Simulation(State):
             self.last_time = current_time
             self.start_button.set_text("wait")
             self.world.update_state()
+        self.population_label.set_text(str(self.world.get_population()))
 
         self.manager.update(time_delta)
         return None
