@@ -63,7 +63,12 @@ class State:
     surface (pygame.Surface): The surface on which the state is rendered.
     """
 
-    def __init__(self, surface: pg.Surface, manager_size: tuple[int, int]):
+    def __init__(
+        self,
+        surface: pg.Surface,
+        manager_size: tuple[int, int],
+        theme: str = "theme.json",
+    ):
         """
         Args:
         ------
@@ -73,7 +78,7 @@ class State:
         initial_manager_size (tuple[int, int]): The initial size of the UI
         manager.
         """
-        self.manager = pgui.UIManager(manager_size)
+        self.manager = pgui.UIManager(manager_size, theme)
         self.surface: pg.Surface = surface
 
     def render(self):
@@ -413,6 +418,7 @@ class Simulation(State):
         if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
             self.world_rect.centerx += 500 * time_delta
 
+        # can't move beyond
         if self.world_rect.top > self.sim_rect.top:
             self.world_rect.top = self.sim_rect.top
         if self.world_rect.bottom < self.sim_rect.bottom:
@@ -623,7 +629,7 @@ def main(resolution: tuple[int, int], fps: int):
                         pg.mixer.music.unpause()
                     music_playing = not music_playing
 
-        screen.fill("black")
+        screen.fill("#423E4A")
         statemachine.run_state(events, time_delta)
         pg.display.flip()
 
