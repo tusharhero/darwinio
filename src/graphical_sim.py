@@ -57,6 +57,8 @@ class State:
     manager (pygame_gui.UIManager): The UI manager for the state.
 
     surface (pygame.Surface): The surface on which the state is rendered.
+
+    next_state_index (int): The index of the next state
     """
 
     def __init__(
@@ -74,6 +76,10 @@ class State:
 
         initial_manager_size (tuple[int, int]): The initial size of the UI
         manager.
+
+        next_state_index (int): The index of the next state
+
+        theme (str):
         """
         self.next_state_index = next_state_index
         self.manager = pgui.UIManager(manager_size, theme)
@@ -313,7 +319,14 @@ class Simulation(State):
     container (pygame_gui.core.UIContainer): The UI container for the main
     screen state.
 
-    button (pygame_gui.elements.UIButton): The UI button for starting the game.
+    start_button (pygame_gui.elements.UIButton): The UI button for starting the
+    game.
+
+    restart_button (pygame_gui.elements.UIButton): The UI button for starting
+    the game.
+
+    population_label (pygame_gui.elements.UITextBox): The UI label for showing
+    the population
 
     image (pygame.Surface): The scaled image loaded from the image path.
 
@@ -348,7 +361,8 @@ class Simulation(State):
         """
         Args:
         -----
-        surface (pygame.Surface): The surface on which the state will be rendered.
+        surface (pygame.Surface): The surface on which the state will be
+        rendered.
 
         world (World): The world object containing the simulation data.
 
@@ -424,6 +438,7 @@ class Simulation(State):
                     self.running = not self.running
                     self.last_time = 0
                 if event.ui_element == self.restart_button:
+                    self.running = not self.running
                     return 2
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
@@ -585,6 +600,8 @@ class TextScreen(State):
         rendered.
 
         screen_text (str): The text content to be displayed on the screen.
+
+        state_index (int): The index of the current active state.
         """
         super().__init__(surface, surface.get_size(), next_state_index)
         self.text_box = pgui.elements.UITextBox(
@@ -615,6 +632,7 @@ class TextScreen(State):
 
 
 def tint(surface: pg.Surface, color: pg.Color) -> pg.Surface:
+    """create a tinted surface from the given color"""
     new_surface = surface.copy()
     new_surface.fill(color, special_flags=pg.BLEND_RGB_ADD)
     return new_surface

@@ -29,6 +29,8 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     resolution (tuple[int, int]): The resolution of the game screen.
 
     fps (int): The desired frame rate of the game.
+
+    world_size (tuple[int, int]): The size of the world for simulation.
     """
 
     # Initialize Pygame
