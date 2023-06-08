@@ -16,6 +16,25 @@ organisms, genetic codes, and neural networks. The program is intended to explor
 the intricacies of the natural world and replicate the processes of evolution
 through a simulation.
 
+## Setup
+
+### *Nix(Gnu-Linux, *BSD, MacOS)
+
++ Make sure you have Python installed using whichever package manager you use.
++ Create a Python-venv.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
++ Install the dependencies
+```
+python -m pip install -r requirements.txt
+```
++ finally, run it,
+```
+cd src
+python main.py
+```
 ## License
 
 This program is copyright © 2023 Tushar Maharana <tusharhero@sdf.org>,
