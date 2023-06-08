@@ -62,7 +62,11 @@ class World:
     of organisms and `None` values of size `canvas_size`.
     """
 
-    def __init__(self, canvas_size: tuple, mutation_factor: float = 0.3):
+    def __init__(
+        self,
+        canvas_size: tuple,
+        mutation_factor: float = 0.3,
+    ):
         """Initializes a new World instance.
 
         Args:
@@ -79,22 +83,13 @@ class World:
 
         self.food_distribution: np.ndarray = self.generate_distribution(
             500, 100
-        ).astype(int)
+        )
 
         self.temp_distribution: np.ndarray = self.generate_distribution(
             315, 50
-        ).astype(int)
-
-        # Randomly distribute the organisms
-        self.organism_distribution = np.array(
-            [
-                [
-                    random.choice((org.get_random_organism(), None))
-                    for _ in range(self.canvas_size[1])
-                ]
-                for _ in range(self.canvas_size[0])
-            ],
-            dtype=object,
+        )
+        self.organism_distribution: np.ndarray = (
+            self.generate_organism_distribution()
         )
 
     def update_state(self):
@@ -120,27 +115,29 @@ class World:
                 # check if there is an organism at the current location
                 if organism is not None:
                     temp_range = get_integer_neighbors(
-                        organism.characters[0], 100
+                        organism.genome_array[0], 100
                     )
                     food_value = self.food_distribution[i][j]
 
                     # name the conditions
 
                     has_enough_food: bool = (
-                        food_value >= organism.characters[2]
+                        food_value >= organism.genome_array[2]
                     )
                     is_in_ideal_temp: bool = (
                         self.temp_distribution[i][j] in temp_range
                     )
                     has_enough_food_for_reprod: bool = (
-                        food_value >= 2 * organism.characters[2]
+                        food_value >= 2 * organism.genome_array[2]
                     )
                     is_in_ideal_temp_for_reprod: bool = (
                         self.temp_distribution[i][j] in temp_range
                     )
 
                     if has_enough_food and is_in_ideal_temp:
-                        self.food_distribution[i][j] -= organism.characters[2]
+                        self.food_distribution[i][j] -= organism.genome_array[
+                            2
+                        ]
                         self.move(organism, (i, j))
 
                     if (
@@ -148,15 +145,28 @@ class World:
                         and is_in_ideal_temp_for_reprod
                     ):
                         self.reproduce(organism, (i, j))
+
                     # if food is not available kill it and derive some food
                     # from its dead body.
                     else:
                         self.food_distribution[i][j] += (
-                            organism.characters[2] * 10
+                            organism.genome_array[2] * 10
                         )
                         self.organism_distribution[i][j] = None
 
     def move(self, organism: org.Organism, current_position: tuple[int, int]):
+        """Move the organism to a new position based on the current position
+        and environmental conditions.
+
+        Args:
+        ------
+        organism (org.Organism): An instance of the Organism class
+        representing the organism to be moved.
+
+        current_position (tuple[int, int]): A tuple of two integers
+        representing the current position of the organism.
+        """
+
         i, j = current_position
         neighbour_cells_food_dist: np.ndarray = get_neighbour_cells(
             (i, j), self.food_distribution
@@ -180,7 +190,6 @@ class World:
             organism.neural_network.run_neural_network(
                 np.array((food_direction, temp_direction))
             )
-            * 10
         ).astype(int)
 
         new_coordinates: tuple = get_feasible_position(
@@ -198,6 +207,16 @@ class World:
     def reproduce(
         self, organism: org.Organism, current_position: tuple[int, int]
     ):
+        """Reproduce the organism at the current position.
+
+        Args:
+        ------
+        organism (org.Organism): An instance of the Organism class representing
+        the organism to be reproduced.
+
+        current_position (tuple[int, int]): A tuple of two integers
+        representing the current position of the organism.
+        """
         i, j = current_position
         prefered_position = tuple(
             [(i, j)[p] + np.random.choice((-1, 1)) for p in range(2)]
@@ -209,7 +228,7 @@ class World:
         )
 
         # asexual
-        if organism.characters[3] == 0:
+        if organism.genome_array[3] == 0:
             offspring: Union[org.Organism, None] = org.reproduce(
                 organism, organism, 0.3
             )
@@ -241,9 +260,6 @@ class World:
 
         Args:
         -----
-        canvas_size: A tuple of two integers representing the desired size of the
-        output array.
-
         loc: An integer representing the mean of the normal distribution.
 
         scale: An integer representing the standard deviation of the normal
@@ -255,7 +271,44 @@ class World:
         random value sampled from a normal distribution with the specified mean
         and standard deviation.
         """
-        return np.random.normal(loc=loc, scale=scale, size=self.canvas_size)
+        return np.random.normal(
+            loc=loc, scale=scale, size=self.canvas_size
+        ).astype(int)
+
+    def generate_organism_distribution(
+        self,
+        weights: tuple[float, float] = (0.1, 0.9),
+        temp_range: tuple[int, int] = (230, 400),
+        trophic_level_range: tuple[int, int] = (0, 3),
+        energy_range: tuple[int, int] = (100, 1000),
+        reproductive_types: tuple[int, int] = (0, 1 + 1),
+    ) -> np.ndarray:
+        return np.array(
+            [
+                [
+                    random.choices(
+                        (
+                            org.get_random_organism(
+                                temp_range,
+                                trophic_level_range,
+                                energy_range,
+                                reproductive_types,
+                            ),
+                            None,
+                        ),
+                        weights=weights,
+                        k=1,
+                    )[0]
+                    for _ in range(self.canvas_size[1])
+                ]
+                for _ in range(self.canvas_size[0])
+            ],
+            dtype=object,
+        )
+
+    def get_population(self) -> int:
+        """Gets you the population of the world."""
+        return get_distribution_population(self.organism_distribution)
 
 
 def get_neighbour_cells(
@@ -394,14 +447,12 @@ def get_points_between_2_points(
         x_coords: np.ndarray = np.full(abs(y2 - y1) + 1, x1)
         y_coords: np.ndarray = np.arange(min(y1, y2), max(y1, y2) + 1)
     else:
-        slope: float = (y2 - y1) / (x2 - x1)
-        intercept: float = y1 - slope * x1
+        slope: int = (y2 - y1) // (x2 - x1)
+        intercept: int = y1 - slope * x1
 
         # Calculate the coordinates of the points on the line
         x_coords: np.ndarray = np.arange(min(x1, x2), max(x1, x2) + 1)
-        y_coords: np.ndarray = np.around(slope * x_coords + intercept).astype(
-            int
-        )
+        y_coords: np.ndarray = np.around(slope * x_coords + intercept)
 
     # Combine the x and y coordinates into a single array
     points: np.ndarray = np.column_stack((x_coords, y_coords))

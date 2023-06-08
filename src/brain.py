@@ -26,11 +26,12 @@ Functions:
 -------------
 create_weights: Creates the weights for the neural network based on the
 genome and neural structure.
+
+normalize_array: Creates the weights for the neural network based on the genome
+and neural structure.
 """
 
 import numpy as np
-import genome as gn
-import utilities as utils
 
 
 class NeuralNetwork:
@@ -88,7 +89,7 @@ class NeuralNetwork:
         Finally, the output of the last layer is returned as a Numpy Array.
         """
 
-        normalized_input_values: np.ndarray = utils.normalize(input_values)
+        normalized_input_values: np.ndarray = normalize(input_values)
         weights: np.ndarray = self.weights
         neural_structure: np.ndarray = self.neural_structure
         neural_network: list[list[float]] = [
@@ -124,37 +125,37 @@ class NeuralNetwork:
         return np.array(neural_network[-1])
 
 
-def create_weights(genome: str, neural_structure: np.ndarray) -> np.ndarray:
+def normalize(arr: np.ndarray) -> np.ndarray:
+    """Normalize the Numpy Array."""
+    magnitude: np.floating = np.linalg.norm(arr)
+    return np.nan_to_num(arr / magnitude)
+
+
+def create_weights(
+    genome_array: np.ndarray, neural_structure: np.ndarray
+) -> np.ndarray:
     """Creates the weights for the neural network based on the genome and
     neural structure.
 
     Args:
     -----
-    genome: A string representing the hexadecimal genome of the organism.
+    genome_array: A Numpy Array representing the hexadecimal genome of the organism.
 
-    neural_structure: An Numpy Array representing the structure of the neural network.
+    neural_structure: A Numpy Array representing the structure of the neural network.
 
     Returns:
     -------
     A Numpy Array containing the weights.
-
-    Note:
-    -----
-    The weights are extracted from the genome by converting the genome into
-    decimals.
     """
 
     number_of_neural_connections = int(
         np.sum(neural_structure[:-1] * neural_structure[1:])
     )
 
-    # convert the genome into an array of base10 numbers.
-    genome_seq: np.ndarray = gn.decode_organism_characters(genome, len(genome))
-
     # generate the weights
-    weights: np.ndarray = genome_seq[:number_of_neural_connections]
+    weights: np.ndarray = genome_array[:number_of_neural_connections]
 
     # normalize to the range [-1, 1]
-    weights: np.ndarray = utils.normalize(weights)
+    weights: np.ndarray = normalize(weights)
 
     return weights

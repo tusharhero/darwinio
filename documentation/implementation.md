@@ -14,11 +14,11 @@ certain stimuli such as presence of food, other organisms, potential mating
 partners, etc. This part will essentially determine the neural structure of the
 organism.
 
-The genome will be encoded as an hexadecimal number. And the offspring's genome
+The genome will be encoded as a hexadecimal number. And the offspring's genome
 will be derived from the parent's genome by randomly selecting each digit randomly
 for each digit and mutation are also applied.
 
-Each digit of the genome represents a feature, as an hexadecimal number this means
+Each digit of the genome represents a feature, as a hexadecimal number this means
 each digit has 16 states.
 
 ```python
