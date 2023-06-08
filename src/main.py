@@ -20,7 +20,7 @@ import graphical_sim as gsim
 import constants
 
 
-def main(resolution: tuple[int, int], fps: int):
+def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     """
     The main function that runs the game.
 
@@ -44,7 +44,7 @@ def main(resolution: tuple[int, int], fps: int):
     pg.mixer.music.set_volume(0.1)
     pg.mixer.music.play()
 
-    world = gsim.World((50, 50))
+    world = gsim.World(world_size)
 
     # Create the states
     title = gsim.TitleScreen(screen, constants.TITLE_ACSII_ART)
@@ -92,4 +92,4 @@ def main(resolution: tuple[int, int], fps: int):
 
 
 if __name__ == "__main__":
-    main((1000, 750), 60)
+    main((1000, 750), 60, (50, 50))
