@@ -190,7 +190,6 @@ class World:
             organism.neural_network.run_neural_network(
                 np.array((food_direction, temp_direction))
             )
-            * 10
         ).astype(int)
 
         new_coordinates: tuple = get_feasible_position(
