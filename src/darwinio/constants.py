@@ -45,9 +45,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses/.
 """
 
-with open("../LICENSE.md", "r") as file:
-    LICENSE = file.read()
-
 HELP = """
 To get help, press <b>SHIFT+H</b>.
 To zoom in, zoom out do <b>-</b> , <b>=</b> respectively.
