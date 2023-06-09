@@ -31,6 +31,7 @@ reproduce: Generate offspring of the two Organisms.
 import darwinio.brain as brn
 import darwinio.genome as gn
 import numpy as np
+import random
 
 
 class Organism:
@@ -101,10 +102,10 @@ def get_random_organism(
 
     characters: np.ndarray = np.array(
         (
-            np.random.randint(*temp_range, dtype=np.int64),
-            np.random.randint(*trophic_level_range, dtype=np.int64),
-            np.random.randint(*energy_range, dtype=np.int64),
-            np.random.randint(*reproductive_types, dtype=np.int64),
+            random.randint(*sorted(temp_range)),
+            random.randint(*sorted(trophic_level_range)),
+            random.randint(*sorted(energy_range)),
+            random.randint(*sorted(reproductive_types)),
         )
     )
 
