@@ -45,7 +45,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     music_playing = True
     with gsim.get_asset_path("audio", "Darwinio.mp3") as path:
         pg.mixer.music.load(path)
-    pg.mixer.music.set_volume(0.1)
+    pg.mixer.music.set_volume(1)
     pg.mixer.music.play()
 
     world = gsim.World(world_size)
