@@ -18,8 +18,8 @@
 from typing import Union
 import pygame as pg
 import pygame_gui as pgui
-import distribution as dist
-import genome as gn
+import darwinio.distribution as dist
+import darwinio.genome as gn
 
 
 class World(dist.World):

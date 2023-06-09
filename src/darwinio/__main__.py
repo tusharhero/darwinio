@@ -16,8 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pygame as pg
-import graphical_sim as gsim
-import constants
+import darwinio.graphical_sim as gsim
+import darwinio.constants as constants
 
 
 def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):

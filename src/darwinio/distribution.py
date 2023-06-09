@@ -40,7 +40,7 @@ that lie on the line between two given points.
 from typing import Union
 import numpy as np
 import random
-import organism as org
+import darwinio.organism as org
 
 
 class World:
