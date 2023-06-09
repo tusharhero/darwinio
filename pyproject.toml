@@ -5,6 +5,7 @@ build-backend = "hatchling.build"
 include = [
   "assets/*",
   "music/*",
+  "darwinio/*"
 ]
 
 [project]
