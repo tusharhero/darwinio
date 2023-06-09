@@ -37,12 +37,14 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     pg.init()
     screen = pg.display.set_mode(resolution, pg.SCALED | pg.RESIZABLE)
     pg.display.set_caption("darwinio")
-    pg.display.set_icon(pg.image.load("../art/eubacteria_BGA.png"))
+    with gsim.get_asset_path("art", "eubacteria_BGA.png") as path:
+        pg.display.set_icon(pg.image.load(path))
     clock = pg.time.Clock()
 
     # music
     music_playing = True
-    pg.mixer.music.load("../audio/Darwinio.mp3")
+    with gsim.get_asset_path("music", "Darwinio.mp3") as path:
+        pg.mixer.music.load(path)
     pg.mixer.music.set_volume(0.1)
     pg.mixer.music.play()
 
@@ -53,11 +55,12 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 2)
     world_build = gsim.Organism_selection(screen, world)
     help_screen = gsim.TextScreen(screen, constants.HELP, 4)
-    main_game = gsim.Simulation(
-        screen,
-        world,
-        "../art/archaebacteria_halophile.png",
-    )
+    with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
+        main_game = gsim.Simulation(
+            screen,
+            world,
+            path,
+        )
 
     # Create the state machine
     statemachine = gsim.StateMachine(
