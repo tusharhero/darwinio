@@ -67,7 +67,6 @@ class State:
         surface: pg.Surface,
         manager_size: tuple[int, int],
         next_state_index: Union[int, None],
-        theme: str = "theme.json",
     ):
         """
         Args:
@@ -83,7 +82,7 @@ class State:
         theme (str):
         """
         self.next_state_index = next_state_index
-        self.manager = pgui.UIManager(manager_size, theme)
+        self.manager = pgui.UIManager(manager_size)
         self.surface: pg.Surface = surface
 
     def render(self):
