@@ -43,7 +43,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
 
     # music
     music_playing = True
-    with gsim.get_asset_path("music", "Darwinio.mp3") as path:
+    with gsim.get_asset_path("audio", "Darwinio.mp3") as path:
         pg.mixer.music.load(path)
     pg.mixer.music.set_volume(0.1)
     pg.mixer.music.play()
@@ -56,11 +56,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     world_build = gsim.Organism_selection(screen, world)
     help_screen = gsim.TextScreen(screen, constants.HELP, 4)
     with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
-        main_game = gsim.Simulation(
-            screen,
-            world,
-            path,
-        )
+        main_game = gsim.Simulation(screen, world, path)
 
     # Create the state machine
     statemachine = gsim.StateMachine(
