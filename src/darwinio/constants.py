@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TITLE_ACSII_ART = """
+TITLE_ASCII_ART = """
  ______   _______  _______          _________ _       _________ _______ 
 (  __  \ (  ___  )(  ____ )|\     /|\__   __/( (    /|\__   __/(  ___  )
 | (  \  )| (   ) || (    )|| )   ( |   ) (   |  \  ( |   ) (   | (   ) |
