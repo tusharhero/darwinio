@@ -37,6 +37,7 @@ get_points_between_2_points: Return an array of coordinates of points
 that lie on the line between two given points.
 """
 
+from __future__ import annotations
 from typing import Union
 import numpy as np
 import random

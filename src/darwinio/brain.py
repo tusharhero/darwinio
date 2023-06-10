@@ -31,6 +31,7 @@ normalize_array: Creates the weights for the neural network based on the genome
 and neural structure.
 """
 
+from __future__ import annotations
 import numpy as np
 
 

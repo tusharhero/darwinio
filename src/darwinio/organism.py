@@ -28,6 +28,7 @@ get_random_organism: A function to generate a random organism.
 reproduce: Generate offspring of the two Organisms.
 """
 
+from __future__ import annotations
 import darwinio.brain as brn
 import darwinio.genome as gn
 import numpy as np
