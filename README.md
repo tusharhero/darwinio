@@ -1,7 +1,7 @@
 # Darwinio
 
  ```ascii
- ______   _______  _______          _________ _       _________ _______ 
+ ______   _______  _______          _________ _       _________ _______
 (  __  \ (  ___  )(  ____ )|\     /|\__   __/( (    /|\__   __/(  ___  )
 | (  \  )| (   ) || (    )|| )   ( |   ) (   |  \  ( |   ) (   | (   ) |
 | |   ) || (___) || (____)|| | _ | |   | |   |   \ | |   | |   | |   | |
@@ -20,21 +20,30 @@ through a simulation.
 
 ### *Nix(Gnu-Linux, *BSD, MacOS)
 
-+ Make sure you have Python installed using whichever package manager you use.
-+ Create a Python-venv.
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-+ Install the dependencies
-```
-python -m pip install -r requirements.txt
-```
-+ finally, run it,
-```
-cd src
-python main.py
-```
+1. Make sure your python is up-to date
+2. Open your terminal, and install darwinio by running
+   ```bash
+   pip install darwinio
+   ```
+3. To run the program,
+   ```bash
+   python -m darwinio
+   ```
+
+### Microsoft Windows
+
+1. Make sure you python is up-to date, if you don't have python installed
+   install a recent version from [python's official website.](https://python.org/).
+2. Open your terminal/powershell, and install darwinio by running
+   ```powershell
+   py -m pip install darwinio
+   ```
+3. To run the program,
+   ```powershell
+   py -m darwinio
+   ```
+
+
 ## License
 
 This program is copyright © 2023 Tushar Maharana <tusharhero@sdf.org>,
