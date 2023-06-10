@@ -12,9 +12,18 @@
  ```
 
 This is a Python program that simulates the process of evolution, complete with
-organisms, genetic codes, and neural networks. The program is intended to explore
-the intricacies of the natural world and replicate the processes of evolution
-through a simulation.
+organisms, genetic codes, and neural networks.
+
+## Features
+
+- You get to randomly generate organisms, and see how they evolve.
+- Change the conditions while the simulation is running.
+- You can control - Food and Temperature
+
+## Screenshot
+
+![title screen screenshot](./documentation/screenshot/titlescreen.png)
+![main game play screenshot](./documentation/screenshot/main_game_play.png)
 
 ## Setup
 
@@ -34,7 +43,7 @@ through a simulation.
 
 1. Make sure you python is up-to date, if you don't have python installed
    install a recent version from [python's official website.](https://python.org/).
-2. Open your terminal/powershell, and install darwinio by running
+2. Open your terminal/Powershell, and install darwinio by running
    ```powershell
    py -m pip install darwinio
    ```
