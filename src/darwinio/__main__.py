@@ -52,7 +52,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     world = gsim.World(world_size)
 
     # Create the states
-    title = gsim.TitleScreen(screen, constants.TITLE_ACSII_ART)
+    title = gsim.TitleScreen(screen, constants.TITLE_ASCII_ART)
     license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 2)
     world_build = gsim.Organism_selection(screen, world)
     help_screen = gsim.TextScreen(screen, constants.HELP, 4)
