@@ -52,7 +52,32 @@ organisms, genetic codes, and neural networks.
    py -m darwinio
    ```
 
+## Building and testing
 
+### *Nix(Gnu-Linux, *BSD, MacOS)
+
+1. Clone the repository to your local machine using the following command in your terminal
+    ```
+    git clone https://github.com/tusharhero/darwinio.git
+    ```
+2. Create a virtual environment and source it
+   ```
+   python -m venv .venv
+   source ./.venv/bin/activate
+   ```
+3. Get the requirements
+   ```
+   pip install build
+   ```
+4. Build and install it
+   ```
+   python -m build
+   pip install .
+   ```
+5. Test it by running it.
+   ```
+   python -m darwinio
+   ```
 ## License
 
 This program is copyright © 2023 Tushar Maharana <tusharhero@sdf.org>,
