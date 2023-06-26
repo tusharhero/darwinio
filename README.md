@@ -81,7 +81,7 @@ organisms, genetic codes, and neural networks.
 ## License
 
 This program is copyright © 2023 Tushar Maharana <tusharhero@sdf.org>,
-and Mihir Nallagonda <adhikshithamihir@gmail.com>.
+and Mihir Nallagonda <adhikshithamihir@gmail.com> and Arnav Vijayvergiya <arnavvijayvergiya@proton.me>.
 
 This program is licensed under the terms of the
 [GNU GENERAL PUBLIC LICENSE VERSION 3](./LICENSE.md) which means this is Free Software.
