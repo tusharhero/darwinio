@@ -54,14 +54,22 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     # Create the states
     title = gsim.TitleScreen(screen, constants.TITLE_ASCII_ART)
     license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 2)
-    world_build = gsim.Organism_selection(screen, world)
-    help_screen = gsim.TextScreen(screen, constants.HELP, 4)
+    world_build = gsim.Organism_selection(screen, world, 4)
+    init_help_screen = gsim.TextScreen(screen, constants.HELP, 3)
+    help_screen = gsim.TextScreen(screen, constants.HELP, 5)
     with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
         main_game = gsim.Simulation(screen, world, path)
 
     # Create the state machine
     statemachine = gsim.StateMachine(
-        [title, license_notice, world_build, main_game, help_screen]
+        [
+            title,
+            license_notice,
+            init_help_screen,
+            world_build,
+            main_game,
+            help_screen,
+        ]
     )
     while True:
         time_delta = clock.tick(fps) / 1000.0
@@ -85,7 +93,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
                         music_playing = not music_playing
                 if event.mod & pg.KMOD_LSHIFT and event.key == pg.K_h:
                     prev_index: int = statemachine.state_index
-                    statemachine.state_index = 4
+                    statemachine.state_index = 5
                     help_screen.next_state_index = prev_index
 
         screen.fill("#423E4A")

@@ -221,9 +221,14 @@ class Organism_selection(State):
     selection.
     """
 
-    def __init__(self, surface: pg.Surface, world: World):
+    def __init__(
+        self,
+        surface: pg.Surface,
+        world: World,
+        next_state_index: Union[int, None],
+    ):
         surface_size = width, height = surface.get_size()
-        super().__init__(surface, surface_size, 3)
+        super().__init__(surface, surface_size, next_state_index)
         self.world: World = world
 
         self.title = pgui.elements.UITextBox(
@@ -440,7 +445,7 @@ class Simulation(State):
                     self.last_time = 0
                 if event.ui_element == self.restart_button:
                     self.running = False
-                    return 2
+                    return 3
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.running = not self.running
