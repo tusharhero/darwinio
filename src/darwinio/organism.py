@@ -53,15 +53,7 @@ class Organism:
 
         Args:
         -----
-        input_data : A string representing the organism's genome or a NumPy
-        array containing the organism's characters.
-
-        number_of_characters : The number of characters
-
-        size_of_genome: It's the length of the genome string.
-
-        letters_per_character: The number of digits that would be used for
-        representing each character.
+        genome_array: A Numpy array representing the organism's genome.
         """
 
         self.genome_array: np.ndarray = genome_array
@@ -84,17 +76,15 @@ def get_random_organism(
 
     Args:
     -----
-    temp_range (Tuple[int, int]): Range of temperature values for the
-    organism's adaptation.
+    temp_range: Range of temperature values for the organism's adaptation.
 
-    trophic_level_range (Tuple[int, int]): Range of trophic level values for
-    the organism's position in the food chain.
+    trophic_level_range: Range of trophic level values for the organism's
+    position in the food chain.
 
-    energy_range (Tuple[int, int]): Range of energy values for the organism's
-    energy capacity.
+    energy_range: Range of energy values for the organism's energy capacity.
 
-    reproductive_types (Tuple[int, int]): Range of reproductive type values for
-    the organism's reproductive strategy.
+    reproductive_types: Range of reproductive type values for the organism's
+    reproductive strategy.
 
     Returns:
     ---------
@@ -122,12 +112,12 @@ def reproduce(
 
     Args:
     -----
-    parent_1(np,ndarray): One of the parent Organisms
+    parent_1(np.ndarray): One of the parent Organisms
 
-    parent_2(np,ndarray): One of the parent Organisms
+    parent_2(np.ndarray): One of the parent Organisms
 
-    mutation_factor(int): A value between 0 and 1 (inclusive) representing the
-    probability of a mutation occurring in the offspring's genome.
+    mutation_factor(float): A value between 0 and 1 (inclusive) representing
+    the probability of a mutation occurring in the offspring's genome.
 
     Returns:
     ---------
