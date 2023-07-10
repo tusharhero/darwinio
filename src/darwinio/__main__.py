@@ -88,6 +88,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
                 if event.key == pg.K_m:
                     if music_playing:
                         pg.mixer.music.pause()
+                        music_playing = not music_playing
                     else:
                         pg.mixer.music.unpause()
                         music_playing = not music_playing
