@@ -43,7 +43,7 @@ class World(dist.World):
                     color = pg.Color(
                         f"#{gn.array2hex(organism.genome_array)[-6:]}"
                     )
-                    tinted_image = tint(image, color)
+                    tinted_image: pg.Surface = tint(image, color)
                     surface.blit(
                         tinted_image,
                         (x * 64, y * 64),
@@ -82,7 +82,7 @@ class State:
 
         theme (str):
         """
-        self.next_state_index = next_state_index
+        self.next_state_index: int = next_state_index
         self.manager = pgui.UIManager(manager_size)
         self.surface: pg.Surface = surface
 
@@ -133,7 +133,7 @@ class StateMachine:
         -----
         states (list[State]): The list of states in the state machine.
         """
-        self.states = states
+        self.states: list[State] = states
         self.state_index = 0
 
     def run_state(self, events: list[pg.Event], time_delta: float):
@@ -146,10 +146,10 @@ class StateMachine:
 
         time_delta (float): The time elapsed since the last update.
         """
-        state = self.states[self.state_index]
-        new_state = state.update(events, time_delta)
+        state: State = self.states[self.state_index]
+        new_state: State = state.update(events, time_delta)
         state.render()
-        self.state_index = (
+        self.state_index: int = (
             new_state
             if new_state is not None or new_state == 0
             else self.state_index
@@ -379,26 +379,28 @@ class Simulation(State):
         super().__init__(surface, surface_size, None)
 
         # Simulation Interface
-        self.image = pg.transform.scale(
+        self.image: pg.Surface = pg.transform.scale(
             pg.image.load(image_path).convert_alpha(), (64, 64)
         )
+
         self.running = False
-        self.world = world
+
+        self.world: World = world
         world_width, world_height = world.canvas_size
-        self.world_surface = pg.surface.Surface(
+        self.world_surface: pg.Surface = pg.surface.Surface(
             (world_height * 64, world_width * 64)
         )
-        self.world_rect = self.world_surface.get_rect(
+        self.world_rect: pg.Rect = self.world_surface.get_rect(
             center=(width // 2, height // 2)
         )
         self.world_scale = 1
+        self.scaled_world_surface: pg.Surface = self.world_surface
 
-        self.scaled_world_surface = self.world_surface
-
-        self.sim_surface = pg.surface.Surface((width, height))
-        self.sim_rect = self.sim_surface.get_rect(
+        self.sim_surface: pg.Surface = pg.surface.Surface((width, height))
+        self.sim_rect: pg.Rect = self.sim_surface.get_rect(
             center=(width // 2, height // 2)
         )
+
         self.last_time = 0
 
         # User Interface
@@ -454,29 +456,30 @@ class Simulation(State):
             # change the temp/food content
             if event.type == pgui.UI_HORIZONTAL_SLIDER_MOVED:
                 if event.ui_element == self.temp_slider.slider:
-                    loc = self.temp_slider.slider.get_current_value()
+                    new_avg_temp = self.temp_slider.slider.get_current_value()
                     self.world.temp_distribution = (
-                        self.world.generate_distribution(int(loc), 50)
+                        self.world.generate_distribution(int(new_avg_temp), 50)
                     )
                     self.temp_slider.update()
                 if event.ui_element == self.food_slider.slider:
-                    loc = self.food_slider.slider.get_current_value()
+                    new_avg_food_content = self.food_slider.slider.get_current_value()
                     self.world.food_distribution = (
-                        self.world.generate_distribution(int(loc), 100)
+                        self.world.generate_distribution(int(new_avg_food_content), 100)
                     )
                     self.food_slider.update()
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()
         # moving
+        step_size: int = 500
         if keys_pressed[pg.K_UP] or keys_pressed[pg.K_k]:
-            self.world_rect.centery += 500 * time_delta
+            self.world_rect.centery += step_size * time_delta
         if keys_pressed[pg.K_DOWN] or keys_pressed[pg.K_j]:
-            self.world_rect.centery -= 500 * time_delta
+            self.world_rect.centery -= step_size * time_delta
         if keys_pressed[pg.K_RIGHT] or keys_pressed[pg.K_l]:
-            self.world_rect.centerx -= 500 * time_delta
+            self.world_rect.centerx -= step_size * time_delta
         if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
-            self.world_rect.centerx += 500 * time_delta
+            self.world_rect.centerx += step_size * time_delta
 
         # can't move beyond
         wiggle_room: int = 100
@@ -490,10 +493,11 @@ class Simulation(State):
             self.world_rect.right = self.sim_rect.right - wiggle_room
 
         # zooming
+        scaling: float = 0.5
         if keys_pressed[pg.K_EQUALS] and self.world_scale < 2:
-            self.world_scale += 0.5 * time_delta
+            self.world_scale += scaling * time_delta
         if keys_pressed[pg.K_MINUS] and self.world_scale > 0.5:
-            self.world_scale -= 0.5 * time_delta
+            self.world_scale -= scaling * time_delta
         self.scaled_world_surface = pg.transform.scale_by(
             self.world_surface, self.world_scale
         )
@@ -507,8 +511,9 @@ class Simulation(State):
             self.start_button.set_text("start")
 
         # run every 1000 milliseconds
+        cycle_time_ms: int = 1000 
         current_time = pg.time.get_ticks()
-        if current_time - self.last_time > 1000 and self.running:
+        if current_time - self.last_time > cycle_time_ms and self.running:
             self.last_time = current_time
             self.start_button.set_text("wait")
             self.world.update_state()
@@ -545,9 +550,9 @@ class TitleScreen(State):
         rendered.
         title_text (str): The text to be displayed as the title.
         """
-        self.font = pg.font.SysFont("monospace", 25)
-        self.title_surf = self.font.render(title_text, True, "white")
-        self.surface = surface
+        self.font: pg.Font = pg.font.SysFont("monospace", 25)
+        self.title_surf: pg.Surface = self.font.render(title_text, True, "white")
+        self.surface: pg.Surface = surface
 
     def render(self) -> None:
         """Render the title screen state."""
