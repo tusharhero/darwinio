@@ -31,10 +31,9 @@ class World(dist.World):
 
         Args:
         -----
-        surface (pg.Surface): The surface on which the organisms will be
-        rendered.
+        surface: The surface on which the organisms will be rendered.
 
-        image (pg.Surface): The image representing an organism.
+        image: The image representing an organism.
         """
         organisms = self.organism_distribution
         for y, row in enumerate(organisms):
@@ -56,11 +55,11 @@ class State:
 
     Attributes:
     -----------
-    manager (pygame_gui.UIManager): The UI manager for the state.
+    manager: The UI manager for the state.
 
-    surface (pygame.Surface): The surface on which the state is rendered.
+    surface: The surface on which the state is rendered.
 
-    next_state_index (int): The index of the next state
+    next_state_index: The index of the next state
     """
 
     def __init__(
@@ -72,15 +71,11 @@ class State:
         """
         Args:
         ------
-        surface (pygame.Surface): The surface on which the state will be
-        rendered.
+        surface: The surface on which the state will be rendered.
 
-        initial_manager_size (tuple[int, int]): The initial size of the UI
-        manager.
+        initial_manager_size: The initial size of the UI manager.
 
-        next_state_index (int): The index of the next state
-
-        theme (str):
+        next_state_index: The index of the next state
         """
         self.next_state_index: int = next_state_index
         self.manager = pgui.UIManager(manager_size)
@@ -98,9 +93,9 @@ class State:
 
         Args:
         ------
-        events (list[pygame.event.Event]): The list of pygame events.
+        events: The list of pygame events.
 
-        time_delta (float): The time elapsed since the last update.
+        time_delta: The time elapsed since the last update.
 
         Returns:
         --------
@@ -120,9 +115,9 @@ class StateMachine:
 
     Attributes:
     -----------
-    states (list[State]): The list of states in the state machine.
+    states: The list of states in the state machine.
 
-    state_index (int): The index of the current active state.
+    state_index: The index of the current active state.
     """
 
     def __init__(self, states: list[State]):
@@ -131,7 +126,7 @@ class StateMachine:
 
         Args:
         -----
-        states (list[State]): The list of states in the state machine.
+        states: The list of states in the state machine.
         """
         self.states: list[State] = states
         self.state_index = 0
@@ -142,16 +137,16 @@ class StateMachine:
 
         Args:
         -----
-        events (list[pg.Event]): The list of pygame events.
+        events: The list of pygame events.
 
-        time_delta (float): The time elapsed since the last update.
+        time_delta: The time elapsed since the last update.
         """
         state: State = self.states[self.state_index]
-        new_state: State = state.update(events, time_delta)
         state.render()
+        new_state_index: Union[int, None] = state.update(events, time_delta)
         self.state_index: int = (
-            new_state
-            if new_state is not None or new_state == 0
+            new_state_index
+            if new_state_index is not None or new_state_index == 0
             else self.state_index
         )
 
@@ -190,36 +185,7 @@ class Slider:
 
 
 class Organism_selection(State):
-    """
-    Represents a organism criteria selection screen.
-
-
-    Attributes:
-    -----------
-    surface (pg.Surface): The surface on which the screen is displayed.
-
-    world  (World): The world object containing the organisms.
-
-    title (pgui.elements.UITextBox): The title textbox displayed on the screen.
-
-    energy_slider_min (Slider): The slider for selecting the minimum
-    energy range of organisms.
-
-    energy_slider_max (Slider): The slider for selecting the maximum
-    energy range of organisms.
-
-    temp_slider_min (Slider): The slider for selecting the minimum
-    temperature range of organisms.
-
-    temp_slider_max (Slider): The slider for selecting the maximum
-    temperature range of organisms.
-
-    done_button (pgui.elements.UIButton): The button for indicating completion
-    of organism selection.
-
-    skip_button (pgui.elements.UIButton): The button for skipping organism
-    selection.
-    """
+    """Represents a organism criteria selection screen."""
 
     def __init__(
         self,
@@ -272,10 +238,9 @@ class Organism_selection(State):
 
         Args:
         -----
-        events (list[pg.Event]): A list of Pygame events.
+        events: A list of Pygame events.
 
-        time_delta (float): The time difference between the current and
-        previous frame.
+        time_delta: The time difference between the current and previous frame.
         """
         for event in events:
             if event.type == pgui.UI_BUTTON_PRESSED:
@@ -308,69 +273,15 @@ class Organism_selection(State):
 
 
 class Simulation(State):
-    """
-    Represents the main screen state of the game.
-
-
-    Attributes:
-    -----------
-    surface (pg.Surface): The surface on which the state will be rendered.
-
-    world (World): The world object containing the simulation data.
-
-    image_path (str): The path to the image used for the game view.
-
-    game_view (pygame.Surface): The surface for the game view.
-
-    container (pygame_gui.core.UIContainer): The UI container for the main
-    screen state.
-
-    start_button (pygame_gui.elements.UIButton): The UI button for starting the
-    game.
-
-    restart_button (pygame_gui.elements.UIButton): The UI button for starting
-    the game.
-
-    population_label (pygame_gui.elements.UITextBox): The UI label for showing
-    the population
-
-    image (pygame.Surface): The scaled image loaded from the image path.
-
-    running (bool): Indicates whether the simulation is currently running.
-
-    world_surface (pg.Surface): The surface representing the world in the
-    simulation.
-
-    world_rect (pg.Rect): The rectangle representing the position and size of
-    the world surface.
-
-    world_scale (int): The scale factor applied to the world surface.
-
-    scaled_world_surface (pg.Surface): The world surface after applying the
-    scale factor.
-
-    sim_surface (pg.Surface): The simulation surface.
-
-    sim_rect (pg.Rect): The rectangle representing the position and size of the
-    simulation surface.
-
-    last_time (int): The last time
-
-    temp_slider (Slider): The slider for adjusting the temperature in the
-    simulation.
-
-    food_slider (Slider): The slider for adjusting the food content in
-    the simulation.
-    """
+    """Represents the main screen state of the game."""
 
     def __init__(self, surface: pg.Surface, world: World, image_path: str):
         """
         Args:
         -----
-        surface (pygame.Surface): The surface on which the state will be
-        rendered.
+        surface: The surface on which the state will be rendered.
 
-        world (World): The world object containing the simulation data.
+        world: The world object containing the simulation data.
 
         image_path: The path of the image which will be used for the organism.
         """
@@ -462,9 +373,13 @@ class Simulation(State):
                     )
                     self.temp_slider.update()
                 if event.ui_element == self.food_slider.slider:
-                    new_avg_food_content = self.food_slider.slider.get_current_value()
+                    new_avg_food_content = (
+                        self.food_slider.slider.get_current_value()
+                    )
                     self.world.food_distribution = (
-                        self.world.generate_distribution(int(new_avg_food_content), 100)
+                        self.world.generate_distribution(
+                            int(new_avg_food_content), 100
+                        )
                     )
                     self.food_slider.update()
             self.manager.process_events(event)
@@ -511,7 +426,7 @@ class Simulation(State):
             self.start_button.set_text("start")
 
         # run every 1000 milliseconds
-        cycle_time_ms: int = 1000 
+        cycle_time_ms: int = 1000
         current_time = pg.time.get_ticks()
         if current_time - self.last_time > cycle_time_ms and self.running:
             self.last_time = current_time
@@ -527,31 +442,27 @@ class TitleScreen(State):
     """
     Represents the title screen state of the game.
 
-    Args:
-    -----
-    surface (pygame.Surface): The surface on which the state will be rendered.
-
-    title_text (str): The text to be displayed as the title.
-
     Attributes:
     -----------
-    font (pygame.font.Font): The font used for rendering the title.
+    font: The font used for rendering the title.
 
-    title_surf (pygame.Surface): The rendered title surface.
+    title_surf: The rendered title surface.
 
-    surface (pygame.Surface): The surface on which the state is rendered.
+    surface: The surface on which the state is rendered.
     """
 
     def __init__(self, surface: pg.Surface, title_text: str) -> None:
         """
         Args:
         -----
-        surface (pygame.Surface): The surface on which the state will be
-        rendered.
-        title_text (str): The text to be displayed as the title.
+        surface: The surface on which the state will be rendered.
+
+        title_text: The text to be displayed as the title.
         """
         self.font: pg.Font = pg.font.SysFont("monospace", 25)
-        self.title_surf: pg.Surface = self.font.render(title_text, True, "white")
+        self.title_surf: pg.Surface = self.font.render(
+            title_text, True, "white"
+        )
         self.surface: pg.Surface = surface
 
     def render(self) -> None:
@@ -573,9 +484,9 @@ class TitleScreen(State):
 
         Args:
         -----
-        events (list[pygame.event.Event]): The list of pygame events.
+        events: The list of pygame events.
 
-        time_delta (float): The time elapsed since the last update.
+        time_delta: The time elapsed since the last update.
 
         Returns:
         -------
@@ -597,8 +508,7 @@ class TextScreen(State):
 
     Attributes:
     -----------
-    text_box (pygame_gui.elements.UITextBox): The UI text box for displaying
-    the text content.
+    text_box: The UI text box for displaying the text content.
     """
 
     def __init__(
@@ -607,12 +517,12 @@ class TextScreen(State):
         """
         Args:
         -----
-        surface (pygame.Surface): The surface on which the state will be
+        surface: The surface on which the state will be
         rendered.
 
-        screen_text (str): The text content to be displayed on the screen.
+        screen_text: The text content to be displayed on the screen.
 
-        state_index (int): The index of the current active state.
+        state_index: The index of the current active state.
         """
         super().__init__(surface, surface.get_size(), next_state_index)
         self.text_box = pgui.elements.UITextBox(
@@ -627,9 +537,9 @@ class TextScreen(State):
 
         Args:
         -----
-        events (list[pygame.event.Event]): The list of pygame events.
+        events: The list of pygame events.
 
-        time_delta (float): The time elapsed since the last update.
+        time_delta: The time elapsed since the last update.
 
         Returns:
         -------
