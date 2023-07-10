@@ -327,7 +327,7 @@ class Simulation(State):
         self.temp_slider = Slider(
             "adjust temperature",
             (width - 500, height - 60),
-            50,
+            45,
             (0, 500),
             self.manager,
         )

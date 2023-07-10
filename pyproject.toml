@@ -8,7 +8,7 @@ exclude = [
 
 [project]
 name = "darwinio"
-version = "0.0.9"
+version = "0.1.0"
 authors = [
   { name="Tushar Maharana", email="tusharhero@sdf.org" },
   { name="Mihir Nallagonda", email="adhikshithamihir@gmail.com" },

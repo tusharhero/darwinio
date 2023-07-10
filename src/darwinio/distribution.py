@@ -67,6 +67,8 @@ class World:
         self,
         canvas_size: tuple,
         mutation_factor: float = 0.3,
+        initial_food_avg: int = 500,
+        initial_temp_avg: int = 315,
     ):
         """Initializes a new World instance.
 
@@ -77,17 +79,23 @@ class World:
 
         mutation_factor: A value between 0 and 1 (inclusive) representing the
         probability of a mutation occurring in the offspring's genome.
+
+        initial_food_distribution: The range of values which will be found in
+        the food variation.
+
+        initial_temp_distribution: The range of values which will be found in
+        the temp variation.
         """
 
         self.canvas_size: tuple = canvas_size
         self.mutation_factor: float = mutation_factor
 
         self.food_distribution: np.ndarray = self.generate_distribution(
-            500, 100
+            initial_food_avg, 100
         )
 
         self.temp_distribution: np.ndarray = self.generate_distribution(
-            315, 50
+            initial_temp_avg, 50
         )
         self.organism_distribution: np.ndarray = (
             self.generate_organism_distribution()

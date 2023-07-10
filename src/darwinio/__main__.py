@@ -49,7 +49,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     pg.mixer.music.set_volume(1)
     pg.mixer.music.play()
 
-    world = gsim.World(world_size)
+    world = gsim.World(world_size, initial_temp_avg=45)
 
     # Create the states
     title = gsim.TitleScreen(screen, constants.TITLE_ASCII_ART)
