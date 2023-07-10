@@ -105,5 +105,9 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
         pg.display.flip()
 
 
-if __name__ == "__main__":
+def cli():
     main((1000, 750), 60, (50, 50))
+
+
+if __name__ == "__main__":
+    cli()
