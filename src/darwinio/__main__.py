@@ -19,6 +19,7 @@ from __future__ import annotations
 import pygame as pg
 import darwinio.graphical_sim as gsim
 import darwinio.constants as constants
+from importlib.metadata import version
 
 
 def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
@@ -37,7 +38,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     # Initialize Pygame
     pg.init()
     screen = pg.display.set_mode(resolution, pg.SCALED | pg.RESIZABLE)
-    pg.display.set_caption("darwinio")
+    pg.display.set_caption(f'darwinio v{version("darwinio")}')
     with gsim.get_asset_path("art", "eubacteria_BGA.png") as path:
         pg.display.set_icon(pg.image.load(path))
     clock = pg.time.Clock()
@@ -52,7 +53,9 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     world = gsim.World(world_size, initial_temp_avg=45)
 
     # Create the states
-    title = gsim.TitleScreen(screen, constants.TITLE_ASCII_ART)
+    title = gsim.TitleScreen(
+        screen, constants.TITLE_ASCII_ART, f'v{version("darwinio")}'
+    )
     license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 2)
     world_build = gsim.Organism_selection(screen, world, 4)
     init_help_screen = gsim.TextScreen(screen, constants.HELP, 3)

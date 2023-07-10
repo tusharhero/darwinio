@@ -8,11 +8,7 @@ exclude = [
 
 [project]
 name = "darwinio"
-<<<<<<< HEAD
-version = "0.1.0"
-=======
-version = "0.1.1"
->>>>>>> master
+version = "0.2.0"
 authors = [
   { name="Tushar Maharana", email="tusharhero@sdf.org" },
   { name="Mihir Nallagonda", email="adhikshithamihir@gmail.com" },

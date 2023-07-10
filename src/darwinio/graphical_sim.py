@@ -451,18 +451,27 @@ class TitleScreen(State):
     surface: The surface on which the state is rendered.
     """
 
-    def __init__(self, surface: pg.Surface, title_text: str) -> None:
+    def __init__(
+        self, surface: pg.Surface, title_text: str, subtitle_text: str
+    ) -> None:
         """
         Args:
         -----
         surface: The surface on which the state will be rendered.
 
         title_text: The text to be displayed as the title.
+
+        subtitle_text: The text to be displayed as the subtitle.
         """
-        self.font: pg.Font = pg.font.SysFont("monospace", 25)
-        self.title_surf: pg.Surface = self.font.render(
-            title_text, True, "white"
+
+        font: pg.Font = pg.font.SysFont("monospace", 25)
+        self.title_surf: pg.Surface = font.render(title_text, True, "white")
+
+        smallerfont: pg.Font = pg.font.SysFont("monospace", 12)
+        self.subtitle_surf: pg.Surface = smallerfont.render(
+            subtitle_text, True, "white"
         )
+
         self.surface: pg.Surface = surface
 
     def render(self) -> None:
@@ -471,10 +480,16 @@ class TitleScreen(State):
             self.title_surf,
             (self.surface.get_width(), self.title_surf.get_height()),
         )
-        self.rect = self.title_surf.get_rect(
+        titlerect = self.title_surf.get_rect(
             center=self.surface.get_rect().center
         )
-        self.surface.blit(self.title_surf, self.rect)
+        self.surface.blit(self.title_surf, titlerect)
+
+        subtitlerect = self.subtitle_surf.get_rect(
+            center=self.surface.get_rect().center
+        )
+        subtitlerect.centery += 200
+        self.surface.blit(self.subtitle_surf, subtitlerect)
 
     def update(
         self, events: list[pg.Event], time_delta: float
@@ -496,9 +511,6 @@ class TitleScreen(State):
         for event in events:
             if event.type == pg.KEYDOWN:
                 return 1
-        self.rect = self.title_surf.get_rect(
-            center=self.surface.get_rect().center
-        )
         return None
 
 
