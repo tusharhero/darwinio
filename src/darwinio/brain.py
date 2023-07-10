@@ -43,9 +43,9 @@ class NeuralNetwork:
     ----------
     weights: contains weights of the neural network.
 
-    neural_structure: A numpy ndarray of integers representing the
-    structure of the neural network, where each integer represents the number
-    of neurons in that layer.
+    neural_structure: A numpy ndarray of integers representing the structure of
+    the neural network, where each integer represents the number of neurons in
+    that layer.
     """
 
     def __init__(
@@ -85,9 +85,9 @@ class NeuralNetwork:
         initializes a new empty neural network and fills in the values using
         the provided input and the weights. The weights are then applied to the
         corresponding input neuron to obtain the output of the next neuron in
-        the network. The output of each layer is passed through the
-        activation function (tanh) and stored in the neural network list.
-        Finally, the output of the last layer is returned as a Numpy Array.
+        the network. The output of each layer is passed through the activation
+        function (tanh) and stored in the neural network list. Finally, the
+        output of the last layer is returned as a Numpy Array.
         """
 
         normalized_input_values: np.ndarray = normalize(input_values)

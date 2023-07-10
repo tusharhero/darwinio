@@ -80,4 +80,5 @@ def generate_offspring_genome(
 
 
 def array2hex(array: np.ndarray) -> str:
+    """Convert array to hex"""
     return nil.Nilsimsa(array.tobytes()).hexdigest()

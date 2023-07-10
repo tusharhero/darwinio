@@ -19,22 +19,22 @@
 
 Classes:
 ---------
-World: Represents a world in which organisms and food are distributed across
-a canvas.
+World: Represents a world in which organisms and food are distributed across a
+canvas.
 
 Functions:
 ----------
-get_neighbour_cells: the values of neighbouring cells around a given
-coordinate in a distribution.
+get_neighbour_cells: the values of neighbouring cells around a given coordinate
+in a distribution.
 
-get_distribution_population: Get the number of "truthy" values in
-the distribution.
+get_distribution_population: Get the number of "truthy" values in the
+distribution.
 
-get_feasible_position: Finds a feasible position given a current
-position, preferred position, and a distribution.
+get_feasible_position: Finds a feasible position given a current position,
+preferred position, and a distribution.
 
-get_points_between_2_points: Return an array of coordinates of points
-that lie on the line between two given points.
+get_points_between_2_points: Return an array of coordinates of points that lie
+on the line between two given points.
 """
 
 from __future__ import annotations
@@ -50,17 +50,17 @@ class World:
 
     Attributes:
     -----------
-    canvas_size (tuple): A tuple of two integers representing the dimensions
-    of the canvas.
+    canvas_size: A tuple of two integers representing the dimensions of the
+    canvas.
 
     mutation_factor: A value between 0 and 1 (inclusive) representing the
     probability of a mutation occurring in the offspring's genome.
 
-    food_distribution (numpy.ndarray): A numpy array of random integers
-    between 0 and 5000 of size `canvas_size`.
+    food_distribution: A numpy array of random integers between 0 and 5000 of
+    size `canvas_size`.
 
-    organism_distribution (list[list[Union[org.Organism, None]]]): A 2D list
-    of organisms and `None` values of size `canvas_size`.
+    organism_distribution: A 2D list of organisms and `None` values of size
+    `canvas_size`.
     """
 
     def __init__(
@@ -72,8 +72,8 @@ class World:
 
         Args:
         ------
-        canvas_size (tuple): A tuple of two integers representing the
-        dimensions of the canvas.
+        canvas_size: A tuple of two integers representing the dimensions of the
+        canvas.
 
         mutation_factor: A value between 0 and 1 (inclusive) representing the
         probability of a mutation occurring in the offspring's genome.
@@ -99,12 +99,11 @@ class World:
         Note:
         -----
         Updates the state of the world by iterating over each organism and
-        updating its position based on its neural network's output. If
-        another organism is not present at its current position after
-        updating, it is removed from the current position and added to the
-        new position. It also considers the direction of food around it.
-        Then it allows the organism to reproduce if it has access to 2x
-        the amount of food.
+        updating its position based on its neural network's output. If another
+        organism is not present at its current position after updating, it is
+        removed from the current position and added to the new position. It
+        also considers the direction of food around it. Then it allows the
+        organism to reproduce if it has access to 2x the amount of food.
         """
 
         rows, cols = self.canvas_size
@@ -159,11 +158,11 @@ class World:
 
         Args:
         ------
-        organism (org.Organism): An instance of the Organism class
-        representing the organism to be moved.
+        organism: An instance of the Organism class representing the organism
+        to be moved.
 
-        current_position (tuple[int, int]): A tuple of two integers
-        representing the current position of the organism.
+        current_position: A tuple of two integers representing the current
+        position of the organism.
         """
 
         i, j = current_position
@@ -210,11 +209,11 @@ class World:
 
         Args:
         ------
-        organism (org.Organism): An instance of the Organism class representing
-        the organism to be reproduced.
+        organism: An instance of the Organism class representing the organism
+        to be reproduced.
 
-        current_position (tuple[int, int]): A tuple of two integers
-        representing the current position of the organism.
+        current_position: A tuple of two integers representing the current
+        position of the organism.
         """
         i, j = current_position
         prefered_position = tuple(
@@ -318,11 +317,10 @@ def get_neighbour_cells(
 
     Args:
     -----
-    coordinates (tuple[int, int]): The (x, y) coordinate for which to
-    retrieve neighbouring cells.
+    coordinates: The (x, y) coordinate for which to retrieve neighbouring
+    cells.
 
-    distribuion (np.ndarray): A 2D array of values representing a
-    distribution of some kind.
+    distribuion: A 2D array of values representing a distribution of some kind.
 
     Returns:
     --------
@@ -343,8 +341,7 @@ def get_distribution_population(distribution: np.ndarray) -> int:
 
     Args:
     -----
-    distribuion (np.ndarray): A 2D array of values representing a
-    distribution of some kind.
+    distribuion: A 2D array of values representing a distribution of some kind.
     """
     return np.count_nonzero(distribution)
 
@@ -359,8 +356,8 @@ def get_feasible_position(
 
     Args:
     ----
-    current_position: A tuple containing the x and y coordinates of the
-    current position.
+    current_position: A tuple containing the x and y coordinates of the current
+    position.
 
     preferred_position: A tuple containing the x and y coordinates of the
     preferred position.
@@ -370,10 +367,10 @@ def get_feasible_position(
 
     Returns:
     -------
-    A tuple containing the x and y coordinates of a feasible position. If
-    there are no feasible positions between the current and preferred
-    positions, returns the preferred position if it is feasible, otherwise
-    returns the current position.
+    A tuple containing the x and y coordinates of a feasible position. If there
+    are no feasible positions between the current and preferred positions,
+    returns the preferred position if it is feasible, otherwise returns the
+    current position.
     """
     x, y = distribution.shape
     possible_positions: np.ndarray = get_points_between_2_points(
@@ -413,11 +410,11 @@ def get_points_between_2_points(
 
     Args:
     -----
-    point_1 (tuple): A tuple of two integers that represent the (x, y)
-    coordinates of the first point.
+    point_1: A tuple of two integers that represent the (x, y) coordinates of
+    the first point.
 
-    point_2 (tuple): A tuple of two integers that represent the (x, y)
-    coordinates of the second point.
+    point_2: A tuple of two integers that represent the (x, y) coordinates of
+    the second point.
 
     Returns:
     -----
@@ -426,15 +423,15 @@ def get_points_between_2_points(
 
     Note:
     -----
-    The function calculates the coordinates of the points that lie on the
-    line between the two input points, and returns an array of these
-    coordinates. The function first determines the slope and intercept of the
-    line connecting the two input points. If the line is vertical, the
-    function returns an array of points with the same x coordinate and a
-    range of y coordinates. Otherwise, the function calculates the
-    coordinates of the points on the line using the slope and intercept, and
-    returns an array of these coordinates. The returned array is sorted by
-    distance from the first input point.
+    The function calculates the coordinates of the points that lie on the line
+    between the two input points, and returns an array of these coordinates.
+    The function first determines the slope and intercept of the line
+    connecting the two input points. If the line is vertical, the function
+    returns an array of points with the same x coordinate and a range of y
+    coordinates. Otherwise, the function calculates the coordinates of the
+    points on the line using the slope and intercept, and returns an array of
+    these coordinates. The returned array is sorted by distance from the first
+    input point.
     """
 
     x1, y1 = np.array(point_1).astype(int)
