@@ -54,3 +54,8 @@ To exit the game do <b>ESC</b>.
 For Full screen do <b>F11</b>.
 To mute/unmute the music, do <b>m</b>.
 """
+
+DISCLAIMER = """
+This application is NOT a game. It is a simulation
+designed to provide a scientific and factual model.
+"""

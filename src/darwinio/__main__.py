@@ -28,11 +28,11 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
 
     Args:
     -----
-    resolution (tuple[int, int]): The resolution of the game screen.
+    resolution: The resolution of the game screen.
 
-    fps (int): The desired frame rate of the game.
+    fps: The desired frame rate of the game.
 
-    world_size (tuple[int, int]): The size of the world for simulation.
+    world_size: The size of the world for simulation.
     """
 
     # Initialize Pygame
@@ -54,12 +54,15 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
 
     # Create the states
     title = gsim.TitleScreen(
-        screen, constants.TITLE_ASCII_ART, f'v{version("darwinio")}'
+        screen, constants.TITLE_ASCII_ART, f'v{version("darwinio")}', 1
     )
-    license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 2)
-    world_build = gsim.Organism_selection(screen, world, 4)
-    init_help_screen = gsim.TextScreen(screen, constants.HELP, 3)
-    help_screen = gsim.TextScreen(screen, constants.HELP, 5)
+    disclaimer = gsim.Heading_TextScreen(
+        screen, "DISCLAIMER", constants.DISCLAIMER, 2
+    )
+    license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 3)
+    world_build = gsim.Organism_selection(screen, world, 5)
+    init_help_screen = gsim.TextScreen(screen, constants.HELP, 4)
+    help_screen = gsim.TextScreen(screen, constants.HELP, 6)
     with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
         main_game = gsim.Simulation(screen, world, path)
 
@@ -67,6 +70,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     statemachine = gsim.StateMachine(
         [
             title,
+            disclaimer,
             license_notice,
             init_help_screen,
             world_build,
@@ -74,6 +78,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
             help_screen,
         ]
     )
+
     while True:
         time_delta = clock.tick(fps) / 1000.0
 

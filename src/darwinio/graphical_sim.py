@@ -358,7 +358,7 @@ class Simulation(State):
                     self.last_time = 0
                 if event.ui_element == self.restart_button:
                     self.running = False
-                    return 3
+                    return 4
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.running = not self.running
@@ -452,7 +452,11 @@ class TitleScreen(State):
     """
 
     def __init__(
-        self, surface: pg.Surface, title_text: str, subtitle_text: str
+        self,
+        surface: pg.Surface,
+        title_text: str,
+        subtitle_text: str,
+        next_state_index: int,
     ) -> None:
         """
         Args:
@@ -462,6 +466,8 @@ class TitleScreen(State):
         title_text: The text to be displayed as the title.
 
         subtitle_text: The text to be displayed as the subtitle.
+
+        next_state_index: The index of the next state
         """
 
         font: pg.Font = pg.font.SysFont("monospace", 25)
@@ -473,6 +479,8 @@ class TitleScreen(State):
         )
 
         self.surface: pg.Surface = surface
+
+        self.next_state_index = next_state_index
 
     def render(self) -> None:
         """Render the title screen state."""
@@ -510,8 +518,57 @@ class TitleScreen(State):
         """
         for event in events:
             if event.type == pg.KEYDOWN:
-                return 1
+                return self.next_state_index
         return None
+
+
+class Heading_TextScreen(TitleScreen):
+    def __init__(
+        self,
+        surface: pg.Surface,
+        title_text: str,
+        content_text: str,
+        next_state_index: int,
+    ) -> None:
+        """
+        Args:
+        -----
+        surface: The surface on which the state will be rendered.
+
+        title_text: The text to be displayed as the title.
+
+        content_text: The text to be displayed as the content.
+
+        next_state_index: The index of the next state
+        """
+
+        font: pg.Font = pg.font.SysFont("monospace", 100)
+        self.title_surf: pg.Surface = font.render(title_text, True, "white")
+
+        smallerfont: pg.Font = pg.font.SysFont("monospace", 30)
+        self.content_text_surf: pg.Surface = smallerfont.render(
+            content_text, True, "white"
+        )
+
+        self.surface: pg.Surface = surface
+
+        self.next_state_index = next_state_index
+
+    def render(self) -> None:
+        """Render the text screen state."""
+
+        titlerect = self.title_surf.get_rect(
+            midtop=self.surface.get_rect().midtop
+        )
+        titlerect = self.title_surf.get_rect(
+            midtop=self.surface.get_rect().midtop
+        )
+        self.surface.blit(self.title_surf, titlerect)
+
+        subtitlerect = self.content_text_surf.get_rect(
+            center=self.surface.get_rect().center
+        )
+        self.surface.blit(self.content_text_surf, subtitlerect)
 
 
 class TextScreen(State):
