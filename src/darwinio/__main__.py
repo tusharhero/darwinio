@@ -69,13 +69,13 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     # Create the state machine
     statemachine = gsim.StateMachine(
         [
-            title,
-            disclaimer,
-            license_notice,
-            init_help_screen,
-            world_build,
+            # title,
+            # disclaimer,
+            # license_notice,
+            # init_help_screen,
+            # world_build,
             main_game,
-            help_screen,
+            # help_screen,
         ]
     )
 

@@ -128,8 +128,8 @@ class NeuralNetwork:
 
 def normalize(arr: np.ndarray) -> np.ndarray:
     """Normalize the Numpy Array."""
-    magnitude: np.floating = np.linalg.norm(arr)
-    return np.nan_to_num(arr / magnitude)
+    magnitude: np.floating = np.linalg.norm(arr) + 1e-16
+    return arr / magnitude
 
 
 def create_weights(
