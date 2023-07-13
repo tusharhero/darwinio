@@ -416,9 +416,12 @@ class Simulation(State):
             self.world_scale += scaling * time_delta
         if keys_pressed[pg.K_MINUS] and self.world_scale > 0.5:
             self.world_scale -= scaling * time_delta
-        self.scaled_world_surface = pg.transform.scale_by(
-            self.world_surface, self.world_scale
-        )
+
+        if not self.thread.is_alive():
+            self.scaled_world_surface = pg.transform.scale_by(
+                self.world_surface, self.world_scale
+            )
+
         self.world_rect = self.scaled_world_surface.get_rect(
             center=self.world_rect.center
         )
@@ -429,8 +432,6 @@ class Simulation(State):
             self.start_button.set_text("start")
 
         # run every 1000 milliseconds
-        x = threading.Lock()
-        with x:
         self.update_sim(1000)
 
         self.population_label.set_text(str(self.world.get_population()))
