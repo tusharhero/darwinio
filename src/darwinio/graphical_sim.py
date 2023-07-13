@@ -22,7 +22,7 @@ import pygame_gui as pgui
 import darwinio.distribution as dist
 import darwinio.genome as gn
 from importlib.resources import as_file, files
-from threading import Thread
+import threading
 
 
 class World(dist.World):
@@ -291,6 +291,7 @@ class Simulation(State):
         super().__init__(surface, surface_size, None)
 
         # Simulation Interface
+
         self.image: pg.Surface = pg.transform.scale(
             pg.image.load(image_path).convert_alpha(), (64, 64)
         )
@@ -298,6 +299,7 @@ class Simulation(State):
         self.running = False
 
         self.world: World = world
+        self.thread = threading.Thread(target=self.world.update_state)
         world_width, world_height = world.canvas_size
         self.world_surface: pg.Surface = pg.surface.Surface(
             (world_height * 64, world_width * 64)
@@ -427,18 +429,25 @@ class Simulation(State):
             self.start_button.set_text("start")
 
         # run every 1000 milliseconds
-        cycle_time_ms: int = 1000
-        current_time = pg.time.get_ticks()
-        if current_time - self.last_time > cycle_time_ms and self.running:
-            self.last_time = current_time
-            self.start_button.set_text("wait")
-            thread = Thread(target=self.world.update_state)
-            thread.start()
+        x = threading.Lock()
+        with x:
+        self.update_sim(1000)
 
         self.population_label.set_text(str(self.world.get_population()))
 
         self.manager.update(time_delta)
         return None
+
+    def update_sim(self, cycle_time_ms: int):
+        current_time = pg.time.get_ticks()
+        if (
+            current_time - self.last_time > cycle_time_ms
+            and self.running
+            and not self.thread.is_alive()
+        ):
+            self.thread = threading.Thread(target=self.world.update_state)
+            self.last_time = current_time
+            self.thread.start()
 
 
 class TitleScreen(State):
