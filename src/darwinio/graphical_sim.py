@@ -23,6 +23,7 @@ import darwinio.distribution as dist
 import darwinio.genome as gn
 from importlib.resources import as_file, files
 import threading
+import copy
 
 
 class World(dist.World):
@@ -299,6 +300,7 @@ class Simulation(State):
         self.running = False
 
         self.world: World = world
+        self.world_buffer = copy.deepcopy(self.world)
         self.thread = threading.Thread(target=self.world.update_state)
         world_width, world_height = world.canvas_size
         self.world_surface: pg.Surface = pg.surface.Surface(
@@ -346,7 +348,7 @@ class Simulation(State):
         """render the main screen state."""
         self.sim_surface.fill("black")
         self.world_surface.fill("#5498C6")
-        self.world.render(self.world_surface, self.image)
+        self.world_buffer.render(self.world_surface, self.image)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
@@ -417,11 +419,9 @@ class Simulation(State):
         if keys_pressed[pg.K_MINUS] and self.world_scale > 0.5:
             self.world_scale -= scaling * time_delta
 
-        if not self.thread.is_alive():
-            self.scaled_world_surface = pg.transform.scale_by(
-                self.world_surface, self.world_scale
-            )
-
+        self.scaled_world_surface = pg.transform.scale_by(
+            self.world_surface, self.world_scale
+        )
         self.world_rect = self.scaled_world_surface.get_rect(
             center=self.world_rect.center
         )
@@ -440,12 +440,21 @@ class Simulation(State):
         return None
 
     def update_sim(self, cycle_time_ms: int):
+        """
+        for updating the world.
+
+        Args:
+        -----
+        cycle_time_ms: cycle time under which the world would be updated once
+        in milliseconds.
+        """
         current_time = pg.time.get_ticks()
         if (
             current_time - self.last_time > cycle_time_ms
             and self.running
             and not self.thread.is_alive()
         ):
+            self.world_buffer = copy.deepcopy(self.world)
             self.thread = threading.Thread(target=self.world.update_state)
             self.last_time = current_time
             self.thread.start()
