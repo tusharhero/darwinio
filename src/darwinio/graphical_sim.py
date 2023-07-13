@@ -22,6 +22,7 @@ import pygame_gui as pgui
 import darwinio.distribution as dist
 import darwinio.genome as gn
 from importlib.resources import as_file, files
+from threading import Thread
 
 
 class World(dist.World):
@@ -431,7 +432,9 @@ class Simulation(State):
         if current_time - self.last_time > cycle_time_ms and self.running:
             self.last_time = current_time
             self.start_button.set_text("wait")
-            self.world.update_state()
+            thread = Thread(target=self.world.update_state)
+            thread.start()
+
         self.population_label.set_text(str(self.world.get_population()))
 
         self.manager.update(time_delta)
