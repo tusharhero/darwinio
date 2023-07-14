@@ -122,7 +122,7 @@ class World:
 
                 # check if there is an organism at the current location
                 if organism is not None:
-                    temp_range = np.arange(0, 100)
+                    temp_range = np.arange(0, organism.genome_array[0])
                     food_value = self.food_distribution[i][j]
 
                     # name the conditions
@@ -432,44 +432,25 @@ def get_points_between_2_points(
     Note:
     -----
     The function calculates the coordinates of the points that lie on the line
-    between the two input points, and returns an array of these coordinates.
-    The function first determines the slope and intercept of the line
-    connecting the two input points. If the line is vertical, the function
-    returns an array of points with the same x coordinate and a range of y
-    coordinates. Otherwise, the function calculates the coordinates of the
-    points on the line using the slope and intercept, and returns an array of
-    these coordinates. The returned array is sorted by distance from the first
-    input point.
+    between the two input points, and returns an array of these coordinates. We
+    first get the number of possible points integer points. And then finds such
+    points such that they are linearly placed. And then combines them.
     """
 
     x1, y1 = np.array(point_1).astype(int)
     x2, y2 = np.array(point_2).astype(int)
 
-    # Calculate the slope of the line
-    if x1 == x2:
-        # Handle the special case where the line is vertical
-        x_coords: np.ndarray = np.full(abs(y2 - y1) + 1, x1)
-        y_coords: np.ndarray = np.arange(min(y1, y2), max(y1, y2) + 1)
-    else:
-        slope: int = (y2 - y1) // (x2 - x1)
-        intercept: int = y1 - slope * x1
+    Dy: int = y2 - y1
+    Dx: int = x2 - x1
+    no_of_points: int = np.gcd(Dy, Dx) + 1
 
-        # Calculate the coordinates of the points on the line
-        x_coords: np.ndarray = np.arange(min(x1, x2), max(x1, x2) + 1)
-        y_coords: np.ndarray = np.around(slope * x_coords + intercept)
+    x_coords: np.ndarray = np.linspace(x1, x2, no_of_points, dtype=int)
+    y_coords: np.ndarray = np.linspace(y1, y2, no_of_points, dtype=int)
 
     # Combine the x and y coordinates into a single array
     points: np.ndarray = np.column_stack((x_coords, y_coords))
 
-    # Remove duplicate points
-    points: np.ndarray = np.unique(points, axis=0)
-
-    # Sort the points by distance from the first input point
-    distances: np.ndarray = np.linalg.norm(points - point_1, axis=1)
-    sorted_indices: np.ndarray = np.argsort(distances)
-    points: np.ndarray = points[sorted_indices]
-
-    return points.astype(int)
+    return points
 
 
 def get_integer_neighbors(value: int, radius: int) -> np.ndarray:

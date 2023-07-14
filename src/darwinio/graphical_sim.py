@@ -22,6 +22,8 @@ import pygame_gui as pgui
 import darwinio.distribution as dist
 import darwinio.genome as gn
 from importlib.resources import as_file, files
+import threading
+import copy
 
 
 class World(dist.World):
@@ -290,6 +292,7 @@ class Simulation(State):
         super().__init__(surface, surface_size, None)
 
         # Simulation Interface
+
         self.image: pg.Surface = pg.transform.scale(
             pg.image.load(image_path).convert_alpha(), (64, 64)
         )
@@ -297,6 +300,8 @@ class Simulation(State):
         self.running = False
 
         self.world: World = world
+        self.world_buffer = copy.deepcopy(self.world)
+        self.thread = threading.Thread(target=self.world.update_state)
         world_width, world_height = world.canvas_size
         self.world_surface: pg.Surface = pg.surface.Surface(
             (world_height * 64, world_width * 64)
@@ -343,7 +348,7 @@ class Simulation(State):
         """render the main screen state."""
         self.sim_surface.fill("black")
         self.world_surface.fill("#5498C6")
-        self.world.render(self.world_surface, self.image)
+        self.world_buffer.render(self.world_surface, self.image)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
@@ -358,7 +363,7 @@ class Simulation(State):
                     self.last_time = 0
                 if event.ui_element == self.restart_button:
                     self.running = False
-                    return 3
+                    return 4
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.running = not self.running
@@ -413,6 +418,7 @@ class Simulation(State):
             self.world_scale += scaling * time_delta
         if keys_pressed[pg.K_MINUS] and self.world_scale > 0.5:
             self.world_scale -= scaling * time_delta
+
         self.scaled_world_surface = pg.transform.scale_by(
             self.world_surface, self.world_scale
         )
@@ -426,16 +432,32 @@ class Simulation(State):
             self.start_button.set_text("start")
 
         # run every 1000 milliseconds
-        cycle_time_ms: int = 1000
-        current_time = pg.time.get_ticks()
-        if current_time - self.last_time > cycle_time_ms and self.running:
-            self.last_time = current_time
-            self.start_button.set_text("wait")
-            self.world.update_state()
+        self.update_sim(1000)
+
         self.population_label.set_text(str(self.world.get_population()))
 
         self.manager.update(time_delta)
         return None
+
+    def update_sim(self, cycle_time_ms: int):
+        """
+        for updating the world.
+
+        Args:
+        -----
+        cycle_time_ms: cycle time under which the world would be updated once
+        in milliseconds.
+        """
+        current_time = pg.time.get_ticks()
+        if (
+            current_time - self.last_time > cycle_time_ms
+            and self.running
+            and not self.thread.is_alive()
+        ):
+            self.world_buffer = copy.deepcopy(self.world)
+            self.thread = threading.Thread(target=self.world.update_state)
+            self.last_time = current_time
+            self.thread.start()
 
 
 class TitleScreen(State):
@@ -452,7 +474,11 @@ class TitleScreen(State):
     """
 
     def __init__(
-        self, surface: pg.Surface, title_text: str, subtitle_text: str
+        self,
+        surface: pg.Surface,
+        title_text: str,
+        subtitle_text: str,
+        next_state_index: int,
     ) -> None:
         """
         Args:
@@ -462,6 +488,8 @@ class TitleScreen(State):
         title_text: The text to be displayed as the title.
 
         subtitle_text: The text to be displayed as the subtitle.
+
+        next_state_index: The index of the next state
         """
 
         font: pg.Font = pg.font.SysFont("monospace", 25)
@@ -473,6 +501,8 @@ class TitleScreen(State):
         )
 
         self.surface: pg.Surface = surface
+
+        self.next_state_index = next_state_index
 
     def render(self) -> None:
         """Render the title screen state."""
@@ -510,8 +540,57 @@ class TitleScreen(State):
         """
         for event in events:
             if event.type == pg.KEYDOWN:
-                return 1
+                return self.next_state_index
         return None
+
+
+class Heading_TextScreen(TitleScreen):
+    def __init__(
+        self,
+        surface: pg.Surface,
+        title_text: str,
+        content_text: str,
+        next_state_index: int,
+    ) -> None:
+        """
+        Args:
+        -----
+        surface: The surface on which the state will be rendered.
+
+        title_text: The text to be displayed as the title.
+
+        content_text: The text to be displayed as the content.
+
+        next_state_index: The index of the next state
+        """
+
+        font: pg.Font = pg.font.SysFont("monospace", 100)
+        self.title_surf: pg.Surface = font.render(title_text, True, "white")
+
+        smallerfont: pg.Font = pg.font.SysFont("monospace", 30)
+        self.content_text_surf: pg.Surface = smallerfont.render(
+            content_text, True, "white"
+        )
+
+        self.surface: pg.Surface = surface
+
+        self.next_state_index = next_state_index
+
+    def render(self) -> None:
+        """Render the text screen state."""
+
+        titlerect = self.title_surf.get_rect(
+            midtop=self.surface.get_rect().midtop
+        )
+        titlerect = self.title_surf.get_rect(
+            midtop=self.surface.get_rect().midtop
+        )
+        self.surface.blit(self.title_surf, titlerect)
+
+        subtitlerect = self.content_text_surf.get_rect(
+            center=self.surface.get_rect().center
+        )
+        self.surface.blit(self.content_text_surf, subtitlerect)
 
 
 class TextScreen(State):

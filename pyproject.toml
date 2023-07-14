@@ -8,7 +8,7 @@ exclude = [
 
 [project]
 name = "darwinio"
-version = "0.2.0"
+version = "0.4.0"
 authors = [
   { name="Tushar Maharana", email="tusharhero@sdf.org" },
   { name="Mihir Nallagonda", email="adhikshithamihir@gmail.com" },
@@ -27,6 +27,7 @@ dependencies = [
 "pygame-gui>=0.6.9",
 "nilsimsa>=0.3.8",
 ]
+scripts = { darwinio = "darwinio.__main__:cli" }
 
 [project.urls]
 "Homepage" = "https://github.com/tusharhero/darwinio"
