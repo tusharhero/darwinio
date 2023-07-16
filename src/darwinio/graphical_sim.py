@@ -292,6 +292,8 @@ class Simulation(State):
 
         world: The world object containing the simulation data.
 
+        stats: The stats object for collecting data and plotting.
+
         image_path: The path of the image which will be used for the organism.
         """
 
