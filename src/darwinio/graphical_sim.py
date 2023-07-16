@@ -21,9 +21,10 @@ import pygame as pg
 import pygame_gui as pgui
 import darwinio.distribution as dist
 import darwinio.genome as gn
-from importlib.resources import as_file, files
+from importlib.resources import files
 import threading
 import copy
+import darwinio.stats as statistics
 
 
 class World(dist.World):
@@ -277,13 +278,21 @@ class Organism_selection(State):
 class Simulation(State):
     """Represents the main screen state of the game."""
 
-    def __init__(self, surface: pg.Surface, world: World, image_path: str):
+    def __init__(
+        self,
+        surface: pg.Surface,
+        world: World,
+        stats: statistics.StatisticsCollector,
+        image_path: str,
+    ):
         """
         Args:
         -----
         surface: The surface on which the state will be rendered.
 
         world: The world object containing the simulation data.
+
+        stats: The stats object for collecting data and plotting.
 
         image_path: The path of the image which will be used for the organism.
         """
@@ -326,6 +335,9 @@ class Simulation(State):
         self.restart_button = pgui.elements.UIButton(
             pg.Rect(width - 100, height - 60, 100, 30), "restart", self.manager
         )
+        self.graph_viz_button = pgui.elements.UIButton(
+            pg.Rect(0, 40, -1, -1), "graph", self.manager
+        )
         self.population_label = pgui.elements.UITextBox(
             "0", pg.Rect(0, 0, -1, -1), self.manager
         )
@@ -343,6 +355,9 @@ class Simulation(State):
             (0, 1200),
             self.manager,
         )
+
+        # Stats
+        self.stats: statistics.StatisticsCollector = stats
 
     def render(self) -> None:
         """render the main screen state."""
@@ -387,6 +402,9 @@ class Simulation(State):
                         )
                     )
                     self.food_slider.update()
+            if event.type == pgui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.graph_viz_button:
+                    self.stats.plot(["Population", "Food", "Temperature"])
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()
@@ -458,6 +476,13 @@ class Simulation(State):
             self.thread = threading.Thread(target=self.world.update_state)
             self.last_time = current_time
             self.thread.start()
+            self.stats.add(
+                (
+                    self.world.get_population(),
+                    self.world.food_distribution.mean(),
+                    self.world.temp_distribution.mean(),
+                )
+            )
 
 
 class TitleScreen(State):
@@ -650,10 +675,10 @@ def tint(surface: pg.Surface, color: pg.Color) -> pg.Surface:
     return new_surface
 
 
-def get_asset_path(*paths: str, is_as_file: bool = True):
+def get_asset_path(*paths: str):
     """Gets the path for an asset"""
     file_path = files("darwinio")
     file_path = file_path.joinpath("assets")
     for path in paths:
         file_path = file_path.joinpath(path)
-    return as_file(file_path) if is_as_file else file_path
+    return file_path

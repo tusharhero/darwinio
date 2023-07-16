@@ -8,7 +8,7 @@ exclude = [
 
 [project]
 name = "darwinio"
-version = "0.4.0"
+version = "0.5.0"
 authors = [
   { name="Tushar Maharana", email="tusharhero@sdf.org" },
   { name="Mihir Nallagonda", email="adhikshithamihir@gmail.com" },
@@ -23,6 +23,7 @@ classifiers = [
 ]
 dependencies = [
 "numpy",
+"pandas"    ,
 "pygame-ce>=2.2.1",
 "pygame-gui>=0.6.9",
 "nilsimsa>=0.3.8",
