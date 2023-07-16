@@ -18,3 +18,18 @@
 """
 Classes and related stuff for statistics.
 """
+import pandas as pd
+import matplotlib.pyplot as plt
+from typing import Any
+
+
+class StatisticsCollector:
+    def __init__(self, columns: list[str]):
+        self.data: pd.DataFrame = pd.DataFrame(columns=columns)
+
+    def add(self, new_data: tuple[Any, ...]):
+        self.data.loc[len(self.data.index)] = new_data
+
+    def plot(self, columns: list[str]):
+        self.data[columns].plot()
+        plt.show()

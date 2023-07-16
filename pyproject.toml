@@ -23,6 +23,7 @@ classifiers = [
 ]
 dependencies = [
 "numpy",
+"pandas"    ,
 "pygame-ce>=2.2.1",
 "pygame-gui>=0.6.9",
 "nilsimsa>=0.3.8",

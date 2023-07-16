@@ -326,6 +326,9 @@ class Simulation(State):
         self.restart_button = pgui.elements.UIButton(
             pg.Rect(width - 100, height - 60, 100, 30), "restart", self.manager
         )
+        self.graph_viz_button = pgui.elements.UIButton(
+            pg.Rect(0, 40, -1, -1), "graph", self.manager
+        )
         self.population_label = pgui.elements.UITextBox(
             "0", pg.Rect(0, 0, -1, -1), self.manager
         )
