@@ -21,7 +21,7 @@ import pygame as pg
 import pygame_gui as pgui
 import darwinio.distribution as dist
 import darwinio.genome as gn
-from importlib.resources import as_file, files
+from importlib.resources import files
 import threading
 import copy
 import darwinio.stats as statistics
@@ -673,10 +673,10 @@ def tint(surface: pg.Surface, color: pg.Color) -> pg.Surface:
     return new_surface
 
 
-def get_asset_path(*paths: str, is_as_file: bool = True):
+def get_asset_path(*paths: str):
     """Gets the path for an asset"""
     file_path = files("darwinio")
     file_path = file_path.joinpath("assets")
     for path in paths:
         file_path = file_path.joinpath(path)
-    return as_file(file_path) if is_as_file else file_path
+    return file_path

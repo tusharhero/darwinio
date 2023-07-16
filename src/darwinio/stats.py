@@ -24,12 +24,41 @@ from typing import Any
 
 
 class StatisticsCollector:
+    """
+    A class for collecting and analyzing statistics.
+
+    Attributes:
+    ----------
+    data: The DataFrame to store the collected statistics.
+    """
+
     def __init__(self, columns: list[str]):
+        """
+        Initialize a StatisticsCollector object.
+
+        Args:
+        -----
+        columns: A list of column names for the data.
+        """
         self.data: pd.DataFrame = pd.DataFrame(columns=columns)
 
     def add(self, new_data: tuple[Any, ...]):
+        """
+        Add new data to the statistics collector.
+
+        Args:
+        -----
+        new_data: The new data(row) to be added.
+        """
         self.data.loc[len(self.data.index)] = new_data
 
     def plot(self, columns: list[str]):
+        """
+        Plot the specified columns of the data.
+
+        Args:
+        -----
+        columns: A list of column names to be plotted.
+        """
         self.data[columns].plot()
         plt.show()
