@@ -24,6 +24,7 @@ import darwinio.genome as gn
 from importlib.resources import as_file, files
 import threading
 import copy
+import darwinio.stats as statistics
 
 
 class World(dist.World):
@@ -277,7 +278,13 @@ class Organism_selection(State):
 class Simulation(State):
     """Represents the main screen state of the game."""
 
-    def __init__(self, surface: pg.Surface, world: World, image_path: str):
+    def __init__(
+        self,
+        surface: pg.Surface,
+        world: World,
+        stats: statistics.StatisticsCollector,
+        image_path: str,
+    ):
         """
         Args:
         -----
@@ -347,6 +354,9 @@ class Simulation(State):
             self.manager,
         )
 
+        # Stats
+        self.stats: statistics.StatisticsCollector = stats
+
     def render(self) -> None:
         """render the main screen state."""
         self.sim_surface.fill("black")
@@ -390,6 +400,9 @@ class Simulation(State):
                         )
                     )
                     self.food_slider.update()
+            if event.type == pgui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.graph_viz_button:
+                    self.stats.plot(["Population", "Food", "Temperature"])
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()
@@ -461,6 +474,13 @@ class Simulation(State):
             self.thread = threading.Thread(target=self.world.update_state)
             self.last_time = current_time
             self.thread.start()
+            self.stats.add(
+                (
+                    self.world.get_population(),
+                    self.world.food_distribution.mean(),
+                    self.world.temp_distribution.mean(),
+                )
+            )
 
 
 class TitleScreen(State):

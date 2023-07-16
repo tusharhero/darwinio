@@ -19,6 +19,7 @@ from __future__ import annotations
 import pygame as pg
 import darwinio.graphical_sim as gsim
 import darwinio.constants as constants
+import darwinio.stats as statistics
 from importlib.metadata import version
 
 
@@ -51,6 +52,9 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     pg.mixer.music.play()
 
     world = gsim.World(world_size, initial_temp_avg=45)
+    stats = statistics.StatisticsCollector(
+        ["Population", "Food", "Temperature"]
+    )
 
     # Create the states
     title = gsim.TitleScreen(
@@ -64,7 +68,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     init_help_screen = gsim.TextScreen(screen, constants.HELP, 4)
     help_screen = gsim.TextScreen(screen, constants.HELP, 6)
     with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
-        main_game = gsim.Simulation(screen, world, path)
+        main_game = gsim.Simulation(screen, world, stats, path)
 
     # Create the state machine
     statemachine = gsim.StateMachine(
