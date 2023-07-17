@@ -60,5 +60,5 @@ class StatisticsCollector:
         -----
         columns: A list of column names to be plotted.
         """
-        self.data[columns].plot()
+        self.data[columns].plot(subplots=True)
         plt.show()

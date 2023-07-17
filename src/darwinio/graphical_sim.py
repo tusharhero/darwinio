@@ -402,7 +402,10 @@ class Simulation(State):
                         )
                     )
                     self.food_slider.update()
-            if event.type == pgui.UI_BUTTON_PRESSED:
+            if (
+                event.type == pgui.UI_BUTTON_PRESSED
+                and not self.stats.data.empty
+            ):
                 if event.ui_element == self.graph_viz_button:
                     self.stats.plot(["Population", "Food", "Temperature"])
             self.manager.process_events(event)
