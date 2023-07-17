@@ -68,7 +68,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     init_help_screen = gsim.TextScreen(screen, constants.HELP, 4)
     help_screen = gsim.TextScreen(screen, constants.HELP, 6)
     with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
-        main_game = gsim.Simulation(screen, world, stats, path)
+        main_game = gsim.Simulation(screen, world, stats, str(path))
 
     # Create the state machine
     statemachine = gsim.StateMachine(

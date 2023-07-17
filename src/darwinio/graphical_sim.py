@@ -21,7 +21,7 @@ import pygame as pg
 import pygame_gui as pgui
 import darwinio.distribution as dist
 import darwinio.genome as gn
-from importlib.resources import files
+from importlib.resources import files, as_file
 import threading
 import copy
 import darwinio.stats as statistics
@@ -681,4 +681,4 @@ def get_asset_path(*paths: str):
     file_path = file_path.joinpath("assets")
     for path in paths:
         file_path = file_path.joinpath(path)
-    return file_path
+    return as_file(file_path)
