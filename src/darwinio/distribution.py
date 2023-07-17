@@ -294,7 +294,7 @@ class World:
                 [
                     random.choices(
                         (
-                            org.get_random_organism(
+                            org.Organism.random(
                                 temp_range,
                                 trophic_level_range,
                                 energy_range,

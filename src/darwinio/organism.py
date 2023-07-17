@@ -23,8 +23,6 @@ Organism: A class representing an organism.
 
 Functions:
 --------
-get_random_organism: A function to generate a random organism.
-
 reproduce: Generate offspring of the two Organisms.
 """
 
@@ -65,44 +63,41 @@ class Organism:
         )
         self.neural_network = brn.NeuralNetwork(weights, neural_structure)
 
+    @classmethod
+    def random(
+        cls,
+        temp_range: tuple[int, int],
+        trophic_level_range: tuple[int, int],
+        energy_range: tuple[int, int],
+        reproductive_types: tuple[int, int],
+    ) -> Organism:
+        """Generate a random organism.
 
-def get_random_organism(
-    temp_range: tuple[int, int],
-    trophic_level_range: tuple[int, int],
-    energy_range: tuple[int, int],
-    reproductive_types: tuple[int, int],
-) -> Organism:
-    """Generate a random organism.
+        Args:
+        -----
+        temp_range: Range of temperature values for the organism's adaptation.
 
-    Args:
-    -----
-    temp_range: Range of temperature values for the organism's adaptation.
+        trophic_level_range: Range of trophic level values for the organism's
+        position in the food chain.
 
-    trophic_level_range: Range of trophic level values for the organism's
-    position in the food chain.
+        energy_range: Range of energy values for the organism's energy capacity.
 
-    energy_range: Range of energy values for the organism's energy capacity.
+        reproductive_types: Range of reproductive type values for the organism's
+        reproductive strategy.
 
-    reproductive_types: Range of reproductive type values for the organism's
-    reproductive strategy.
-
-    Returns:
-    ---------
-    Organism: A random instance of the Organism class.
-    """
-
-    characters: np.ndarray = np.array(
-        (
-            random.randint(*sorted(temp_range)),
-            random.randint(*sorted(trophic_level_range)),
-            random.randint(*sorted(energy_range)),
-            random.randint(*sorted(reproductive_types)),
+        Returns:
+        ---------
+        Organism: A random instance of the Organism class.
+        """
+        characters: np.ndarray = np.array(
+            (
+                random.randint(*sorted(temp_range)),
+                random.randint(*sorted(trophic_level_range)),
+                random.randint(*sorted(energy_range)),
+                random.randint(*sorted(reproductive_types)),
+            )
         )
-    )
-
-    organism: Organism = Organism(characters)
-
-    return organism
+        return cls(characters)
 
 
 def reproduce(
