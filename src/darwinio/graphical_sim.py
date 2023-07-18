@@ -378,6 +378,7 @@ class Simulation(State):
                     self.last_time = 0
                 if event.ui_element == self.restart_button:
                     self.running = False
+                    self.stats.clear()
                     return 4
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
