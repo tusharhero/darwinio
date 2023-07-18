@@ -62,3 +62,9 @@ class StatisticsCollector:
         """
         self.data[columns].plot(subplots=True)
         plt.show()
+
+    def clear(self):
+        """
+        Clear the data in data frame.
+        """
+        self.data = self.data.iloc[0:0]
