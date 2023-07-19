@@ -122,7 +122,9 @@ class World:
 
                 # check if there is an organism at the current location
                 if organism is not None:
-                    temp_range = np.arange(0, organism.genome_array[0])
+                    temp_range = get_integer_neighbors(
+                        organism.genome_array[0], 150
+                    )
                     food_value = self.food_distribution[i][j]
 
                     # name the conditions
