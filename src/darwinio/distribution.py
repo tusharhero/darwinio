@@ -155,9 +155,9 @@ class World:
                     # if food is not available kill it and derive some food
                     # from its dead body.
                     else:
-                        self.food_distribution[i][j] += (
-                            organism.genome_array[2] * 10
-                        )
+                        self.food_distribution[i][j] += organism.genome_array[
+                            2
+                        ]
                         self.organism_distribution[i][j] = None
 
     def move(self, organism: org.Organism, current_position: tuple[int, int]):
