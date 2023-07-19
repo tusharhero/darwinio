@@ -214,10 +214,10 @@ class Organism_selection(State):
         )
 
         self.temp_slider_min = Slider(
-            "Temp min:", (350, 350), 230, (1, 2000), self.manager
+            "Temp min:", (350, 350), 30, (1, 2000), self.manager
         )
         self.temp_slider_max = Slider(
-            "Temp max:", (350, 450), 400, (1, 2000), self.manager
+            "Temp max:", (350, 450), 150, (1, 2000), self.manager
         )
 
         self.done_button = pgui.elements.UIButton(
