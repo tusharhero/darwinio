@@ -18,9 +18,11 @@
 """
 Classes and related stuff for statistics.
 """
+import time
 import pandas as pd
 import matplotlib.pyplot as plt
 from typing import Any
+import numpy as np
 
 
 class StatisticsCollector:
@@ -52,7 +54,7 @@ class StatisticsCollector:
         """
         self.data.loc[len(self.data.index)] = new_data
 
-    def plot(self, columns: list[str]):
+    def plot(self, columns: list[str], title: str):
         """
         Plot the specified columns of the data.
 
@@ -60,7 +62,7 @@ class StatisticsCollector:
         -----
         columns: A list of column names to be plotted.
         """
-        self.data[columns].plot(subplots=True)
+        self.data[columns].plot(subplots=True, title=title, xlabel="time")
         plt.show()
 
     def clear(self):
@@ -68,3 +70,8 @@ class StatisticsCollector:
         Clear the data in data frame.
         """
         self.data = self.data.iloc[0:0]
+
+
+class HeatMap:
+    def __init__(self, data_array: np.ndarray):
+        pass
