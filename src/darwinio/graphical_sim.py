@@ -408,7 +408,9 @@ class Simulation(State):
                 and not self.stats.data.empty
             ):
                 if event.ui_element == self.graph_viz_button:
-                    self.stats.plot(["Population", "Food", "Temperature"])
+                    self.stats.plot(
+                        ["Population", "Food", "Temperature"], "Variables plot"
+                    )
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()
