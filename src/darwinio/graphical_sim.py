@@ -338,6 +338,12 @@ class Simulation(State):
         self.graph_viz_button = pgui.elements.UIButton(
             pg.Rect(0, 40, -1, -1), "graph", self.manager
         )
+        self.temp_heatmap_button = pgui.elements.UIButton(
+            pg.Rect(0, 80, -1, -1), "temp", self.manager
+        )
+        self.food_heatmap_button = pgui.elements.UIButton(
+            pg.Rect(0, 120, -1, -1), "food", self.manager
+        )
         self.population_label = pgui.elements.UITextBox(
             "0", pg.Rect(0, 0, -1, -1), self.manager
         )
@@ -411,6 +417,17 @@ class Simulation(State):
                     self.stats.plot(
                         ["Population", "Food", "Temperature"], "Variables plot"
                     )
+                if event.ui_element == self.temp_heatmap_button:
+                    statistics.plot_heatmap(
+                        self.world.temp_distribution,
+                        "Temperature distribution",
+                    )
+                if event.ui_element == self.food_heatmap_button:
+                    statistics.plot_heatmap(
+                        self.world.food_distribution,
+                        "Food distribution",
+                    )
+
             self.manager.process_events(event)
 
         keys_pressed = pg.key.get_pressed()

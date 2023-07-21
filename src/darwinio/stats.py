@@ -72,6 +72,7 @@ class StatisticsCollector:
         self.data = self.data.iloc[0:0]
 
 
-class HeatMap:
-    def __init__(self, data_array: np.ndarray):
-        pass
+def plot_heatmap(data_grid: np.ndarray, title: str):
+    plt.imshow(data_grid, interpolation="nearest")
+    plt.title(title)
+    plt.show()
