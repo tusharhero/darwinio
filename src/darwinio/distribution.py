@@ -182,7 +182,7 @@ class World:
             else -1
         )
 
-        nx, ny = (
+        new_x, new_y = (
             organism.neural_network.run_neural_network(
                 np.array((food_direction, temp_direction))
             )
@@ -190,7 +190,7 @@ class World:
 
         new_coordinates: tuple = get_feasible_position(
             (i, j),
-            (i + nx, j + ny),
+            (i + new_x, j + new_y),
             self.organism_distribution,
         )
 
@@ -273,6 +273,9 @@ class World:
         energy_range: tuple[int, int] = (100, 1000),
         reproductive_types: tuple[int, int] = (0, 1 + 1),
     ) -> np.ndarray:
+        """
+        Generate a random organism distribution.
+        """
         return np.array(
             [
                 [
@@ -416,15 +419,15 @@ def get_points_between_2_points(
     points such that they are linearly placed. And then combines them.
     """
 
-    x1, y1 = np.array(point_1).astype(int)
-    x2, y2 = np.array(point_2).astype(int)
+    x_1, y_1 = np.array(point_1).astype(int)
+    x_2, y_2 = np.array(point_2).astype(int)
 
-    Dy: int = y2 - y1
-    Dx: int = x2 - x1
-    no_of_points: int = np.gcd(Dy, Dx) + 1
+    delta_y: int = y_2 - y_1
+    delta_x: int = x_2 - x_1
+    no_of_points: int = np.gcd(delta_y, delta_x) + 1
 
-    x_coords: np.ndarray = np.linspace(x1, x2, no_of_points, dtype=int)
-    y_coords: np.ndarray = np.linspace(y1, y2, no_of_points, dtype=int)
+    x_coords: np.ndarray = np.linspace(x_1, x_2, no_of_points, dtype=int)
+    y_coords: np.ndarray = np.linspace(y_1, y_2, no_of_points, dtype=int)
 
     # Combine the x and y coordinates into a single array
     points: np.ndarray = np.column_stack((x_coords, y_coords))

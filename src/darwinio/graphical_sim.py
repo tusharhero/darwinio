@@ -31,6 +31,12 @@ import darwinio.stats as statistics
 
 
 class World(dist.World):
+    """Represents a world in which organisms and food are distributed across a
+    canvas.
+
+    An additional method to render the world.
+    """
+
     def render(self, surface: pg.Surface, image: pg.Surface):
         """
         Renders the organisms on the given surface using the provided image.
@@ -160,14 +166,26 @@ class Slider:
         self,
         label: str,
         position: tuple[int, int],
-        starting_value: int,
+        initial_value: int,
         slider_range: tuple[int, int],
         manager: pgui.UIManager,
     ):
+        """
+        Args:
+        -----
+        label: text to be displayed on the label.
+
+        position: position of the slider.
+
+        initial_value: initial value of the sliding bar.
+
+        slider_range: range of the values that the slider is allowed to get
+        into.
+        """
         x, y = position
         self.slider = pgui.elements.UIHorizontalSlider(
             pg.Rect(x, y, 400, 30),
-            starting_value,
+            initial_value,
             slider_range,
             manager,
         )
@@ -183,10 +201,13 @@ class Slider:
         )
 
     def update(self):
+        """
+        Update the value label.
+        """
         self.value_label.set_text(str(self.slider.get_current_value()))
 
 
-class Organism_selection(State):
+class OrganismSelection(State):
     """Represents a organism criteria selection screen."""
 
     def __init__(
@@ -580,7 +601,7 @@ class TitleScreen(State):
         return None
 
 
-class Heading_TextScreen(TitleScreen):
+class HeadingTextScreen(TitleScreen):
     def __init__(
         self,
         surface: pg.Surface,

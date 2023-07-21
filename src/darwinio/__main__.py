@@ -61,9 +61,9 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     title = gsim.TitleScreen(
         screen, constants.TITLE_ASCII_ART, f'v{version("darwinio")}', 1
     )
-    disclaimer = gsim.Heading_TextScreen(screen, "DISCLAIMER", constants.DISCLAIMER, 2)
+    disclaimer = gsim.HeadingTextScreen(screen, "DISCLAIMER", constants.DISCLAIMER, 2)
     license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 3)
-    world_build = gsim.Organism_selection(screen, world, 5)
+    world_build = gsim.OrganismSelection(screen, world, 5)
     init_help_screen = gsim.TextScreen(screen, constants.HELP, 4)
     help_screen = gsim.TextScreen(screen, constants.HELP, 6)
     with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
