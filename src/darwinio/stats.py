@@ -73,6 +73,6 @@ class StatisticsCollector:
 
 
 def plot_heatmap(data_grid: np.ndarray, title: str):
-    plt.imshow(data_grid, cmap="hot", interpolation="nearest")
+    plt.imshow(data_grid, interpolation="nearest")
     plt.title(title)
     plt.show()
