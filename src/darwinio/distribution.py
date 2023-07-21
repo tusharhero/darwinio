@@ -100,9 +100,7 @@ class World:
         self.temp_distribution: np.ndarray = self.generate_distribution(
             initial_temp_avg, 50
         )
-        self.organism_distribution: np.ndarray = (
-            self.generate_organism_distribution()
-        )
+        self.organism_distribution: np.ndarray = self.generate_organism_distribution()
 
     def update_state(self):
         """Update the state of the canvas.
@@ -125,19 +123,13 @@ class World:
 
                 # check if there is an organism at the current location
                 if organism is not None:
-                    temp_range = get_integer_neighbors(
-                        organism.genome_array[0], 150
-                    )
+                    temp_range = get_integer_neighbors(organism.genome_array[0], 150)
                     food_value = self.food_distribution[i][j]
 
                     # name the conditions
 
-                    has_enough_food: bool = (
-                        food_value >= organism.genome_array[2]
-                    )
-                    is_in_ideal_temp: bool = (
-                        self.temp_distribution[i][j] in temp_range
-                    )
+                    has_enough_food: bool = food_value >= organism.genome_array[2]
+                    is_in_ideal_temp: bool = self.temp_distribution[i][j] in temp_range
                     has_enough_food_for_reprod: bool = (
                         food_value >= 2 * organism.genome_array[2]
                     )
@@ -146,23 +138,16 @@ class World:
                     )
 
                     if has_enough_food and is_in_ideal_temp:
-                        self.food_distribution[i][j] -= organism.genome_array[
-                            2
-                        ]
+                        self.food_distribution[i][j] -= organism.genome_array[2]
                         self.move(organism, (i, j))
 
-                    if (
-                        has_enough_food_for_reprod
-                        and is_in_ideal_temp_for_reprod
-                    ):
+                    if has_enough_food_for_reprod and is_in_ideal_temp_for_reprod:
                         self.reproduce(organism, (i, j))
 
                     # if food is not available kill it and derive some food
                     # from its dead body.
                     else:
-                        self.food_distribution[i][j] += organism.genome_array[
-                            2
-                        ]
+                        self.food_distribution[i][j] += organism.genome_array[2]
                         self.organism_distribution[i][j] = None
 
     def move(self, organism: org.Organism, current_position: tuple[int, int]):
@@ -211,13 +196,9 @@ class World:
 
         # move the organism
         self.organism_distribution[i][j] = None
-        self.organism_distribution[new_coordinates[0]][
-            new_coordinates[1]
-        ] = organism
+        self.organism_distribution[new_coordinates[0]][new_coordinates[1]] = organism
 
-    def reproduce(
-        self, organism: org.Organism, current_position: tuple[int, int]
-    ):
+    def reproduce(self, organism: org.Organism, current_position: tuple[int, int]):
         """Reproduce the organism at the current position.
 
         Args:
@@ -282,9 +263,7 @@ class World:
         random value sampled from a normal distribution with the specified mean
         and standard deviation.
         """
-        return np.random.normal(
-            loc=loc, scale=scale, size=self.canvas_size
-        ).astype(int)
+        return np.random.normal(loc=loc, scale=scale, size=self.canvas_size).astype(int)
 
     def generate_organism_distribution(
         self,
@@ -396,9 +375,7 @@ def get_feasible_position(
             return tuple(
                 [
                     np.clip(
-                        possible_positions[index - 1 if index != 0 else index][
-                            p
-                        ],
+                        possible_positions[index - 1 if index != 0 else index][p],
                         0,
                         (y, x)[p] - 1,
                     )
@@ -407,10 +384,7 @@ def get_feasible_position(
             )
     return tuple(
         np.array(
-            [
-                np.clip(preferred_position[p], 0, (x, y)[p] - 1)
-                for p in range(2)
-            ]
+            [np.clip(preferred_position[p], 0, (x, y)[p] - 1) for p in range(2)]
         ).astype(int)
     )
 

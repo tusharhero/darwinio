@@ -45,9 +45,7 @@ class World(dist.World):
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
-                    color = pg.Color(
-                        f"#{gn.array2hex(organism.genome_array)[-6:]}"
-                    )
+                    color = pg.Color(f"#{gn.array2hex(organism.genome_array)[-6:]}")
                     tinted_image: pg.Surface = tint(image, color)
                     surface.blit(
                         tinted_image,
@@ -91,9 +89,7 @@ class State:
         """Render the state."""
         self.manager.draw_ui(self.surface)
 
-    def update(
-        self, events: list[pg.Event], time_delta: float
-    ) -> Union[int, None]:
+    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
         """
         Update the state.
 
@@ -236,9 +232,7 @@ class Organism_selection(State):
             anchors={"centerx": "centerx"},
         )
 
-    def update(
-        self, events: list[pg.Event], time_delta: float
-    ) -> Union[int, None]:
+    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
         """
         Updates the state based on the given events and time delta.
 
@@ -377,9 +371,7 @@ class Simulation(State):
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
 
-    def update(
-        self, events: list[pg.Event], time_delta: float
-    ) -> Union[int, None]:
+    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
         for event in events:
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.start_button:
@@ -417,18 +409,14 @@ class Simulation(State):
             if event.type == pgui.UI_HORIZONTAL_SLIDER_MOVED:
                 if event.ui_element == self.temp_slider.slider:
                     new_avg_temp = self.temp_slider.slider.get_current_value()
-                    self.world.temp_distribution = (
-                        self.world.generate_distribution(int(new_avg_temp), 50)
+                    self.world.temp_distribution = self.world.generate_distribution(
+                        int(new_avg_temp), 50
                     )
                     self.temp_slider.update()
                 if event.ui_element == self.food_slider.slider:
-                    new_avg_food_content = (
-                        self.food_slider.slider.get_current_value()
-                    )
-                    self.world.food_distribution = (
-                        self.world.generate_distribution(
-                            int(new_avg_food_content), 100
-                        )
+                    new_avg_food_content = self.food_slider.slider.get_current_value()
+                    self.world.food_distribution = self.world.generate_distribution(
+                        int(new_avg_food_content), 100
                     )
                     self.food_slider.update()
 
@@ -562,9 +550,7 @@ class TitleScreen(State):
             self.title_surf,
             (self.surface.get_width(), self.title_surf.get_height()),
         )
-        titlerect = self.title_surf.get_rect(
-            center=self.surface.get_rect().center
-        )
+        titlerect = self.title_surf.get_rect(center=self.surface.get_rect().center)
         self.surface.blit(self.title_surf, titlerect)
 
         subtitlerect = self.subtitle_surf.get_rect(
@@ -573,9 +559,7 @@ class TitleScreen(State):
         subtitlerect.centery += 200
         self.surface.blit(self.subtitle_surf, subtitlerect)
 
-    def update(
-        self, events: list[pg.Event], time_delta: float
-    ) -> Union[int, None]:
+    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
         """
         Update the title screen state.
 
@@ -631,12 +615,8 @@ class Heading_TextScreen(TitleScreen):
     def render(self) -> None:
         """Render the text screen state."""
 
-        titlerect = self.title_surf.get_rect(
-            midtop=self.surface.get_rect().midtop
-        )
-        titlerect = self.title_surf.get_rect(
-            midtop=self.surface.get_rect().midtop
-        )
+        titlerect = self.title_surf.get_rect(midtop=self.surface.get_rect().midtop)
+        titlerect = self.title_surf.get_rect(midtop=self.surface.get_rect().midtop)
         self.surface.blit(self.title_surf, titlerect)
 
         subtitlerect = self.content_text_surf.get_rect(
@@ -654,9 +634,7 @@ class TextScreen(State):
     text_box: The UI text box for displaying the text content.
     """
 
-    def __init__(
-        self, surface: pg.Surface, screen_text: str, next_state_index: int
-    ):
+    def __init__(self, surface: pg.Surface, screen_text: str, next_state_index: int):
         """
         Args:
         -----
@@ -672,9 +650,7 @@ class TextScreen(State):
             screen_text, self.surface.get_rect(), self.manager
         )
 
-    def update(
-        self, events: list[pg.Event], time_delta: float
-    ) -> Union[int, None]:
+    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
         """
         Update the text screen state.
 

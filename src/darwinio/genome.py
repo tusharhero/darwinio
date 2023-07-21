@@ -61,9 +61,7 @@ def generate_offspring_genome(
     """
 
     if not 0 <= mutation_factor <= 1:
-        raise ValueError(
-            "mutation_factor must be a value between 0 and 1 (inclusive)"
-        )
+        raise ValueError("mutation_factor must be a value between 0 and 1 (inclusive)")
     if len(parent_1) != len(parent_2):
         raise ValueError("parent_1 and parent_2 must have the same length")
 

@@ -55,17 +55,13 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     pg.mixer.music.play()
 
     world = gsim.World(world_size, initial_temp_avg=45)
-    stats = statistics.StatisticsCollector(
-        ["Population", "Food", "Temperature"]
-    )
+    stats = statistics.StatisticsCollector(["Population", "Food", "Temperature"])
 
     # Create the states
     title = gsim.TitleScreen(
         screen, constants.TITLE_ASCII_ART, f'v{version("darwinio")}', 1
     )
-    disclaimer = gsim.Heading_TextScreen(
-        screen, "DISCLAIMER", constants.DISCLAIMER, 2
-    )
+    disclaimer = gsim.Heading_TextScreen(screen, "DISCLAIMER", constants.DISCLAIMER, 2)
     license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 3)
     world_build = gsim.Organism_selection(screen, world, 5)
     init_help_screen = gsim.TextScreen(screen, constants.HELP, 4)

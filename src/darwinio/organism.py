@@ -61,9 +61,7 @@ class Organism:
 
         # assign a neural_network generated from the genome
         neural_structure = np.array([2, 2])
-        weights: np.ndarray = brn.create_weights(
-            self.genome_array, neural_structure
-        )
+        weights: np.ndarray = brn.create_weights(self.genome_array, neural_structure)
         self.neural_network = brn.NeuralNetwork(weights, neural_structure)
 
     @classmethod

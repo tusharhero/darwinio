@@ -49,9 +49,7 @@ class NeuralNetwork:
     that layer.
     """
 
-    def __init__(
-        self, weights: np.ndarray, neural_structure: np.ndarray
-    ) -> None:
+    def __init__(self, weights: np.ndarray, neural_structure: np.ndarray) -> None:
         """Initialize a neural network object with the given weight and neural
         structure.
 
@@ -94,9 +92,7 @@ class NeuralNetwork:
         normalized_input_values: np.ndarray = normalize(input_values)
         weights: np.ndarray = self.weights
         neural_structure: np.ndarray = self.neural_structure
-        neural_network: list[list[float]] = [
-            [0.0] * i for i in neural_structure
-        ]
+        neural_network: list[list[float]] = [[0.0] * i for i in neural_structure]
 
         neural_network[0] = list(normalized_input_values)
 
@@ -110,9 +106,7 @@ class NeuralNetwork:
                 layer_values,
                 weights[
                     : len(layer_values) * len(neural_network[next_layer_index])
-                ].reshape(
-                    len(layer_values), len(neural_network[next_layer_index])
-                ),
+                ].reshape(len(layer_values), len(neural_network[next_layer_index])),
             )
 
             # reshape the resulting values to match the shape of the next layer
