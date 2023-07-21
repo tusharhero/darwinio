@@ -24,9 +24,11 @@ parents with mutations.
 """
 
 from __future__ import annotations
+
 import random
-import numpy as np
+
 import nilsimsa as nil
+import numpy as np
 
 
 def generate_offspring_genome(

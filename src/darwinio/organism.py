@@ -27,10 +27,13 @@ reproduce: Generate offspring of the two Organisms.
 """
 
 from __future__ import annotations
+
+import random
+
+import numpy as np
+
 import darwinio.brain as brn
 import darwinio.genome as gn
-import numpy as np
-import random
 
 
 class Organism:

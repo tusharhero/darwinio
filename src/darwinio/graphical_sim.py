@@ -16,14 +16,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import annotations
+
+import copy
+import threading
+from importlib.resources import as_file, files
 from typing import Union
+
 import pygame as pg
 import pygame_gui as pgui
+
 import darwinio.distribution as dist
 import darwinio.genome as gn
-from importlib.resources import files, as_file
-import threading
-import copy
 import darwinio.stats as statistics
 
 
@@ -386,6 +389,25 @@ class Simulation(State):
                     self.running = False
                     self.stats.clear()
                     return 4
+
+                # graph buttons
+                if (
+                    event.ui_element == self.graph_viz_button
+                    and not self.stats.data.empty
+                ):
+                    self.stats.plot(
+                        ["Population", "Food", "Temperature"], "Variables plot"
+                    )
+                if event.ui_element == self.temp_heatmap_button:
+                    statistics.plot_heatmap(
+                        self.world.temp_distribution,
+                        "Temperature distribution",
+                    )
+                if event.ui_element == self.food_heatmap_button:
+                    statistics.plot_heatmap(
+                        self.world.food_distribution,
+                        "Food distribution",
+                    )
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.running = not self.running
@@ -409,24 +431,6 @@ class Simulation(State):
                         )
                     )
                     self.food_slider.update()
-            if (
-                event.type == pgui.UI_BUTTON_PRESSED
-                and not self.stats.data.empty
-            ):
-                if event.ui_element == self.graph_viz_button:
-                    self.stats.plot(
-                        ["Population", "Food", "Temperature"], "Variables plot"
-                    )
-                if event.ui_element == self.temp_heatmap_button:
-                    statistics.plot_heatmap(
-                        self.world.temp_distribution,
-                        "Temperature distribution",
-                    )
-                if event.ui_element == self.food_heatmap_button:
-                    statistics.plot_heatmap(
-                        self.world.food_distribution,
-                        "Food distribution",
-                    )
 
             self.manager.process_events(event)
 

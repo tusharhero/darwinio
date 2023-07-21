@@ -16,11 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import annotations
-import pygame as pg
-import darwinio.graphical_sim as gsim
-import darwinio.constants as constants
-import darwinio.stats as statistics
+
 from importlib.metadata import version
+
+import pygame as pg
+
+import darwinio.constants as constants
+import darwinio.graphical_sim as gsim
+import darwinio.stats as statistics
 
 
 def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):

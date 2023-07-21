@@ -38,9 +38,12 @@ on the line between two given points.
 """
 
 from __future__ import annotations
-from typing import Union
-import numpy as np
+
 import random
+from typing import Union
+
+import numpy as np
+
 import darwinio.organism as org
 
 

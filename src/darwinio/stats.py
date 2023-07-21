@@ -18,11 +18,11 @@
 """
 Classes and related stuff for statistics.
 """
-import time
-import pandas as pd
-import matplotlib.pyplot as plt
 from typing import Any
+
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 
 class StatisticsCollector:
@@ -61,6 +61,8 @@ class StatisticsCollector:
         Args:
         -----
         columns: A list of column names to be plotted.
+
+        title: tile of the plot.
         """
         self.data[columns].plot(subplots=True, title=title, xlabel="time")
         plt.show()
@@ -73,6 +75,15 @@ class StatisticsCollector:
 
 
 def plot_heatmap(data_grid: np.ndarray, title: str):
+    """
+    Plot the specified columns of the data.
+
+    Args:
+    -----
+    data_grid: A 2d array of values to be plotted.
+
+    title: tile of the plot.
+    """
     plt.imshow(data_grid, interpolation="nearest")
     plt.title(title)
     plt.show()
