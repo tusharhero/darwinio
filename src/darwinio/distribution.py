@@ -40,7 +40,7 @@ on the line between two given points.
 from __future__ import annotations
 
 import random
-from typing import Union
+from typing import Union, cast
 
 import numpy as np
 
@@ -102,7 +102,7 @@ class World:
         )
         self.organism_distribution: np.ndarray = self.generate_organism_distribution()
 
-    def update_state(self):
+    def update_state(self) -> None:
         """Update the state of the canvas.
 
         Note:
@@ -119,15 +119,14 @@ class World:
 
         for i in range(rows):
             for j in range(cols):
-                organism = self.organism_distribution[i][j]
+                organism: org.Organism = self.organism_distribution[i][j]
 
                 # check if there is an organism at the current location
                 if organism is not None:
                     temp_range = get_integer_neighbors(organism.genome_array[0], 150)
-                    food_value = self.food_distribution[i][j]
+                    food_value: int = self.food_distribution[i][j]
 
                     # name the conditions
-
                     has_enough_food: bool = food_value >= organism.genome_array[2]
                     is_in_ideal_temp: bool = self.temp_distribution[i][j] in temp_range
                     has_enough_food_for_reprod: bool = (
@@ -210,8 +209,9 @@ class World:
         position of the organism.
         """
         i, j = current_position
-        prefered_position = tuple(
-            [(i, j)[p] + np.random.choice((-1, 1)) for p in range(2)]
+        prefered_position: tuple[int, int] = cast(
+            tuple[int, int],
+            tuple((i, j)[p] + np.random.choice((-1, 1)) for p in range(2)),
         )
         x, y = get_feasible_position(
             (i, j),
@@ -219,11 +219,11 @@ class World:
             self.organism_distribution,
         )
 
+        offspring: Union[org.Organism, None]
+
         # asexual
         if organism.genome_array[3] == 0:
-            offspring: Union[org.Organism, None] = org.reproduce(
-                organism, organism, 0.3
-            )
+            offspring = org.reproduce(organism, organism, 0.3)
         # sexual
         else:
             partner: Union[org.Organism, None] = None
@@ -236,11 +236,9 @@ class World:
                         partner = other_organism
                         break
             if partner is not None:
-                offspring: Union[org.Organism, None] = org.reproduce(
-                    organism, partner, 0.3
-                )
+                offspring = org.reproduce(organism, partner, 0.3)
             else:
-                offspring: Union[org.Organism, None] = None
+                offspring = None
 
             if offspring:
                 self.organism_distribution[y][x] = offspring
@@ -375,20 +373,24 @@ def get_feasible_position(
     for index, position in enumerate(possible_positions):
         row, column = tuple(position)
         if distribution[np.clip(column, 0, y - 1)][np.clip(row, 0, x - 1)]:
-            return tuple(
-                [
+            return cast(
+                tuple[int, int],
+                tuple(
                     np.clip(
                         possible_positions[index - 1 if index != 0 else index][p],
                         0,
                         (y, x)[p] - 1,
                     )
                     for p in range(2)
-                ]
+                ),
             )
-    return tuple(
-        np.array(
-            [np.clip(preferred_position[p], 0, (x, y)[p] - 1) for p in range(2)]
-        ).astype(int)
+    return cast(
+        tuple[int, int],
+        tuple(
+            np.array(
+                [np.clip(preferred_position[p], 0, (x, y)[p] - 1) for p in range(2)]
+            ).astype(int)
+        ),
     )
 
 

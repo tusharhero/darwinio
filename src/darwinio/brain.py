@@ -37,7 +37,8 @@ import numpy as np
 
 
 class NeuralNetwork:
-    """A class for representing a neural network with a given genome and neural
+    """
+    A class for representing a neural network with a given genome and neural
     structure.
 
     Attributes:
@@ -50,7 +51,8 @@ class NeuralNetwork:
     """
 
     def __init__(self, weights: np.ndarray, neural_structure: np.ndarray) -> None:
-        """Initialize a neural network object with the given weight and neural
+        """
+        Initialize a neural network object with the given weight and neural
         structure.
 
         Args:
@@ -66,7 +68,8 @@ class NeuralNetwork:
         self.neural_structure: np.ndarray = neural_structure
 
     def run_neural_network(self, input_values: np.ndarray) -> np.ndarray:
-        """Run the neural network according to input values.
+        """
+        Run the neural network according to input values.
 
         Args:
         -----
@@ -130,14 +133,17 @@ def normalize(arr: np.ndarray) -> np.ndarray:
 def create_weights(
     genome_array: np.ndarray, neural_structure: np.ndarray
 ) -> np.ndarray:
-    """Creates the weights for the neural network based on the genome and
+    """
+    Creates the weights for the neural network based on the genome and
     neural structure.
 
     Args:
     -----
-    genome_array: A Numpy Array representing the hexadecimal genome of the organism.
+    genome_array: A Numpy Array representing the hexadecimal genome of the
+    organism.
 
-    neural_structure: A Numpy Array representing the structure of the neural network.
+    neural_structure: A Numpy Array representing the structure of the neural
+    network.
 
     Returns:
     -------
