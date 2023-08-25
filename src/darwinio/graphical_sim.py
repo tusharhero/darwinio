@@ -87,7 +87,7 @@ class State:
 
         next_state_index: The index of the next state
         """
-        self.next_state_index: int = next_state_index
+        self.next_state_index: Union[int, None] = next_state_index
         self.manager = pgui.UIManager(manager_size)
         self.surface: pg.Surface = surface
 
@@ -137,7 +137,7 @@ class StateMachine:
         states: The list of states in the state machine.
         """
         self.states: list[State] = states
-        self.state_index = 0
+        self.state_index: int = 0
 
     def run_state(self, events: list[pg.Event], time_delta: float):
         """
@@ -152,10 +152,8 @@ class StateMachine:
         state: State = self.states[self.state_index]
         state.render()
         new_state_index: Union[int, None] = state.update(events, time_delta)
-        self.state_index: int = (
-            new_state_index
-            if new_state_index is not None or new_state_index == 0
-            else self.state_index
+        self.state_index = (
+            new_state_index if new_state_index is not None else self.state_index
         )
 
 
@@ -336,7 +334,7 @@ class Simulation(State):
         self.world_rect: pg.Rect = self.world_surface.get_rect(
             center=(width // 2, height // 2)
         )
-        self.world_scale = 1
+        self.world_scale: float = 1.0
         self.scaled_world_surface: pg.Surface = self.world_surface
 
         self.sim_surface: pg.Surface = pg.surface.Surface((width, height))
@@ -447,13 +445,13 @@ class Simulation(State):
         # moving
         step_size: int = 500
         if keys_pressed[pg.K_UP] or keys_pressed[pg.K_k]:
-            self.world_rect.centery += step_size * time_delta
+            self.world_rect.centery += int(step_size * time_delta)
         if keys_pressed[pg.K_DOWN] or keys_pressed[pg.K_j]:
-            self.world_rect.centery -= step_size * time_delta
+            self.world_rect.centery -= int(step_size * time_delta)
         if keys_pressed[pg.K_RIGHT] or keys_pressed[pg.K_l]:
-            self.world_rect.centerx -= step_size * time_delta
+            self.world_rect.centerx -= int(step_size * time_delta)
         if keys_pressed[pg.K_LEFT] or keys_pressed[pg.K_h]:
-            self.world_rect.centerx += step_size * time_delta
+            self.world_rect.centerx += int(step_size * time_delta)
 
         # can't move beyond
         wiggle_room: int = 100
@@ -690,6 +688,7 @@ class TextScreen(State):
             if event.type == pg.KEYDOWN:
                 return self.next_state_index
         super().update(events, time_delta)
+        return None
 
 
 def tint(surface: pg.Surface, color: pg.Color) -> pg.Surface:
