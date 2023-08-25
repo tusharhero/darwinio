@@ -334,7 +334,7 @@ class Simulation(State):
         self.world_rect: pg.Rect = self.world_surface.get_rect(
             center=(width // 2, height // 2)
         )
-        self.world_scale = 1
+        self.world_scale: float = 1.0
         self.scaled_world_surface: pg.Surface = self.world_surface
 
         self.sim_surface: pg.Surface = pg.surface.Surface((width, height))
@@ -467,9 +467,9 @@ class Simulation(State):
         # zooming
         scaling: float = 0.5
         if keys_pressed[pg.K_EQUALS] and self.world_scale < 2:
-            self.world_scale += int(scaling * time_delta)
+            self.world_scale += scaling * time_delta
         if keys_pressed[pg.K_MINUS] and self.world_scale > 0.5:
-            self.world_scale -= int(scaling * time_delta)
+            self.world_scale -= scaling * time_delta
 
         self.scaled_world_surface = pg.transform.scale_by(
             self.world_surface, self.world_scale
