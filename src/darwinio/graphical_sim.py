@@ -594,7 +594,7 @@ class TitleScreen(State):
         transition is needed.
         """
         for event in events:
-            if event.type == pg.KEYDOWN:
+            if event.type == pg.KEYDOWN and event.key != pg.K_F11:
                 return self.next_state_index
         return None
 
