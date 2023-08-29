@@ -266,7 +266,7 @@ class World:
     def generate_organism_distribution(
         self,
         weights: tuple[float, float] = (0.1, 0.9),
-        temp_range: tuple[int, int] = (230, 400),
+        temp_range: tuple[int, int] = (30, 150),
         trophic_level_range: tuple[int, int] = (0, 3),
         energy_range: tuple[int, int] = (100, 1000),
         reproductive_types: tuple[int, int] = (0, 1 + 1),
