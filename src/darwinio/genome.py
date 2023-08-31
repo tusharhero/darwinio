@@ -36,7 +36,8 @@ def generate_offspring_genome(
     parent_2: np.ndarray,
     mutation_factor: float,
 ) -> np.ndarray:
-    """Generate a genome_array for an offspring of the given parents with mutations.
+    """Generate a genome_array for an offspring of the given parents
+    with mutations.
 
     Args:
     -------

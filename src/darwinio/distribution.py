@@ -267,7 +267,6 @@ class World:
         self,
         weights: tuple[float, float] = (0.1, 0.9),
         temp_range: tuple[int, int] = (30, 150),
-        trophic_level_range: tuple[int, int] = (0, 3),
         energy_range: tuple[int, int] = (100, 1000),
         reproductive_types: tuple[int, int] = (0, 1 + 1),
     ) -> np.ndarray:
@@ -281,7 +280,6 @@ class World:
                         (
                             org.Organism.random(
                                 temp_range,
-                                trophic_level_range,
                                 energy_range,
                                 reproductive_types,
                             ),

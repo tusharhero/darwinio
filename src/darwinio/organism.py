@@ -68,7 +68,6 @@ class Organism:
     def random(
         cls,
         temp_range: tuple[int, int],
-        trophic_level_range: tuple[int, int],
         energy_range: tuple[int, int],
         reproductive_types: tuple[int, int],
     ) -> Organism:
@@ -77,9 +76,6 @@ class Organism:
         Args:
         -----
         temp_range: Range of temperature values for the organism's adaptation.
-
-        trophic_level_range: Range of trophic level values for the organism's
-        position in the food chain.
 
         energy_range: Range of energy values for the organism's energy capacity.
 
@@ -93,7 +89,6 @@ class Organism:
         characters: np.ndarray = np.array(
             (
                 random.randint(*sorted(temp_range)),
-                random.randint(*sorted(trophic_level_range)),
                 random.randint(*sorted(energy_range)),
                 random.randint(*sorted(reproductive_types)),
             )
