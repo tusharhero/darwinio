@@ -105,19 +105,22 @@ class NeuralNetwork:
 
             # calculate the dot product between the current layer and the
             # weights for the next layer
-            next_layer_values = np.dot(
-                layer_values,
-                weights[
-                    : len(layer_values) * len(neural_network[next_layer_index])
-                ].reshape(len(layer_values), len(neural_network[next_layer_index])),
-            )
+            try:
+                next_layer_values = np.dot(
+                    layer_values,
+                    weights[
+                        : len(layer_values) * len(neural_network[next_layer_index])
+                    ].reshape(len(layer_values), len(neural_network[next_layer_index])),
+                )
+            except:
+                next_layer_values = np.dot(layer_values, np.ones((2, 2)))
 
             # reshape the resulting values to match the shape of the next layer
             next_layer_values = next_layer_values.reshape(
                 len(neural_network[next_layer_index]),
             )
-            # apply the activation function to the next layer values
 
+            # apply the activation function to the next layer values
             next_layer_values = np.tanh(next_layer_values)
             neural_network[next_layer_index] = list(next_layer_values)
 

@@ -47,7 +47,7 @@ class World(dist.World):
 
         image: The image representing an organism.
         """
-        organisms = self.organism_distribution
+        organisms = self.organism_distribution.data
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
@@ -273,8 +273,10 @@ class OrganismSelection(State):
                         int(self.temp_slider_max.slider.get_current_value()),
                     )
                     self.world.organism_distribution = (
-                        self.world.generate_organism_distribution(
-                            energy_range=energy_range, temp_range=temp_range
+                        dist.OrganismDistribution.generate(
+                            size=self.world.canvas_size,
+                            energy_range=energy_range,
+                            temp_range=temp_range,
                         )
                     )
                     return self.next_state_index
@@ -411,12 +413,12 @@ class Simulation(State):
                     )
                 if event.ui_element == self.temp_heatmap_button:
                     statistics.plot_heatmap(
-                        self.world.temp_distribution,
+                        self.world.temp_distribution.data,
                         "Temperature distribution",
                     )
                 if event.ui_element == self.food_heatmap_button:
                     statistics.plot_heatmap(
-                        self.world.food_distribution,
+                        self.world.food_distribution.data,
                         "Food distribution",
                     )
             if event.type == pg.KEYDOWN:
@@ -428,14 +430,14 @@ class Simulation(State):
             if event.type == pgui.UI_HORIZONTAL_SLIDER_MOVED:
                 if event.ui_element == self.temp_slider.slider:
                     new_avg_temp = self.temp_slider.slider.get_current_value()
-                    self.world.temp_distribution = self.world.generate_distribution(
-                        int(new_avg_temp), 50
+                    self.world.temp_distribution = dist.Distribution.generate(
+                        self.world.canvas_size, int(new_avg_temp), 50
                     )
                     self.temp_slider.update()
                 if event.ui_element == self.food_slider.slider:
                     new_avg_food_content = self.food_slider.slider.get_current_value()
-                    self.world.food_distribution = self.world.generate_distribution(
-                        int(new_avg_food_content), 100
+                    self.world.food_distribution = dist.Distribution.generate(
+                        self.world.canvas_size, int(new_avg_food_content), 100
                     )
                     self.food_slider.update()
 
@@ -486,7 +488,9 @@ class Simulation(State):
         # run every 1000 milliseconds
         self.update_sim(1000)
 
-        self.population_label.set_text(str(self.world.get_population()))
+        self.population_label.set_text(
+            str(self.world.organism_distribution.get_population())
+        )
 
         self.manager.update(time_delta)
         return None
@@ -512,9 +516,9 @@ class Simulation(State):
             self.thread.start()
             self.stats.add(
                 (
-                    self.world.get_population(),
-                    self.world.food_distribution.mean(),
-                    self.world.temp_distribution.mean(),
+                    self.world.organism_distribution.get_population(),
+                    self.world.food_distribution.data.mean(),
+                    self.world.temp_distribution.data.mean(),
                 )
             )
 
