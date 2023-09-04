@@ -55,7 +55,9 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     pg.mixer.music.play()
 
     world = gsim.World(world_size, initial_temp_avg=45)
-    stats = statistics.StatisticsCollector(["Population", "Food", "Temperature"])
+    stats = statistics.StatisticsCollector(
+        ["Population", "Food", "Temperature", "Reproduction Ratio"]
+    )
 
     # Create the states
     title = gsim.TitleScreen(
