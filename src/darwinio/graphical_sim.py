@@ -409,7 +409,8 @@ class Simulation(State):
                     and not self.stats.data.empty
                 ):
                     self.stats.plot(
-                        ["Population", "Food", "Temperature"], "Variables plot"
+                        ["Population", "Food", "Temperature", "Reproduction Ratio"],
+                        "Variables plot",
                     )
                 if event.ui_element == self.temp_heatmap_button:
                     statistics.plot_heatmap(
@@ -519,6 +520,7 @@ class Simulation(State):
                     self.world.organism_distribution.get_population(),
                     self.world.food_distribution.data.mean(),
                     self.world.temp_distribution.data.mean(),
+                    self.world.organism_distribution.get_reproduction_ratio(),
                 )
             )
 

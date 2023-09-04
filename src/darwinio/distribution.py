@@ -169,6 +169,24 @@ class Distribution:
 
 
 class OrganismDistribution(Distribution):
+    def get_reproduction_ratio(self) -> float:
+        """
+        Returns:
+        --------
+        The 'reproduction ratio', which is basically the
+        number of asexuals per sexuals.
+        """
+        asexuals: int = 0
+        sexuals: int = 0
+        for row in self.data:
+            for organism in row:
+                if organism is not None:
+                    if organism.genome_array[2] == 0:
+                        asexuals += 1
+                    else:
+                        sexuals += 1
+        return asexuals / sexuals if sexuals != 0 else np.NaN
+
     @classmethod
     def generate(
         cls,
