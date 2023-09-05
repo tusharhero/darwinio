@@ -18,12 +18,15 @@
 from __future__ import annotations
 
 import copy
+from importlib.metadata import Distribution
 import threading
 from importlib.resources import as_file, files
-from typing import Union
+from typing import Any, Union, Tuple
+import math
 
 import pygame as pg
 import pygame_gui as pgui
+import numpy as np
 
 import darwinio.distribution as dist
 import darwinio.genome as gn
@@ -57,6 +60,30 @@ class World(dist.World):
                         tinted_image,
                         (x * 64, y * 64),
                     )
+
+
+def render_distribution(distribution: dist.Distribution, surface: pg.Surface):
+    """
+    Renders the distribution on the given surface.
+
+    Args:
+    -----
+    distribution: The distribution to be rendered.
+
+    surface: The surface on which the distribution will be rendered.
+    """
+    data: np.ndarray = distribution.data
+    color_pixel_size = size_x, size_y = tuple(
+        surface.get_size()[_] / data.shape[_] for _ in range(2)
+    )
+    color_pixel: pg.Surface = pg.Surface(color_pixel_size)
+    max_value: int = data.max()
+    min_value: int = data.min()
+    for y, row in enumerate(data):
+        for x, datapoint in enumerate(row):
+            color: int = 255 * math.floor(datapoint / max_value - min_value)
+            color_pixel.fill(color)
+            surface.blit(color_pixel, (size_x * x, size_y * y))
 
 
 class State:
@@ -291,6 +318,10 @@ class OrganismSelection(State):
 
         self.manager.update(time_delta)
         return None
+
+
+class DistributionPainting(State):
+    pass
 
 
 class Simulation(State):
