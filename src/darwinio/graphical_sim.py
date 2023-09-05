@@ -62,26 +62,32 @@ class World(dist.World):
                     )
 
 
-def render_distribution(distribution: dist.Distribution, surface: pg.Surface):
+def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
     """
-    Renders the distribution on the given surface.
+    Renders the NumPy array on the given surface.
 
     Args:
     -----
-    distribution: The distribution to be rendered.
+    array: The NumPy array to be rendered.
 
-    surface: The surface on which the distribution will be rendered.
+    surface: The surface on which the NumPy array will be rendered.
     """
-    data: np.ndarray = distribution.data
     color_pixel_size = size_x, size_y = tuple(
-        surface.get_size()[_] / data.shape[_] for _ in range(2)
+        surface.get_size()[_] / array.shape[_] for _ in range(2)
     )
     color_pixel: pg.Surface = pg.Surface(color_pixel_size)
-    max_value: int = data.max()
-    min_value: int = data.min()
-    for y, row in enumerate(data):
+    max_value: int = array.max()
+    min_value: int = array.min()
+    for y, row in enumerate(array):
         for x, datapoint in enumerate(row):
-            color: int = 255 * math.floor(datapoint / max_value - min_value)
+            color_brightness: int = abs(
+                math.floor(255 * (datapoint / (max_value - min_value)))
+            )
+            color: Tuple[int, int, int] = (
+                color_brightness,
+                color_brightness,
+                color_brightness,
+            )
             color_pixel.fill(color)
             surface.blit(color_pixel, (size_x * x, size_y * y))
 
@@ -321,7 +327,55 @@ class OrganismSelection(State):
 
 
 class DistributionPainting(State):
-    pass
+    def __init__(
+        self,
+        surface: pg.Surface,
+        world: World,
+        next_state_index: Union[int, None],
+    ):
+        surface_size = width, height = surface.get_size()
+        super().__init__(surface, surface_size, next_state_index)
+        self.world: World = world
+
+        self.canvas_surface: pg.Surface = pg.Surface((500, 500))
+        self.canvas_rect: pg.Rect = self.canvas_surface.get_rect(
+            center=(width // 2, height // 2)
+        )
+
+        # State variables
+        self.current_distribution: dist.Distribution = self.world.temp_distribution
+
+        # User interface variables
+        self.title = pgui.elements.UITextBox(
+            "<b>Customize the distribution yourselves</b>",
+            pg.Rect((width // 2) - 350 // 2, 20, 315, 50),
+            self.manager,
+        )
+
+        self.temp_heatmap_button = pgui.elements.UIButton(
+            pg.Rect(0, 80, -1, -1), "temp", self.manager
+        )
+        self.food_heatmap_button = pgui.elements.UIButton(
+            pg.Rect(0, 120, -1, -1), "food", self.manager
+        )
+
+        self.done_button = pgui.elements.UIButton(
+            pg.Rect(0, 650, -1, -1),
+            "Done!",
+            self.manager,
+            anchors={"centerx": "centerx"},
+        )
+        self.skip_button = pgui.elements.UIButton(
+            pg.Rect(0, 700, -1, -1),
+            "skip",
+            self.manager,
+            anchors={"centerx": "centerx"},
+        )
+
+    def render(self):
+        render_np_2d_array(self.current_distribution.data, self.canvas_surface)
+        self.surface.blit(self.canvas_surface, self.canvas_rect)
+        super().render()
 
 
 class Simulation(State):
@@ -702,7 +756,7 @@ class TextScreen(State):
         state_index: The index of the current active state.
         """
         super().__init__(surface, surface.get_size(), next_state_index)
-        self.text_box = pgui.elements.UITextBox(
+        self.text_ = pgui.elements.UITextBox(
             screen_text, self.surface.get_rect(), self.manager
         )
 
