@@ -77,11 +77,15 @@ def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
     )
     color_pixel: pg.Surface = pg.Surface(color_pixel_size)
     max_value: int = array.max()
+    min_value: int = array.min()
     for y, row in enumerate(array):
         for x, datapoint in enumerate(row):
-            color_brightness: int = abs(
-                math.floor(255 * (datapoint / (max_value if max_value != 0 else 1)))
+            color_brightness: int = (
+                math.floor(255 * ((datapoint - min_value) / (max_value - min_value)))
+                if max_value - min_value != 0
+                else 0
             )
+
             color: Tuple[int, int, int] = (
                 color_brightness,
                 color_brightness,
