@@ -290,6 +290,12 @@ class OrganismSelection(State):
             self.manager,
             anchors={"centerx": "centerx"},
         )
+        self.painting_distribution_button = pgui.elements.UIButton(
+            pg.Rect(0, 650, -1, -1),
+            "customize the distributions too!",
+            self.manager,
+            anchors={"centerx": "centerx"},
+        )
 
     def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
         """
@@ -322,6 +328,8 @@ class OrganismSelection(State):
                     return self.next_state_index
                 if event.ui_element == self.skip_button:
                     return self.next_state_index
+                if event.ui_element == self.painting_distribution_button:
+                    return -1
             self.manager.process_events(event)
 
         self.energy_slider_max.update()
@@ -465,6 +473,9 @@ class DistributionPainting(State):
                     self.current_distribution.data = np.zeros(
                         shape=self.current_distribution.data.shape
                     )
+
+                if event.ui_element == self.done_button:
+                    return self.next_state_index
 
                 self.instrument_indicator = pgui.elements.UITextBox(
                     self.instrument, pg.Rect(width - 90, 150, 100, -1), self.manager
