@@ -81,16 +81,18 @@ def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
     for y, row in enumerate(array):
         for x, datapoint in enumerate(row):
             color_brightness: int = (
-                math.floor(255 * ((datapoint - min_value) / (max_value - min_value)))
+                math.floor((datapoint - min_value) / (max_value - min_value))
                 if max_value - min_value != 0
                 else 0
             )
 
-            color: Tuple[int, int, int] = (
-                color_brightness,
-                color_brightness,
-                color_brightness,
-            )
+            # https://krazydad.com/tutorials/makecolors.php
+
+            r = round(math.sin(0.024 * color_brightness + 0) * 127 + 128)
+            g = round(math.sin(0.024 * color_brightness + 2) * 127 + 128)
+            b = round(math.sin(0.024 * color_brightness + 4) * 127 + 128)
+
+            color: Tuple[int, int, int] = (r, g, b)
 
             color_pixel.fill(color)
             surface.blit(color_pixel, (size_x * x, size_y * y))
@@ -98,7 +100,8 @@ def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
 
 class State:
     """
-    Represents a game state.
+    Represents a game
+    state.
 
     Attributes:
     -----------
