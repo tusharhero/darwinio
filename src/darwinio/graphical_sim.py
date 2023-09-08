@@ -396,6 +396,16 @@ class DistributionPainting(State):
             pg.Rect(0, 120, -1, -1), "food", self.manager
         )
 
+        self.current_distribution_min_label = pgui.elements.UITextBox(
+            f"min: {self.current_distribution.data.min()}",
+            pg.Rect(width - 130, 300, -1, -1),
+            self.manager,
+        )
+        self.current_distribution_max_label = pgui.elements.UITextBox(
+            f"max: {self.current_distribution.data.max()}",
+            pg.Rect(width - 130, 360, -1, -1),
+            self.manager,
+        )
         self.done_button = pgui.elements.UIButton(
             pg.Rect(0, 650, -1, -1),
             "Done!",
@@ -424,6 +434,17 @@ class DistributionPainting(State):
             x_index, y_index = mouse_x_rel // 10, mouse_y_rel // 10
             self.current_distribution.data[y_index][x_index] += (
                 100 if self.instrument == "paintbrush" else -100
+            )
+
+            self.current_distribution_min_label = pgui.elements.UITextBox(
+                f"min: {self.current_distribution.data.min()}",
+                pg.Rect(width - 130, 300, -1, -1),
+                self.manager,
+            )
+            self.current_distribution_max_label = pgui.elements.UITextBox(
+                f"max: {self.current_distribution.data.max()}",
+                pg.Rect(width - 130, 360, -1, -1),
+                self.manager,
             )
 
         for event in events:
