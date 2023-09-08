@@ -416,13 +416,14 @@ class DistributionPainting(State):
         is_mouse_in_canvas: bool = (0 < mouse_x_rel < canvas_width) and (
             0 < mouse_y_rel < canvas_height
         )
+
+        if pg.mouse.get_pressed()[0] and is_mouse_in_canvas:
+            x_index, y_index = mouse_x_rel // 10, mouse_y_rel // 10
+            self.current_distribution.data[y_index][x_index] += (
+                100 if self.instrument == "paintbrush" else -100
+            )
+
         for event in events:
-            if event.type == pg.MOUSEBUTTONDOWN:
-                if pg.mouse.get_pressed()[0] and is_mouse_in_canvas:
-                    x_index, y_index = mouse_x_rel // 10, mouse_y_rel // 10
-                    self.current_distribution.data[y_index][x_index] += (
-                        100 if self.instrument == "paintbrush" else -100
-                    )
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.done_button:
                     return self.next_state_index
