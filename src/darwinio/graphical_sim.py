@@ -80,8 +80,8 @@ def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
     min_value: int = array.min()
     for y, row in enumerate(array):
         for x, datapoint in enumerate(row):
-            color_brightness: int = (
-                math.floor((datapoint - min_value) / (max_value - min_value))
+            color_brightness: int = round(
+                255 * (datapoint - min_value) / (max_value - min_value)
                 if max_value - min_value != 0
                 else 0
             )
