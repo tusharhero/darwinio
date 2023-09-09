@@ -88,9 +88,9 @@ def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
 
             # https://krazydad.com/tutorials/makecolors.php
 
-            r = round(math.sin(0.024 * color_brightness + 0) * 127 + 128)
-            g = round(math.sin(0.024 * color_brightness + 2) * 127 + 128)
-            b = round(math.sin(0.024 * color_brightness + 4) * 127 + 128)
+            r = round(math.sin(0.01 * color_brightness + 0 * math.pi / 3) * 127 + 128)
+            g = round(math.sin(0.01 * color_brightness + 1 * math.pi / 3) * 127 + 128)
+            b = round(math.sin(0.01 * color_brightness + 2 * math.pi / 3) * 127 + 128)
 
             color: Tuple[int, int, int] = (r, g, b)
 
