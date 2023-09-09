@@ -870,7 +870,7 @@ class TextScreen(State):
         state_index: The index of the current active state.
         """
         super().__init__(surface, surface.get_size(), next_state_index)
-        self.text_ = pgui.elements.UITextBox(
+        self.text_box = pgui.elements.UITextBox(
             screen_text, self.surface.get_rect(), self.manager
         )
 
