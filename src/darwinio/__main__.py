@@ -112,7 +112,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
                     statemachine.state_index = 5
                     help_screen.next_state_index = prev_index
 
-        screen.fill("#423E4A")
+        screen.fill("#000000")
         statemachine.run_state(events, time_delta)
         pg.display.flip()
 
