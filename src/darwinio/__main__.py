@@ -17,7 +17,7 @@
 
 from __future__ import annotations
 
-from importlib.metadata import version
+from importlib.metadata import distribution, version
 
 import pygame as pg
 
@@ -65,9 +65,10 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     )
     disclaimer = gsim.HeadingTextScreen(screen, "DISCLAIMER", constants.DISCLAIMER, 2)
     license_notice = gsim.TextScreen(screen, constants.LICENSE_NOTICE, 3)
-    world_build = gsim.OrganismSelection(screen, world, 5)
+    organism_build = gsim.OrganismSelection(screen, world, 5)
     init_help_screen = gsim.TextScreen(screen, constants.HELP, 4)
     help_screen = gsim.TextScreen(screen, constants.HELP, 6)
+    distribution_painting = gsim.DistributionPainting(screen, world, 4)
     with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
         main_game = gsim.Simulation(screen, world, stats, str(path))
 
@@ -78,9 +79,10 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
             disclaimer,
             license_notice,
             init_help_screen,
-            world_build,
+            organism_build,
             main_game,
             help_screen,
+            distribution_painting,
         ]
     )
 
@@ -110,7 +112,7 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
                     statemachine.state_index = 5
                     help_screen.next_state_index = prev_index
 
-        screen.fill("#423E4A")
+        screen.fill("#000000")
         statemachine.run_state(events, time_delta)
         pg.display.flip()
 

@@ -18,12 +18,15 @@
 from __future__ import annotations
 
 import copy
+from importlib.metadata import Distribution
 import threading
 from importlib.resources import as_file, files
-from typing import Union
+from typing import Any, Union, Tuple
+import math
 
 import pygame as pg
 import pygame_gui as pgui
+import numpy as np
 
 import darwinio.distribution as dist
 import darwinio.genome as gn
@@ -59,9 +62,46 @@ class World(dist.World):
                     )
 
 
+def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
+    """
+    Renders the NumPy array on the given surface.
+
+    Args:
+    -----
+    array: The NumPy array to be rendered.
+
+    surface: The surface on which the NumPy array will be rendered.
+    """
+    color_pixel_size = size_x, size_y = tuple(
+        surface.get_size()[_] / array.shape[_] for _ in range(2)
+    )
+    color_pixel: pg.Surface = pg.Surface(color_pixel_size)
+    max_value: int = array.max()
+    min_value: int = array.min()
+    for y, row in enumerate(array):
+        for x, datapoint in enumerate(row):
+            color_brightness: int = round(
+                255 * (datapoint - min_value) / (max_value - min_value)
+                if max_value - min_value != 0
+                else 0
+            )
+
+            # https://krazydad.com/tutorials/makecolors.php
+
+            r = round(math.sin(0.01 * color_brightness + 0 * math.pi / 3) * 127 + 128)
+            g = round(math.sin(0.01 * color_brightness + 1 * math.pi / 3) * 127 + 128)
+            b = round(math.sin(0.01 * color_brightness + 2 * math.pi / 3) * 127 + 128)
+
+            color: Tuple[int, int, int] = (r, g, b)
+
+            color_pixel.fill(color)
+            surface.blit(color_pixel, (size_x * x, size_y * y))
+
+
 class State:
     """
-    Represents a game state.
+    Represents a game
+    state.
 
     Attributes:
     -----------
@@ -250,6 +290,12 @@ class OrganismSelection(State):
             self.manager,
             anchors={"centerx": "centerx"},
         )
+        self.painting_distribution_button = pgui.elements.UIButton(
+            pg.Rect(0, 650, -1, -1),
+            "customize the distributions too!",
+            self.manager,
+            anchors={"centerx": "centerx"},
+        )
 
     def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
         """
@@ -282,6 +328,8 @@ class OrganismSelection(State):
                     return self.next_state_index
                 if event.ui_element == self.skip_button:
                     return self.next_state_index
+                if event.ui_element == self.painting_distribution_button:
+                    return -1
             self.manager.process_events(event)
 
         self.energy_slider_max.update()
@@ -291,6 +339,168 @@ class OrganismSelection(State):
 
         self.manager.update(time_delta)
         return None
+
+
+class DistributionPainting(State):
+    """Represents a distribution painting screen."""
+
+    def __init__(
+        self,
+        surface: pg.Surface,
+        world: World,
+        next_state_index: Union[int, None],
+    ):
+        self.surface_size = width, height = surface.get_size()
+        super().__init__(surface, self.surface_size, next_state_index)
+        self.world: World = world
+
+        self.canvas_surface: pg.Surface = pg.Surface((500, 500))
+        self.canvas_rect: pg.Rect = self.canvas_surface.get_rect(
+            center=(width // 2, height // 2)
+        )
+        self.canvas_offset: Tuple[int, int] = self.canvas_rect.topleft
+
+        self.distribution_labels = {
+            self.world.food_distribution: "Food distribution",
+            self.world.temp_distribution: "Temperature distribution",
+        }
+
+        # State variables
+        self.current_distribution: dist.Distribution = self.world.temp_distribution
+
+        # User interface variables
+        self.title = pgui.elements.UITextBox(
+            "<b>Customize the distribution yourselves</b>",
+            pg.Rect((width // 2) - 350 // 2, 20, 350, -1),
+            self.manager,
+        )
+        self.current_distribution_label_text: str = (
+            f"<b>Customizing {self.distribution_labels[self.current_distribution]}</b>"
+        )
+
+        self.current_distribution_label = pgui.elements.UITextBox(
+            self.current_distribution_label_text,
+            pg.Rect((width // 2) - 350 // 2, 60, 350, -1),
+            self.manager,
+        )
+
+        self.instrument: str = "paintbrush"
+
+        self.instrument_indicator = pgui.elements.UITextBox(
+            self.instrument, pg.Rect(width - 90, 150, 100, -1), self.manager
+        )
+        self.paint_button = pgui.elements.UIButton(
+            pg.Rect(width - 70, 80, -1, -1), "paint", self.manager
+        )
+        self.eraser_button = pgui.elements.UIButton(
+            pg.Rect(width - 70, 120, -1, -1), "eraser", self.manager
+        )
+
+        self.clear_canvas_button = pgui.elements.UIButton(
+            pg.Rect(width - 150, 210, -1, -1), "clear the canvas", self.manager
+        )
+        self.temp_heatmap_button = pgui.elements.UIButton(
+            pg.Rect(0, 80, -1, -1), "temp", self.manager
+        )
+        self.food_heatmap_button = pgui.elements.UIButton(
+            pg.Rect(0, 120, -1, -1), "food", self.manager
+        )
+
+        self.current_distribution_min_label = pgui.elements.UITextBox(
+            f"min: {self.current_distribution.data.min()}",
+            pg.Rect(width - 130, 300, -1, -1),
+            self.manager,
+        )
+        self.current_distribution_max_label = pgui.elements.UITextBox(
+            f"max: {self.current_distribution.data.max()}",
+            pg.Rect(width - 130, 360, -1, -1),
+            self.manager,
+        )
+        self.done_button = pgui.elements.UIButton(
+            pg.Rect(0, 650, -1, -1),
+            "Done!",
+            self.manager,
+            anchors={"centerx": "centerx"},
+        )
+
+    def render(self):
+        render_np_2d_array(self.current_distribution.data, self.canvas_surface)
+        self.surface.blit(self.canvas_surface, self.canvas_rect)
+        super().render()
+
+    def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
+        """
+        Updates the state based on the given events and time delta.
+
+        Args:
+        -----
+        events: A list of Pygame events.
+
+        time_delta: The time difference between the current and previous frame.
+        """
+        width, height = self.surface_size
+        canvas_width, canvas_height = self.canvas_surface.get_size()
+        mouse_pos = pg.mouse.get_pos()
+        mouse_canvas_pos: Tuple[int, ...] = tuple(
+            mouse_pos[_] - self.canvas_offset[_] for _ in range(2)
+        )
+        mouse_x_rel, mouse_y_rel = mouse_canvas_pos
+        is_mouse_in_canvas: bool = (0 < mouse_x_rel < canvas_width) and (
+            0 < mouse_y_rel < canvas_height
+        )
+
+        if pg.mouse.get_pressed()[0] and is_mouse_in_canvas:
+            x_index, y_index = mouse_x_rel // 10, mouse_y_rel // 10
+            self.current_distribution.data[y_index][x_index] += (
+                100 if self.instrument == "paintbrush" else -100
+            )
+
+            self.current_distribution_min_label = pgui.elements.UITextBox(
+                f"min: {self.current_distribution.data.min()}",
+                pg.Rect(width - 130, 300, -1, -1),
+                self.manager,
+            )
+            self.current_distribution_max_label = pgui.elements.UITextBox(
+                f"max: {self.current_distribution.data.max()}",
+                pg.Rect(width - 130, 360, -1, -1),
+                self.manager,
+            )
+
+        for event in events:
+            if event.type == pgui.UI_BUTTON_PRESSED:
+                if event.ui_element == self.done_button:
+                    return self.next_state_index
+                if event.ui_element == self.temp_heatmap_button:
+                    self.current_distribution = self.world.temp_distribution
+                if event.ui_element == self.food_heatmap_button:
+                    self.current_distribution = self.world.food_distribution
+
+                if event.ui_element == self.paint_button:
+                    self.instrument = "paintbrush"
+                if event.ui_element == self.eraser_button:
+                    self.instrument = "eraser"
+
+                if event.ui_element == self.clear_canvas_button:
+                    self.current_distribution.data = np.zeros(
+                        shape=self.current_distribution.data.shape
+                    )
+
+                if event.ui_element == self.done_button:
+                    return self.next_state_index
+
+                self.instrument_indicator = pgui.elements.UITextBox(
+                    self.instrument, pg.Rect(width - 90, 150, 100, -1), self.manager
+                )
+                self.current_distribution_label_text = (
+                    f"<b>Customizing {self.distribution_labels[self.current_distribution]}</b>"
+                )  # fmt: skip
+                self.current_distribution_label = pgui.elements.UITextBox(
+                    self.current_distribution_label_text,
+                    pg.Rect((width // 2) - 350 // 2, 60, 350, -1),
+                    self.manager,
+                )
+
+        return super().update(events, time_delta)
 
 
 class Simulation(State):
