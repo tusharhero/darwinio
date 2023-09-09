@@ -342,6 +342,8 @@ class OrganismSelection(State):
 
 
 class DistributionPainting(State):
+    """Represents a distribution painting screen."""
+
     def __init__(
         self,
         surface: pg.Surface,
@@ -427,6 +429,15 @@ class DistributionPainting(State):
         super().render()
 
     def update(self, events: list[pg.Event], time_delta: float) -> Union[int, None]:
+        """
+        Updates the state based on the given events and time delta.
+
+        Args:
+        -----
+        events: A list of Pygame events.
+
+        time_delta: The time difference between the current and previous frame.
+        """
         width, height = self.surface_size
         canvas_width, canvas_height = self.canvas_surface.get_size()
         mouse_pos = pg.mouse.get_pos()
