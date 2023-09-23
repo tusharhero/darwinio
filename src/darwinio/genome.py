@@ -50,7 +50,7 @@ def generate_offspring_genome(
 
     Returns:
     -------
-    A string representing the genome of the offspring.
+    A NumPy array representing the genome of the offspring.
 
     Notes:
     -------
