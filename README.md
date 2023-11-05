@@ -22,7 +22,6 @@ organisms, genetic codes, and neural networks.
 
 ## Screenshot
 
-![title screen screenshot](./documentation/screenshot/titlescreen.png)
 ![main game play screenshot](./documentation/screenshot/main_game_play.png)
 
 ## Setup
@@ -30,11 +29,29 @@ organisms, genetic codes, and neural networks.
 ### *Nix(Gnu-Linux, *BSD, MacOS)
 
 1. Make sure your python is up-to date
-2. Open your terminal, and install darwinio by running
+2. Install pipx 
+   ## For Debian and it's derivatives
+    ```
+    apt install pipx
+    ```
+   ## For ArchLinux and it's derivatives
+    ```
+    pacman -S pipx 
+    
+    ```
+   ## For Gentoo
+    ```
+    sudo emerge --sync
+    sudo emerge --ask --update --deep --newuse @world
+    sudo emerge --ask dev-python/pip
+    sudo pip install pipx
+
+    ```
+3. Open your terminal, and install darwinio by running
    ```bash
    pip install darwinio
    ```
-3. To run the program,
+4. To run the program,
    ```bash
    python -m darwinio
    ```
