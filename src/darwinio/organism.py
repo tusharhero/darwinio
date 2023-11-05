@@ -64,6 +64,17 @@ class Organism:
         weights: np.ndarray = brn.create_weights(self.genome_array, neural_structure)
         self.neural_network = brn.NeuralNetwork(weights, neural_structure)
 
+        # range
+        self.temp_range: tuple[int, int] = (30, 150)
+        self.energy_range: tuple[int, int] = (100, 1000)
+        self.reproductive_types: tuple[int, int] = (0, 1 + 1)
+
+    def get_tier(self) -> float:
+        """Return the classification tier."""
+        return np.sum(self.genome_array[:3]) / (
+            self.temp_range[1] + self.energy_range[1] + self.reproductive_types[1]
+        )
+
     @classmethod
     def random(
         cls,

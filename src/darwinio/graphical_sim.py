@@ -40,7 +40,7 @@ class World(dist.World):
     An additional method to render the world.
     """
 
-    def render(self, surface: pg.Surface, image: pg.Surface):
+    def render(self, surface: pg.Surface, images: list[pg.Surface]):
         """
         Renders the organisms on the given surface using the provided image.
 
@@ -48,12 +48,17 @@ class World(dist.World):
         -----
         surface: The surface on which the organisms will be rendered.
 
-        image: The image representing an organism.
+        images: The images representing organisms.
         """
         organisms = self.organism_distribution.data
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
+                    image = images[
+                        np.clip(
+                            int(organism.get_tier() * len(images)), 0, len(images) - 1
+                        )
+                    ]
                     color = pg.Color(f"#{gn.array2hex(organism.genome_array)[-6:]}")
                     tinted_image: pg.Surface = tint(image, color)
                     surface.blit(
@@ -511,7 +516,7 @@ class Simulation(State):
         surface: pg.Surface,
         world: World,
         stats: statistics.StatisticsCollector,
-        image_path: str,
+        images: list[pg.Surface],
     ):
         """
         Args:
@@ -522,7 +527,7 @@ class Simulation(State):
 
         stats: The stats object for collecting data and plotting.
 
-        image_path: The path of the image which will be used for the organism.
+        images: The images representing organisms.
         """
 
         surface_size = width, height = surface.get_size()
@@ -530,9 +535,7 @@ class Simulation(State):
 
         # Simulation Interface
 
-        self.image: pg.Surface = pg.transform.scale(
-            pg.image.load(image_path).convert_alpha(), (64, 64)
-        )
+        self.images: list[pg.Surface] = images
 
         self.running = False
 
@@ -597,7 +600,7 @@ class Simulation(State):
         """render the main screen state."""
         self.sim_surface.fill("black")
         self.world_surface.fill("#5498C6")
-        self.world_buffer.render(self.world_surface, self.image)
+        self.world_buffer.render(self.world_surface, self.images)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)
