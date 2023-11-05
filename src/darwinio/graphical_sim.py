@@ -29,6 +29,7 @@ import pygame_gui as pgui
 import numpy as np
 
 import darwinio.distribution as dist
+import darwinio.organism as org
 import darwinio.genome as gn
 import darwinio.stats as statistics
 
@@ -40,7 +41,7 @@ class World(dist.World):
     An additional method to render the world.
     """
 
-    def render(self, surface: pg.Surface, image: pg.Surface):
+    def render(self, surface: pg.Surface, images: list[pg.Surface]):
         """
         Renders the organisms on the given surface using the provided image.
 
@@ -48,18 +49,20 @@ class World(dist.World):
         -----
         surface: The surface on which the organisms will be rendered.
 
-        image: The image representing an organism.
+        images: The images representing organisms.
         """
         organisms = self.organism_distribution.data
         for y, row in enumerate(organisms):
             for x, organism in enumerate(row):
                 if organism is not None:
+                    image = images[
+                        np.clip(
+                            int(organism.get_tier() * len(images)), 0, len(images) - 1
+                        )
+                    ]
                     color = pg.Color(f"#{gn.array2hex(organism.genome_array)[-6:]}")
                     tinted_image: pg.Surface = tint(image, color)
-                    surface.blit(
-                        tinted_image,
-                        (x * 64, y * 64),
-                    )
+                    surface.blit(tinted_image, (x * 64, y * 64))
 
 
 def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
@@ -310,20 +313,20 @@ class OrganismSelection(State):
         for event in events:
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.done_button:
-                    energy_range = (
+                    energy_range: tuple[int, int] = (
                         int(self.energy_slider_min.slider.get_current_value()),
                         int(self.energy_slider_max.slider.get_current_value()),
                     )
-                    temp_range = (
+                    temp_range: tuple[int, int] = (
                         int(self.temp_slider_min.slider.get_current_value()),
                         int(self.temp_slider_max.slider.get_current_value()),
                     )
+
+                    org.Organism.energy_range = energy_range
+                    org.Organism.temp_range = temp_range
+
                     self.world.organism_distribution = (
-                        dist.OrganismDistribution.generate(
-                            size=self.world.canvas_size,
-                            energy_range=energy_range,
-                            temp_range=temp_range,
-                        )
+                        dist.OrganismDistribution.generate(size=self.world.canvas_size)
                     )
                     return self.next_state_index
                 if event.ui_element == self.skip_button:
@@ -511,7 +514,7 @@ class Simulation(State):
         surface: pg.Surface,
         world: World,
         stats: statistics.StatisticsCollector,
-        image_path: str,
+        images: list[pg.Surface],
     ):
         """
         Args:
@@ -522,7 +525,7 @@ class Simulation(State):
 
         stats: The stats object for collecting data and plotting.
 
-        image_path: The path of the image which will be used for the organism.
+        images: The images representing organisms.
         """
 
         surface_size = width, height = surface.get_size()
@@ -530,9 +533,7 @@ class Simulation(State):
 
         # Simulation Interface
 
-        self.image: pg.Surface = pg.transform.scale(
-            pg.image.load(image_path).convert_alpha(), (64, 64)
-        )
+        self.images: list[pg.Surface] = images
 
         self.running = False
 
@@ -597,7 +598,7 @@ class Simulation(State):
         """render the main screen state."""
         self.sim_surface.fill("black")
         self.world_surface.fill("#5498C6")
-        self.world_buffer.render(self.world_surface, self.image)
+        self.world_buffer.render(self.world_surface, self.images)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
         self.manager.draw_ui(self.surface)

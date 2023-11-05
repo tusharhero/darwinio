@@ -69,8 +69,37 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
     init_help_screen = gsim.TextScreen(screen, constants.HELP, 4)
     help_screen = gsim.TextScreen(screen, constants.HELP, 6)
     distribution_painting = gsim.DistributionPainting(screen, world, 4)
-    with gsim.get_asset_path("art", "archaebacteria_halophile.png") as path:
-        main_game = gsim.Simulation(screen, world, stats, str(path))
+
+    # get images for the organisms.
+    image_names: list[str] = [
+        "archaebacteria_halophile.png",
+        "archaebacteria_methanogen.png",
+        "archaebacteria_thermoacidophile.png",
+        "eubacteria_BGA.png",
+        "eubacteria_mycoplasma.png",
+        "eubacteroa_chemosynthetic.png",
+        "fungi-ascomycetes.png",
+        "fungi-basidiomycetes.png",
+        "fungi-deuteromycetes.png",
+        "fungi-phycomycetes.png",
+        "metaphyta-algae.png",
+        "metaphyta-angiospermae.png",
+        "metaphyta-bryophyta.png",
+        "metaphyta-gymnospermae.png",
+        "metaphyta-pterdiophyta.png",
+        "protista_dinoflagellate.png",
+        "protista_euglena.png",
+        "protista_protozoan.png",
+        "protista_slimemould.png",
+    ]
+    images: list[pg.Surface] = []
+    for file_name in image_names:
+        with gsim.get_asset_path("art", file_name) as path:
+            images.append(
+                pg.transform.scale(pg.image.load(path).convert_alpha(), (64, 64))
+            )
+
+    main_game = gsim.Simulation(screen, world, stats, images)
 
     # Create the state machine
     statemachine = gsim.StateMachine(

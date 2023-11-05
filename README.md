@@ -22,7 +22,6 @@ organisms, genetic codes, and neural networks.
 
 ## Screenshot
 
-![title screen screenshot](./documentation/screenshot/titlescreen.png)
 ![main game play screenshot](./documentation/screenshot/main_game_play.png)
 
 ## Setup
