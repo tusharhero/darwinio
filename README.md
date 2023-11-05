@@ -30,9 +30,22 @@ organisms, genetic codes, and neural networks.
 
 1. Make sure your python is up-to date
 2. Install pipx 
+   ## For Debian and it's derivatives
     ```
-    apt install pipx --Debian
+    apt install pipx
+    ```
+   ## For ArchLinux and it's derivatives
+    ```
     pacman -S pipx 
+    
+    ```
+   ## For Gentoo
+    ```
+    sudo emerge --sync
+    sudo emerge --ask --update --deep --newuse @world
+    sudo emerge --ask dev-python/pip
+    sudo pip install pipx
+
     ```
 3. Open your terminal, and install darwinio by running
    ```bash
