@@ -4,11 +4,12 @@ build-backend = "hatchling.build"
 [tool.hatch.build]
 exclude = [
   "*.wav",
+  "*.mp3",
 ]
 
 [project]
 name = "darwinio"
-version = "0.10.0"
+version = "0.10.1"
 authors = [
   { name="Tushar Maharana", email="tusharhero@sdf.org" },
   { name="Mihir Nallagonda", email="adhikshithamihir@gmail.com" },
