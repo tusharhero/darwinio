@@ -39,12 +39,25 @@ import darwinio.genome as gn
 class Organism:
     """A class representing an organism.
 
+    Class Attributes:
+    ---------
+    temp_range: Range of temperature values for the organism's adaptation.
+
+    energy_range: Range of energy values for the organism's energy capacity.
+
+    reproductive_types: Range of reproductive type values for the organism's
+    reproductive strategy.
+
     Attributes:
     ---------
     genome_array: A Numpy array representing the organism's genome.
 
     neural_network: A neural network generated from the genome of the organism
     """
+
+    temp_range: tuple[int, int] = (30, 150)
+    energy_range: tuple[int, int] = (100, 1000)
+    reproductive_types: tuple[int, int] = (0, 1 + 1)
 
     def __init__(
         self,
@@ -76,22 +89,8 @@ class Organism:
         )
 
     @classmethod
-    def random(
-        cls,
-        temp_range: tuple[int, int],
-        energy_range: tuple[int, int],
-        reproductive_types: tuple[int, int],
-    ) -> Organism:
+    def random(cls) -> Organism:
         """Generate a random organism.
-
-        Args:
-        -----
-        temp_range: Range of temperature values for the organism's adaptation.
-
-        energy_range: Range of energy values for the organism's energy capacity.
-
-        reproductive_types: Range of reproductive type values for the organism's
-        reproductive strategy.
 
         Returns:
         ---------
@@ -99,9 +98,9 @@ class Organism:
         """
         characters: np.ndarray = np.array(
             (
-                random.randint(*sorted(temp_range)),
-                random.randint(*sorted(energy_range)),
-                random.randint(*sorted(reproductive_types)),
+                random.randint(*sorted(cls.temp_range)),
+                random.randint(*sorted(cls.energy_range)),
+                random.randint(*sorted(cls.reproductive_types)),
             )
         )
         return cls(characters)

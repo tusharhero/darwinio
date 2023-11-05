@@ -192,9 +192,6 @@ class OrganismDistribution(Distribution):
         cls,
         size: tuple[int, int],
         weights: tuple[float, float] = (0.1, 0.9),
-        temp_range: tuple[int, int] = (30, 150),
-        energy_range: tuple[int, int] = (100, 1000),
-        reproductive_types: tuple[int, int] = (0, 1 + 1),
     ) -> OrganismDistribution:
         """
         Generate a random organism distribution.
@@ -205,11 +202,7 @@ class OrganismDistribution(Distribution):
                     [
                         random.choices(
                             (
-                                org.Organism.random(
-                                    temp_range,
-                                    energy_range,
-                                    reproductive_types,
-                                ),
+                                org.Organism.random(),
                                 None,
                             ),
                             weights=weights,

@@ -29,6 +29,7 @@ import pygame_gui as pgui
 import numpy as np
 
 import darwinio.distribution as dist
+import darwinio.organism as org
 import darwinio.genome as gn
 import darwinio.stats as statistics
 
@@ -61,10 +62,7 @@ class World(dist.World):
                     ]
                     color = pg.Color(f"#{gn.array2hex(organism.genome_array)[-6:]}")
                     tinted_image: pg.Surface = tint(image, color)
-                    surface.blit(
-                        tinted_image,
-                        (x * 64, y * 64),
-                    )
+                    surface.blit(tinted_image, (x * 64, y * 64))
 
 
 def render_np_2d_array(array: np.ndarray, surface: pg.Surface):
@@ -315,20 +313,20 @@ class OrganismSelection(State):
         for event in events:
             if event.type == pgui.UI_BUTTON_PRESSED:
                 if event.ui_element == self.done_button:
-                    energy_range = (
+                    energy_range: tuple[int, int] = (
                         int(self.energy_slider_min.slider.get_current_value()),
                         int(self.energy_slider_max.slider.get_current_value()),
                     )
-                    temp_range = (
+                    temp_range: tuple[int, int] = (
                         int(self.temp_slider_min.slider.get_current_value()),
                         int(self.temp_slider_max.slider.get_current_value()),
                     )
+
+                    org.Organism.energy_range = energy_range
+                    org.Organism.temp_range = temp_range
+
                     self.world.organism_distribution = (
-                        dist.OrganismDistribution.generate(
-                            size=self.world.canvas_size,
-                            energy_range=energy_range,
-                            temp_range=temp_range,
-                        )
+                        dist.OrganismDistribution.generate(size=self.world.canvas_size)
                     )
                     return self.next_state_index
                 if event.ui_element == self.skip_button:
