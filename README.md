@@ -36,7 +36,7 @@ organisms, genetic codes, and neural networks.
     ```
    ## For ArchLinux and it's derivatives
     ```
-    pacman -S python-pipx 
+    pacman -S python-pipx
     
     ```
    ## For Gentoo
