@@ -1,3 +1,4 @@
+![Built with Emacs](https://tusharhero.github.io/emacs.gif)
 # Darwinio
 
  ```ascii
