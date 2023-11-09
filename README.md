@@ -1,4 +1,7 @@
-![Built with Emacs](https://tusharhero.github.io/emacs.gif)
+[![Made with Emacs](https://tusharhero.github.io/emacs.gif)](https://github.com/tusharhero/ecfpaw)
+[![GPLv3](https://www.gnu.org/graphics/gplv3-with-text-84x42.png)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Python Powered](https://www.python.org/static/community_logos/python-powered-w-70x28.png)](https://python.org)
+
 # Darwinio
 
  ```ascii
