@@ -64,6 +64,11 @@ organisms, genetic codes, and neural networks.
 
 1. Make sure you python is up-to date, if you don't have python installed
    install a recent version from [python's official website.](https://python.org/).
+
+   Or, if you have `winget` available, you can use,
+   ```powershell
+   winget install python
+   ```
 2. Open your terminal/Powershell, and install darwinio by running
    ```powershell
    py -m pip install darwinio
