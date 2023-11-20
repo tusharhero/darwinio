@@ -53,11 +53,11 @@ organisms, genetic codes, and neural networks.
     ```
 3. Open your terminal, and install darwinio by running
    ```bash
-   pip install darwinio
+   pipx install darwinio
    ```
 4. To run the program,
    ```bash
-   python -m darwinio
+   pipx run darwinio
    ```
 
 ### Microsoft Windows
