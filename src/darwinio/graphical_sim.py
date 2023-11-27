@@ -268,10 +268,10 @@ class OrganismSelection(State):
         )
 
         self.energy_slider_min = Slider(
-            "Food min:", (350, 150), 100, (1, 2000), self.manager
+            "Food min needed:", (350, 150), 100, (1, 2000), self.manager
         )
         self.energy_slider_max = Slider(
-            "Food max:", (350, 250), 1000, (1, 2000), self.manager
+            "Food max needed:", (350, 250), 1000, (1, 2000), self.manager
         )
 
         self.temp_slider_min = Slider(
