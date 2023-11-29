@@ -373,7 +373,7 @@ class DistributionPainting(State):
 
         # User interface variables
         self.title = pgui.elements.UITextBox(
-            "<b>Customize the distribution yourselves</b>",
+            "<b>Customize the distributions.</b>",
             pg.Rect((width // 2) - 350 // 2, 20, 350, -1),
             self.manager,
         )
