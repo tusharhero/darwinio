@@ -262,8 +262,8 @@ class OrganismSelection(State):
         self.world: World = world
 
         self.title = pgui.elements.UITextBox(
-            "<b>Select the range of your random organisms</b>",
-            pg.Rect((width // 2) - 350 // 2, 50, 350, 50),
+            "Select how you want to your organisms to initally spawn.",
+            pg.Rect((width // 2) - 350 // 2, 50, 350, 70),
             self.manager,
         )
 
@@ -295,7 +295,7 @@ class OrganismSelection(State):
         )
         self.painting_distribution_button = pgui.elements.UIButton(
             pg.Rect(0, 650, -1, -1),
-            "customize the distributions too!",
+            "customize the other distributions.",
             self.manager,
             anchors={"centerx": "centerx"},
         )
@@ -373,7 +373,7 @@ class DistributionPainting(State):
 
         # User interface variables
         self.title = pgui.elements.UITextBox(
-            "<b>Customize the distribution yourselves</b>",
+            "<b>Customize the distributions.</b>",
             pg.Rect((width // 2) - 350 // 2, 20, 350, -1),
             self.manager,
         )
