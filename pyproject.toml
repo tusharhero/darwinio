@@ -9,7 +9,7 @@ exclude = [
 
 [project]
 name = "darwinio"
-version = "0.10.1"
+version = "0.10.2"
 authors = [
   { name="Tushar Maharana", email="tusharhero@sdf.org" },
   { name="Mihir Nallagonda", email="adhikshithamihir@gmail.com" },
@@ -29,6 +29,7 @@ dependencies = [
 "pygame-ce>=2.2.1",
 "pygame-gui>=0.6.9",
 "nilsimsa>=0.3.8",
+"PyQt5",
 ]
 scripts = { darwinio = "darwinio.__main__:cli" }
 
