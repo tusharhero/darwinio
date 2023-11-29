@@ -46,16 +46,16 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 """
 
 HELP = """
-To get help, press <b>SHIFT+H</b>.
-To zoom in, zoom out do <b>-</b> , <b>=</b> respectively.
-To move around use the <b>arrow keys</b> or vim keys for moving around the
-text.
-To exit the game do <b>ESC</b>.
-For Full screen do <b>F11</b>.
-To mute/unmute the music, do <b>m</b>.
+To get this help screen, press <b>SHIFT+H</b>.
+To zoom in and zoom out, press the <b>-</b> , <b>=</b> keys respectively.
+To move around the canvas, use the <b>arrow keys</b> or the vi keys. 
+To exit the game, press <b>ESC</b>.
+To enter full screen, press <b>F11</b>.
+To mute or unmute the music, press <b>m</b>.
 """
 
 DISCLAIMER = """
-This application is NOT a game. It is a simulation
-designed to provide a scientific and factual model.
+This program is NOT a game. It is a
+simulation that aims to provide a fairly
+scientific model of evolution.
 """
