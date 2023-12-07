@@ -99,7 +99,11 @@ def main(resolution: tuple[int, int], fps: int, world_size: tuple[int, int]):
                 pg.transform.scale(pg.image.load(path).convert_alpha(), (64, 64))
             )
 
-    main_game = gsim.Simulation(screen, world, stats, images)
+    #get background image.
+    with gsim.get_asset_path("art", "water.png") as path:
+        background_image: pg.Surface = pg.transform.scale(pg.image.load(path).convert_alpha(), (64, 64))
+
+    main_game = gsim.Simulation(screen, world, stats, images, background_image)
 
     # Create the state machine
     statemachine = gsim.StateMachine(
