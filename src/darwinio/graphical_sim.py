@@ -515,6 +515,7 @@ class Simulation(State):
         world: World,
         stats: statistics.StatisticsCollector,
         images: list[pg.Surface],
+        background_image: pg.Surface,
     ):
         """
         Args:
@@ -526,6 +527,8 @@ class Simulation(State):
         stats: The stats object for collecting data and plotting.
 
         images: The images representing organisms.
+        
+        background_image: Tiling image for background.
         """
 
         surface_size = width, height = surface.get_size()
@@ -534,6 +537,8 @@ class Simulation(State):
         # Simulation Interface
 
         self.images: list[pg.Surface] = images
+
+        self.background_image: pg.Surface = background_image
 
         self.running = False
 
@@ -597,7 +602,9 @@ class Simulation(State):
     def render(self) -> None:
         """render the main screen state."""
         self.sim_surface.fill("black")
-        self.world_surface.fill("#5498C6")
+        for i in range(self.world.canvas_size[0]):
+            for j in range(self.world.canvas_size[1]):
+                self.world_surface.blit(self.background_image,pg.Rect(i*64,j*64,64,64))
         self.world_buffer.render(self.world_surface, self.images)
         self.sim_surface.blit(self.scaled_world_surface, self.world_rect)
         self.surface.blit(self.sim_surface, self.sim_rect)
